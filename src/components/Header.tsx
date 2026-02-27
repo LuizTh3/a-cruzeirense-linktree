@@ -1,13 +1,17 @@
-// src/components/Header.jsx
+// src/components/Header.tsx
 
-export default function Header() {
+interface HeaderProps {
+  backgroundImage?: string;
+}
+
+export default function Header({ backgroundImage }: HeaderProps) {
+  const bgImage = backgroundImage || '/assets/images/header.png';
+  
   return (
     <div 
-      // Tailwind cuidando do layout, flexbox e dimensões
       className="relative w-full min-h-70 flex flex-col justify-end items-center pb-10 z-1 mb-2.5 text-center text-white"
-      // Estilo inline para as propriedades muito específicas de máscara e background
       style={{
-        background: `linear-gradient(180deg, transparent 50%, rgba(0, 0, 0, 0.4) 100%), url('/assets/images/header.png')`,
+        background: `linear-gradient(180deg, transparent 50%, rgba(0, 0, 0, 0.4) 100%), url('${bgImage}')`,
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         WebkitMaskImage: 'linear-gradient(to bottom, black 80%, transparent 100%)',
