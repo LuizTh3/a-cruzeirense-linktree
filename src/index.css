@@ -1,0 +1,57 @@
+@import "tailwindcss";
+
+/* 1. Injetando suas variáveis no Tema do Tailwind v4 */
+@theme {
+  /* Cores de Fundo (Body) */
+  --color-bg-body-center: #0f4c8a;
+  --color-bg-body-mid: #0c3f73;
+  --color-bg-body-edge: #00103c;
+
+  /* Cores de Fundo (Container Mobile) */
+  --color-bg-container-top: #1a5fa8;
+  --color-bg-container-mid: #0e4480;
+  --color-bg-container-bottom: #030f1f;
+
+  /* Superfícies e Botões */
+  --color-surface-card: #122036;
+  --color-action: #fbbc04;
+  --color-action-hover: #e5a900;
+  --color-whatsapp: #25D366;
+
+  /* Fontes */
+  --font-roboto: "Roboto", sans-serif;
+  --font-segoe: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* 2. Reset Base e Estilo do Body (Global) */
+@layer base {
+  body {
+    font-family: var(--font-segoe);
+    color: white;
+    /* Gradiente radial do fundo da tela (fora do container mobile) */
+    background: radial-gradient(
+      ellipse at center,
+      var(--color-bg-body-center) 0%,
+      var(--color-bg-body-mid) 45%,
+      var(--color-bg-body-edge) 100%
+    );
+    background-attachment: fixed;
+    min-height: 100vh;
+  }
+}
+
+/* 3. Utilitários Customizados para os Gradientes e Sombras Complexas */
+@layer utilities {
+  .bg-container-radial {
+    background: radial-gradient(
+      ellipse at 50% 25%,
+      var(--color-bg-container-top) 0%,
+      var(--color-bg-container-mid) 40%,
+      var(--color-bg-container-bottom) 100%
+    );
+  }
+  
+  .shadow-lateral {
+    box-shadow: -10px 0 50px rgba(0, 0, 0, 0.5), 10px 0 50px rgba(0, 0, 0, 0.5);
+  }
+}
