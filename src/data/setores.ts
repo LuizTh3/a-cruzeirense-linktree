@@ -10,8 +10,8 @@ export const setores: Setor[] = [
     slug: "moveis",
     title: "Setor de Móveis",
     subtitle: "Transforme sua casa com conforto e sofisticação",
-    heroImage: "/assets/images/cards-setores/moveis.jpeg",
-    cardImage: "/assets/images/cards-setores/moveis.jpeg",
+    heroImage: "/assets/images/cards-setores/moveis.webp",
+    cardImage: "/assets/images/cards-setores/moveis.webp",
     cardTags: "Modern . Design . practicality .",
     cardDesc: "Transforme sua casa com móveis que unem conforto e sofisticação.",
     colaboradores: [
@@ -19,7 +19,7 @@ export const setores: Setor[] = [
         id: 1,
         nome: "Elisangela",
         cargo: "Atendente",
-        avatarSrc: "//assets/images/funcionarios/moveis/ELISANGELA.png",
+        avatarSrc: "/assets/images/funcionarios/moveis/ELISANGELA.png",
         whatsappHref: "https://wa.me/SEU_NUMERO",
       },
       {
@@ -49,8 +49,8 @@ export const setores: Setor[] = [
     slug: "confeccao",
     title: "Confecção e Calçados",
     subtitle: "As melhores marcas e estilos para você",
-    heroImage: "/assets/images/cards-setores/calcados.png",
-    cardImage: "/assets/images/cards-setores/calcados.png",
+    heroImage: "/assets/images/cards-setores/calcados.webp",
+    cardImage: "/assets/images/cards-setores/calcados.webp",
     cardTags: "Estilo . Conforto . Moda .",
     cardDesc: "Encontre as melhores peças para renovar o seu guarda-roupa.",
     colaboradores: [
@@ -109,8 +109,8 @@ export const setores: Setor[] = [
     slug: "tecidos",
     title: "Tecidos, Cama, Mesa",
     subtitle: "Detalhes que transformam sua casa em um verdadeiro refúgio",
-    heroImage: "/assets/images/cards-setores/tecidos.jpeg",
-    cardImage: "/assets/images/cards-setores/tecidos.jpeg",
+    heroImage: "/assets/images/cards-setores/tecidos.webp",
+    cardImage: "/assets/images/cards-setores/tecidos.webp",
     cardTags: "Comfort . Softness . Elegance .",
     cardDesc: "Detalhes que transformam sua casa em um verdadeiro refúgio.",
     colaboradores: [

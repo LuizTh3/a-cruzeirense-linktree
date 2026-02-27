@@ -7,7 +7,11 @@ const SectorPage = lazy(() => import('./pages/SectorPage'));
 
 function App() {
   return (
-    <Suspense fallback={<div className="min-h-screen bg-container-radial flex items-center justify-center text-white">Carregando...</div>}>
+    <Suspense fallback={
+      <div className="min-h-screen bg-container-radial flex items-center justify-center">
+        <div className="w-8 h-8 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+      </div>
+    }>
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/setor/:slug" element={<SectorPage />} />

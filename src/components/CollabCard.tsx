@@ -19,6 +19,10 @@ function CardContent({ nome, cargo, avatarSrc }: CardContentProps) {
           src={avatarSrc}
           alt={`Foto ${nome}`}
           className="w-[70px] h-[70px] rounded-full object-cover border-2 border-white/20"
+          loading="lazy"
+          decoding="async"
+          width={70}
+          height={70}
         />
         <div className="flex flex-col leading-tight">
           <h3 className="

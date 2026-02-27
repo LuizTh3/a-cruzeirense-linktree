@@ -21,6 +21,10 @@ export default function SectorCard({ href, imgSrc, imgAlt, title, tags, desc }: 
         src={imgSrc} 
         alt={imgAlt} 
         className="w-full h-27.5 object-cover block"
+        loading="lazy"
+        decoding="async"
+        width={300}
+        height={180}
       />
       
       <div className="p-3 flex flex-col grow">

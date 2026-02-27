@@ -5,7 +5,7 @@ interface HeaderProps {
 }
 
 export default function Header({ backgroundImage }: HeaderProps) {
-  const bgImage = backgroundImage || '/assets/images/header.png';
+  const bgImage = backgroundImage || '/assets/images/header.webp';
   
   return (
     <div 
@@ -28,6 +28,10 @@ export default function Header({ backgroundImage }: HeaderProps) {
             src="/assets/images/ACRUZEIRENSE.png" 
             alt="A Cruzeirense Matriz" 
             className="h-[clamp(40px,12vw,60px)] w-auto block object-contain transition-[height] duration-100 ease-out"
+            loading="eager"
+            fetchPriority="high"
+            width={200}
+            height={60}
           />
         </a>
 

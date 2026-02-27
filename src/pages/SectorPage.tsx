@@ -11,7 +11,7 @@ export default function SectorPage() {
   if (loading) {
     return (
       <main className="relative max-w-120 mx-auto min-h-screen bg-container-radial border-x border-white/5 shadow-lateral flex flex-col items-center justify-center overflow-x-hidden pb-10">
-        <div className="text-white text-xl">Carregando...</div>
+        <div className="w-8 h-8 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
       </main>
     );
   }

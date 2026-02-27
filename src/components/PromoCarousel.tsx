@@ -69,13 +69,14 @@ export default function PromoCarousel({ images, autoPlayInterval = 3000 }: Promo
         className="flex w-full transition-transform duration-500 ease-in-out will-change-transform"
         style={{ transform: `translateX(-${currentIndex * 100}%)` }}
       >
-        {images.map((image) => (
+        {images.map((image, index) => (
           <img
             key={image.id}
             src={image.src}
             alt={image.alt}
             className="min-w-full w-full object-cover block shrink-0"
-            loading="lazy"
+            loading={index === 0 ? 'eager' : 'lazy'}
+            fetchPriority={index === 0 ? 'high' : 'low'}
             decoding="async"
             width="860"
             height="430"
