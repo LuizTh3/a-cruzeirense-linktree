@@ -5,6 +5,7 @@ import PromoCarousel from '../components/PromoCarousel';
 import { getSectorCards } from '../services/setoresService';
 import { promoWhatsAppGroup } from '../constants/socialLinks';
 import type { CarouselImage } from '../types';
+import { useRastrearAcesso } from '../hooks/useRastrearAcesso';
 
 const promoImages: CarouselImage[] = [
   { id: 1, src: '/assets/images/promocoes/promo1.png', alt: 'Promoção 1' },
@@ -15,6 +16,8 @@ const promoImages: CarouselImage[] = [
 const sectorCards = getSectorCards();
 
 export default function HomePage() {
+  useRastrearAcesso('home');
+  
   return (
     <main className="relative max-w-120 mx-auto min-h-screen bg-container-radial border-x border-white/5 shadow-lateral flex flex-col items-center gap-4 overflow-x-hidden pb-10">
       <Header />

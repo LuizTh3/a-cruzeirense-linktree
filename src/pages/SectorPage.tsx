@@ -3,10 +3,13 @@ import { useSetor } from '../hooks/useSetor';
 import CollabCard from '../components/CollabCard';
 import SocialLinks from '../components/SocialLinks';
 import Header from '../components/Header';
+import { useRastrearAcesso } from '../hooks/useRastrearAcesso';
 
 export default function SectorPage() {
   const { slug } = useParams<{ slug: string }>();
   const { setor, loading, error } = useSetor(slug);
+
+  useRastrearAcesso(`setor/${slug}`);
 
   if (loading) {
     return (

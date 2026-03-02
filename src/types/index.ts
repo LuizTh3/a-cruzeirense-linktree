@@ -7,6 +7,16 @@ export interface Colaborador {
   whatsappHref?: string;
 }
 
+export interface Avaliacao {
+  id?: string;
+  colaboradorId: string;
+  setorSlug: string;
+  rating: number;
+  feedback: string;
+  ipAvaliador: string;
+  createdAt: Date;
+}
+
 export interface Setor {
   slug: string;
   title: string;

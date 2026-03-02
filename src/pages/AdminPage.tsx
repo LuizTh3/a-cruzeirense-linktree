@@ -13,6 +13,38 @@ export default function AdminPage() {
       </h1>
 
       <div className="flex flex-col gap-4 w-full">
+        <Link
+          to="/admin/relatorios"
+          className="
+            flex items-center justify-center w-full py-4.5
+            bg-[linear-gradient(135deg,#082d5e,#1a5fa8)]
+            text-white no-underline rounded-2xl
+            font-roboto font-bold uppercase text-[0.85rem] tracking-[1px]
+            border-none transition-all duration-300
+            ease-[cubic-bezier(0.25,0.8,0.25,1)]
+            hover:brightness-110 hover:-translate-y-0.75
+            hover:shadow-[0_8px_25px_rgba(0,86,179,0.4)]
+          "
+        >
+          Relatórios de Acesso
+        </Link>
+
+        <Link
+          to="/admin/avaliacoes"
+          className="
+            flex items-center justify-center w-full py-4.5
+            bg-[linear-gradient(135deg,#082d5e,#1a5fa8)]
+            text-white no-underline rounded-2xl
+            font-roboto font-bold uppercase text-[0.85rem] tracking-[1px]
+            border-none transition-all duration-300
+            ease-[cubic-bezier(0.25,0.8,0.25,1)]
+            hover:brightness-110 hover:-translate-y-0.75
+            hover:shadow-[0_8px_25px_rgba(0,86,179,0.4)]
+          "
+        >
+          Ver Avaliações
+        </Link>
+
         <button
           className="
             flex items-center justify-center w-full py-4.5
@@ -60,7 +92,7 @@ export default function AdminPage() {
       </div>
 
       <Link
-        to="/"
+        to="/admin"
         className="
           flex items-center justify-center w-full py-4.5 mt-8
           bg-[linear-gradient(135deg,#082d5e,#1a5fa8)]
@@ -72,7 +104,7 @@ export default function AdminPage() {
           hover:shadow-[0_8px_25px_rgba(0,86,179,0.4)]
         "
       >
-        Voltar ao Início
+        Sair
       </Link>
     </main>
   );

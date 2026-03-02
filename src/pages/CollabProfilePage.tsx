@@ -1,14 +1,20 @@
 import { useState } from 'react';
 import { useParams, Navigate, Link } from 'react-router-dom';
 import { useColaborador } from '../hooks/useColaborador';
+import { enviarAvaliacao } from '../services/avaliacoesService';
+import { useRastrearAcesso } from '../hooks/useRastrearAcesso';
 
 export default function CollabProfilePage() {
   const { slug, id } = useParams<{ slug: string; id: string }>();
   const { colaborador, setorSlug, setorTitle, loading, error } = useColaborador(slug, id);
+
+  useRastrearAcesso(`colaborador/${slug}/${id}`);
   const [rating, setRating] = useState(0);
   const [hoverRating, setHoverRating] = useState(0);
   const [feedback, setFeedback] = useState('');
   const [submitted, setSubmitted] = useState(false);
+  const [sending, setSending] = useState(false);
+  const [submitError, setSubmitError] = useState('');
 
   if (loading) {
     return (
@@ -22,9 +28,35 @@ export default function CollabProfilePage() {
     return <Navigate to="/" replace />;
   }
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setSubmitted(true);
+    setSubmitError('');
+
+    if (rating === 0) {
+      setSubmitError('Por favor, selecione uma avaliação');
+      return;
+    }
+
+    setSending(true);
+
+    try {
+      if (!setorSlug) {
+        setSubmitError('Erro ao identificar setor. Tente novamente.');
+        return;
+      }
+      await enviarAvaliacao({
+        colaboradorId: String(colaborador.id),
+        setorSlug,
+        rating,
+        feedback,
+      });
+      setSubmitted(true);
+    } catch (err) {
+      console.error('Erro ao enviar avaliação:', err);
+      setSubmitError('Erro ao enviar avaliação. Tente novamente.');
+    } finally {
+      setSending(false);
+    }
   };
 
   return (
@@ -138,8 +170,13 @@ export default function CollabProfilePage() {
               />
             </div>
 
+            {submitError && (
+              <p className="text-red-400 text-sm text-center font-roboto">{submitError}</p>
+            )}
+
             <button
               type="submit"
+              disabled={sending}
               className="
                 flex items-center justify-center w-full py-4.5
                 bg-white text-blue-700 no-underline rounded-2xl
@@ -148,9 +185,10 @@ export default function CollabProfilePage() {
                 ease-[cubic-bezier(0.25,0.8,0.25,1)]
                 hover:brightness-95 hover:-translate-y-0.75
                 hover:shadow-[0_8px_25px_rgba(255,255,255,0.3)]
+                disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0
               "
             >
-              Enviar Avaliação
+              {sending ? 'Enviando...' : 'Enviar Avaliação'}
             </button>
           </form>
         )}

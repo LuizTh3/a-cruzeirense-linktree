@@ -60,7 +60,7 @@ export default function PromoCarousel({ images, autoPlayInterval = 3000 }: Promo
   return (
     <div 
       ref={containerRef}
-      className="relative w-full max-w-107.5 mx-auto mb-6 overflow-hidden rounded-xl shadow-[0_4px_10px_rgba(0,0,0,0.1)] px-0 touch-none"
+      className="relative w-full max-w-107.5 mx-auto mb-6 overflow-hidden rounded-xl shadow-[0_4px_10px_rgba(0,0,0,0.1)] px-0 touch-pan-y"
       onTouchStart={handleTouchStart}
       onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}
