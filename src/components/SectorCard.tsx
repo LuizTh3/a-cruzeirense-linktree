@@ -21,7 +21,8 @@ export default function SectorCard({ href, imgSrc, imgAlt, title, tags, desc }: 
         src={imgSrc} 
         alt={imgAlt} 
         className="w-full h-27.5 object-cover block"
-        loading="lazy"
+        loading="eager"
+        fetchPriority="high"
         decoding="async"
         width={300}
         height={180}

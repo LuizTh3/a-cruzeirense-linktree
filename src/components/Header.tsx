@@ -21,7 +21,7 @@ export default function Header({ backgroundImage }: HeaderProps) {
       {/* pointer-events-none: Permite clicar "através" do container do header invisível.
         Mas reativamos os cliques (pointer-events-auto) na logo e no botão! 
       */}
-      <header className="absolute top-0 left-0 w-full px-6 py-115px flex justify-between items-center z-11 pointer-events-none">
+      <header className="absolute top-0 left-0 w-full px-6 py-5 flex justify-between items-center z-11 pointer-events-none">
         
         <a href="/" className="pointer-events-auto shrink-0 hover:opacity-80 transition-opacity duration-300">
           <img 

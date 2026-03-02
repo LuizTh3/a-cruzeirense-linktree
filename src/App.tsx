@@ -4,6 +4,8 @@ import './index.css';
 
 const HomePage = lazy(() => import('./pages/HomePage'));
 const SectorPage = lazy(() => import('./pages/SectorPage'));
+const AdminPage = lazy(() => import('./pages/AdminPage'));
+const CollabProfilePage = lazy(() => import('./pages/CollabProfilePage'));
 
 function App() {
   return (
@@ -15,6 +17,8 @@ function App() {
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/setor/:slug" element={<SectorPage />} />
+        <Route path="/colaborador/:slug/:id" element={<CollabProfilePage />} />
+        <Route path="/admin" element={<AdminPage />} />
       </Routes>
     </Suspense>
   );

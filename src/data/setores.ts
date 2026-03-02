@@ -20,6 +20,7 @@ export const setores: Setor[] = [
         nome: "Elisangela",
         cargo: "Atendente",
         avatarSrc: "/assets/images/funcionarios/moveis/ELISANGELA.png",
+        profileHref: "/colaborador/moveis/1",
         whatsappHref: "https://wa.me/SEU_NUMERO",
       },
       {
@@ -27,6 +28,7 @@ export const setores: Setor[] = [
         nome: "Jamisson",
         cargo: "Atendente",
         avatarSrc: "/assets/images/funcionarios/moveis/JAMISSON.png",
+        profileHref: "/colaborador/moveis/2",
         whatsappHref: "https://wa.me/SEU_NUMERO",
       },
       {
@@ -34,6 +36,7 @@ export const setores: Setor[] = [
         nome: "Lerivaldo",
         cargo: "Atendente",
         avatarSrc: "/assets/images/funcionarios/moveis/LERIVALDO.png",
+        profileHref: "/colaborador/moveis/3",
         whatsappHref: "https://wa.me/SEU_NUMERO",
       },
       {
@@ -41,6 +44,7 @@ export const setores: Setor[] = [
         nome: "Vanda",
         cargo: "Atendente",
         avatarSrc: "/assets/images/funcionarios/moveis/VANDA.png",
+        profileHref: "/colaborador/moveis/4",
         whatsappHref: "https://wa.me/SEU_NUMERO",
       },
     ],
@@ -57,15 +61,17 @@ export const setores: Setor[] = [
       {
         id: 1,
         nome: "David",
-        cargo: "Setor: Confecção e Calçados",
+        cargo: "Atendente",
         avatarSrc: "/assets/images/funcionarios/confeccao/DAVID.png",
-        whatsappHref: "#",
+        profileHref: "/colaborador/confeccao/1",
+        whatsappHref: "+5568999739841",
       },
       {
         id: 2,
         nome: "Denyse",
         cargo: "Atendente",
         avatarSrc: "/assets/images/funcionarios/confeccao/DENYSE.png",
+        profileHref: "/colaborador/confeccao/2",
         whatsappHref: "#",
       },
       {
@@ -73,6 +79,7 @@ export const setores: Setor[] = [
         nome: "Fabiula",
         cargo: "Atendente",
         avatarSrc: "/assets/images/funcionarios/confeccao/FABIULA.png",
+        profileHref: "/colaborador/confeccao/3",
         whatsappHref: "#",
       },
       {
@@ -80,6 +87,7 @@ export const setores: Setor[] = [
         nome: "Francisca",
         cargo: "Atendente",
         avatarSrc: "/assets/images/funcionarios/confeccao/FRANCISCA.png",
+        profileHref: "/colaborador/confeccao/4",
         whatsappHref: "#",
       },
       {
@@ -87,6 +95,7 @@ export const setores: Setor[] = [
         nome: "Janaira",
         cargo: "Atendente",
         avatarSrc: "/assets/images/funcionarios/confeccao/JANAIRA.png",
+        profileHref: "/colaborador/confeccao/5",
         whatsappHref: "#",
       },
       {
@@ -94,6 +103,7 @@ export const setores: Setor[] = [
         nome: "Mônica",
         cargo: "Atendente",
         avatarSrc: "/assets/images/funcionarios/confeccao/MONICA.png",
+        profileHref: "/colaborador/confeccao/6",
         whatsappHref: "#",
       },
       {
@@ -101,6 +111,7 @@ export const setores: Setor[] = [
         nome: "Zenaide",
         cargo: "Atendente",
         avatarSrc: "/assets/images/funcionarios/confeccao/ZENAIDE.png",
+        profileHref: "/colaborador/confeccao/7",
         whatsappHref: "#",
       },
     ],
@@ -119,6 +130,7 @@ export const setores: Setor[] = [
         nome: "Conceição",
         cargo: "Atendente",
         avatarSrc: "/assets/images/funcionarios/tecidos/CONCEICAO.png",
+        profileHref: "/colaborador/tecidos/1",
         whatsappHref: "#",
       },
       {
@@ -126,6 +138,7 @@ export const setores: Setor[] = [
         nome: "Damiana",
         cargo: "Atendente",
         avatarSrc: "/assets/images/funcionarios/tecidos/DAMIANA.png",
+        profileHref: "/colaborador/tecidos/2",
         whatsappHref: "#",
       },
       {
@@ -133,6 +146,7 @@ export const setores: Setor[] = [
         nome: "Sumaya",
         cargo: "Atendente",
         avatarSrc: "/assets/images/funcionarios/tecidos/SUMAYA.png",
+        profileHref: "/colaborador/tecidos/3",
         whatsappHref: "#",
       },
     ],
@@ -151,6 +165,7 @@ export const setores: Setor[] = [
         nome: "Colaborador 1",
         cargo: "Atendente",
         avatarSrc: "/assets/images/agente.png",
+        profileHref: "/colaborador/pagamento/1",
         whatsappHref: "#",
       },
     ],
@@ -159,8 +174,8 @@ export const setores: Setor[] = [
     slug: "negociacao",
     title: "Crediários e Negociações",
     subtitle: "Soluções justas para reorganizar suas finanças com tranquilidade",
-    heroImage: "/assets/images/cards-setores/negociacao.jpg",
-    cardImage: "/assets/images/cards-setores/negociacao.jpg",
+    heroImage: "/assets/images/cards-setores/negociacao.webp",
+    cardImage: "/assets/images/cards-setores/negociacao.webp",
     cardTags: "Agreement . Planning . Growth .",
     cardDesc: "Soluções justas para reorganizar suas finanças com tranquilidade.",
     colaboradores: [
@@ -169,6 +184,7 @@ export const setores: Setor[] = [
         nome: "Colaborador 1",
         cargo: "Atendente",
         avatarSrc: "/assets/images/agente.png",
+        profileHref: "/colaborador/negociacao/1",
         whatsappHref: "#",
       },
     ],

@@ -26,7 +26,7 @@ export default function SectorPage() {
     ">
 
       <div
-        className="relative w-full min-h-[280px] flex flex-col justify-end items-center"
+        className="relative w-full min-h-70 flex flex-col justify-end items-center"
         style={{
           background: `
             linear-gradient(180deg, transparent 50%, rgba(0,0,0,0.4) 100%),
@@ -65,7 +65,7 @@ export default function SectorPage() {
       </p>
 
       {/* ── LISTA DE COLABORADORES ────────────────────────────────────────── */}
-      <div className="flex flex-col gap-[15px] w-full px-[34px] box-border mt-5">
+      <div className="flex flex-col gap-3.75 w-full px-8.5 box-border mt-5">
         {setor.colaboradores.map((colab) => (
           <CollabCard key={colab.id} colaborador={colab} />
         ))}
