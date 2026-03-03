@@ -5,12 +5,25 @@ import { useNavigate } from 'react-router-dom';
 
 interface HeaderProps {
   backgroundImage?: string;
+  variant?: 'full' | 'minimal';
 }
 
-const menuOptions = [
-  { label: 'Setores', icon: 'fa-solid fa-layer-group', targetId: 'setores', href: null },
-  { label: 'Promoções', icon: 'fa-solid fa-tags', targetId: null, href: '/promocoes' },
-  { label: 'Redes sociais', icon: 'fa-solid fa-share-nodes', targetId: 'redes-sociais', href: null },
+interface MenuOption {
+  label: string;
+  icon: string;
+  targetId?: string | null;
+  href?: string | null;
+}
+
+const fullMenuOptions: MenuOption[] = [
+  { label: 'Setores', icon: 'fa-solid fa-layer-group', targetId: 'setores' },
+  { label: 'Promoções', icon: 'fa-solid fa-tags', href: '/promocoes' },
+  { label: 'Redes sociais', icon: 'fa-solid fa-share-nodes', targetId: 'redes-sociais' },
+];
+
+const minimalMenuOptions: MenuOption[] = [
+  { label: 'Home', icon: 'fa-solid fa-house', href: '/' },
+  { label: 'Redes sociais', icon: 'fa-solid fa-share-nodes', targetId: 'redes-sociais' },
 ];
 
 function scrollToSection(id: string) {
@@ -20,11 +33,13 @@ function scrollToSection(id: string) {
   }
 }
 
-export default function Header({ backgroundImage }: HeaderProps) {
+export default function Header({ backgroundImage, variant = 'full' }: HeaderProps) {
   const bgImage = backgroundImage || '/assets/images/header.webp';
   const [menuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
+
+  const menuOptions = variant === 'minimal' ? minimalMenuOptions : fullMenuOptions;
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -36,7 +51,7 @@ export default function Header({ backgroundImage }: HeaderProps) {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  const handleOptionClick = (targetId: string | null, href: string | null) => {
+  const handleOptionClick = (targetId?: string | null, href?: string | null) => {
     if (href) {
       navigate(href);
     } else if (targetId) {

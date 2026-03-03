@@ -3,6 +3,8 @@ import { useSetor } from '../hooks/useSetor';
 import CollabCard from '../components/CollabCard';
 import SocialLinks from '../components/SocialLinks';
 import Header from '../components/Header';
+import Footer from '../components/Footer';
+import SidebarMenu from '../components/SidebarMenu';
 import { useRastrearAcesso } from '../hooks/useRastrearAcesso';
 
 export default function SectorPage() {
@@ -30,7 +32,8 @@ export default function SectorPage() {
       shadow-lateral flex flex-col items-center
       overflow-x-hidden pb-10
     ">
-      <Header backgroundImage={setor.heroImage} />
+      <Header backgroundImage={setor.heroImage} variant="minimal" />
+      <SidebarMenu variant="minimal" />
 
       <div className="relative z-10 -mt-20 text-center w-full px-5 mb-4">
         <h2 className="
@@ -63,7 +66,7 @@ export default function SectorPage() {
           Acesse nossas Redes sociais
         </h2>
         <p className="text-center font-medium text-[0.95rem] opacity-80 mt-1">
-          Customize the best promotions in the city
+          Confira as melhores promoções da cidade
         </p>
       </div>
 
@@ -88,6 +91,8 @@ export default function SectorPage() {
           Grupo de Clientes (Promoções)
         </Link>
       </div>
+
+      <Footer />
     </main>
   );
 }

@@ -6,6 +6,7 @@ interface AvaliacaoData {
   setorSlug: string;
   rating: number;
   feedback: string;
+  telefone?: string;
 }
 
 export interface AvaliacaoFirestore {
@@ -14,6 +15,7 @@ export interface AvaliacaoFirestore {
   setorSlug: string;
   rating: number;
   feedback: string;
+  telefone?: string;
   ipAvaliador: string;
   createdAt: Date;
 }
@@ -36,6 +38,7 @@ export async function enviarAvaliacao(data: AvaliacaoData): Promise<void> {
     setorSlug: data.setorSlug,
     rating: data.rating,
     feedback: data.feedback,
+    telefone: data.telefone || null,
     ipAvaliador,
     createdAt: serverTimestamp(),
   });
@@ -53,6 +56,7 @@ export async function buscarAvaliacoes(): Promise<AvaliacaoFirestore[]> {
       setorSlug: data.setorSlug,
       rating: data.rating,
       feedback: data.feedback,
+      telefone: data.telefone,
       ipAvaliador: data.ipAvaliador,
       createdAt: data.createdAt?.toDate() || new Date(),
     };

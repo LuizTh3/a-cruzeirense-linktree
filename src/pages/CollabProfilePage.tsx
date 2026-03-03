@@ -3,6 +3,8 @@ import { useParams, Navigate, Link } from 'react-router-dom';
 import { useColaborador } from '../hooks/useColaborador';
 import { enviarAvaliacao } from '../services/avaliacoesService';
 import { useRastrearAcesso } from '../hooks/useRastrearAcesso';
+import Footer from '../components/Footer';
+import SidebarMenu from '../components/SidebarMenu';
 
 export default function CollabProfilePage() {
   const { slug, id } = useParams<{ slug: string; id: string }>();
@@ -12,9 +14,23 @@ export default function CollabProfilePage() {
   const [rating, setRating] = useState(0);
   const [hoverRating, setHoverRating] = useState(0);
   const [feedback, setFeedback] = useState('');
+  const [telefone, setTelefone] = useState('');
   const [submitted, setSubmitted] = useState(false);
   const [sending, setSending] = useState(false);
   const [submitError, setSubmitError] = useState('');
+
+  const formatTelefone = (value: string) => {
+    const digits = value.replace(/\D/g, '');
+    if (digits.length <= 2) return digits;
+    if (digits.length <= 3) return `(${digits.slice(0, 2)}) ${digits.slice(2)}`;
+    if (digits.length <= 7) return `(${digits.slice(0, 2)}) ${digits.slice(2, 7)}`;
+    return `(${digits.slice(0, 2)}) ${digits.slice(2, 11)}`;
+  };
+
+  const handleTelefoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const formatted = formatTelefone(e.target.value);
+    setTelefone(formatted);
+  };
 
   if (loading) {
     return (
@@ -37,6 +53,12 @@ export default function CollabProfilePage() {
       return;
     }
 
+    const digits = telefone.replace(/\D/g, '');
+    if (digits.length !== 11) {
+      setSubmitError('Por favor, insira um telefone válido (DDD + 9 dígitos)');
+      return;
+    }
+
     setSending(true);
 
     try {
@@ -49,6 +71,7 @@ export default function CollabProfilePage() {
         setorSlug,
         rating,
         feedback,
+        telefone: digits,
       });
       setSubmitted(true);
     } catch (err) {
@@ -73,6 +96,8 @@ export default function CollabProfilePage() {
         <i className="fa-solid fa-arrow-left"></i>
         Voltar
       </Link>
+
+      <SidebarMenu variant="minimal" />
 
       <div className="flex flex-col items-center mt-6 w-full">
         <img
@@ -149,6 +174,31 @@ export default function CollabProfilePage() {
 
             <div>
               <label
+                htmlFor="telefone"
+                className="block text-white/80 text-sm font-roboto mb-2"
+              >
+                Seu telefone (para contato)
+              </label>
+              <input
+                type="tel"
+                id="telefone"
+                value={telefone}
+                onChange={handleTelefoneChange}
+                placeholder="(XX) 99999-9999"
+                required
+                className="
+                  w-full p-4 rounded-xl
+                  bg-[#0d2137] text-white
+                  border border-white/10
+                  placeholder:text-white/30
+                  focus:outline-none focus:border-white/30
+                  font-roboto
+                "
+              />
+            </div>
+
+            <div>
+              <label
                 htmlFor="feedback"
                 className="block text-white/80 text-sm font-roboto mb-2"
               >
@@ -193,6 +243,8 @@ export default function CollabProfilePage() {
           </form>
         )}
       </div>
+
+      <Footer />
     </main>
   );
 }

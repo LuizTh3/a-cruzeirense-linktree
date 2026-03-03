@@ -13,6 +13,7 @@ export interface Avaliacao {
   setorSlug: string;
   rating: number;
   feedback: string;
+  telefone?: string;
   ipAvaliador: string;
   createdAt: Date;
 }

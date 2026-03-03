@@ -1,4 +1,6 @@
 import Header from '../components/Header';
+import Footer from '../components/Footer';
+import SidebarMenu from '../components/SidebarMenu';
 import SectorCard from '../components/SectorCard';
 import SocialLinks from '../components/SocialLinks';
 import PromoCarousel from '../components/PromoCarousel';
@@ -21,6 +23,7 @@ export default function HomePage() {
   return (
     <main className="relative max-w-120 mx-auto min-h-screen bg-container-radial border-x border-white/5 shadow-lateral flex flex-col items-center gap-4 overflow-x-hidden pb-10">
       <Header />
+      <SidebarMenu variant="full" />
 
       <div className="relative z-10 -mt-20 text-center w-full px-5 mb-4">
         <h2 className="text-[2rem] font-roboto font-bold text-white drop-shadow-[2px_2px_10px_rgba(0,0,0,0.8)] mb-1">
@@ -36,8 +39,8 @@ export default function HomePage() {
       </div>
 
       <div className="w-full px-6 text-left mt-4" id="setores">
-        <h2 className="font-roboto font-black uppercase text-[1.5rem] tracking-[1px] text-white">
-          Nossos setores
+        <h2 className="font-roboto font-black text-[1.5rem] tracking-[1px] text-white">
+          Nossos Setores
         </h2>
         <p className="font-medium text-[1.1rem] opacity-80 mb-2 text-white">
           Acesse e fale com um de nossos colaboradores
@@ -65,7 +68,7 @@ export default function HomePage() {
       </div>
 
       <p className="text-center font-medium text-[0.95rem] opacity-80">
-        CONFIRA AS MELHORES PROMOÇÕES DA CIDADE
+        Confira as melhores promoções da cidade
       </p>
 
       <div className="flex flex-col gap-3.75 w-full px-6 my-2">
@@ -82,6 +85,8 @@ export default function HomePage() {
           Grupo de Clientes (Promoções)
         </a>
       </div>
+
+      <Footer />
     </main>
   );
 }

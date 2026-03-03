@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { buscarAvaliacoes } from '../services/avaliacoesService';
 import type { AvaliacaoFirestore } from '../services/avaliacoesService';
 import { getAllSetores } from '../services/setoresService';
+import Footer from '../components/Footer';
 
 interface AvaliacaoCompleta extends AvaliacaoFirestore {
   nomeColaborador: string;
@@ -53,6 +54,15 @@ export default function AvaliacoesPage() {
       hour: '2-digit',
       minute: '2-digit',
     }).format(date);
+  };
+
+  const formatTelefone = (telefone: string | undefined) => {
+    if (!telefone) return '';
+    const digits = telefone.replace(/\D/g, '');
+    if (digits.length === 11) {
+      return `(${digits.slice(0, 2)}) ${digits.slice(2)}`;
+    }
+    return telefone;
   };
 
   if (loading) {
@@ -129,7 +139,7 @@ export default function AvaliacoesPage() {
                 )}
 
                 <div className="flex items-center justify-between text-xs text-white/40">
-                  <span>IP: {avaliacao.ipAvaliador}</span>
+                  <span>{avaliacao.telefone ? `Tel: ${formatTelefone(avaliacao.telefone)}` : ''}</span>
                   <span>{formatDate(avaliacao.createdAt)}</span>
                 </div>
               </div>
@@ -137,6 +147,8 @@ export default function AvaliacoesPage() {
           ))}
         </div>
       )}
+
+      <Footer />
     </main>
   );
 }

@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
 import { useParams, Navigate, Link } from 'react-router-dom';
 import Header from '../components/Header';
+import Footer from '../components/Footer';
+import SidebarMenu from '../components/SidebarMenu';
 import PromoCard from '../components/PromoCard';
 import SkeletonLoader from '../components/SkeletonLoader';
 import { getProdutoById, getProdutosRelacionados } from '../services/promocoesService';
@@ -56,7 +58,8 @@ export default function ProdutoPage() {
 
   return (
     <main className="relative max-w-120 mx-auto min-h-screen bg-container-radial border-x border-white/5 shadow-lateral flex flex-col items-center overflow-x-hidden pb-10">
-      <Header />
+      <Header variant="minimal" />
+      <SidebarMenu variant="minimal" />
 
       <div className="w-full px-6 mt-4">
         <Link
@@ -135,6 +138,8 @@ export default function ProdutoPage() {
           </div>
         </div>
       )}
+
+      <Footer />
     </main>
   );
 }

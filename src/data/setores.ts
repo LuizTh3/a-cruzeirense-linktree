@@ -162,9 +162,9 @@ export const setores: Setor[] = [
     colaboradores: [
       {
         id: 1,
-        nome: "Colaborador 1",
+        nome: "Financeiro",
         cargo: "Atendente",
-        avatarSrc: "/assets/images/agente.webp",
+        avatarSrc: "/assets/images/funcionarios/faturas/financeiro.webp",
         profileHref: "/colaborador/pagamento/1",
         whatsappHref: "#",
       },
@@ -181,9 +181,9 @@ export const setores: Setor[] = [
     colaboradores: [
       {
         id: 1,
-        nome: "Colaborador 1",
+        nome: "Boletos/Crediário",
         cargo: "Atendente",
-        avatarSrc: "/assets/images/agente.webp",
+        avatarSrc: "/assets/images/funcionarios/negociacoes/negociacao.webp",
         profileHref: "/colaborador/negociacao/1",
         whatsappHref: "#",
       },
