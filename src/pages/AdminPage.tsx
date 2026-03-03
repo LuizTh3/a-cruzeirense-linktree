@@ -45,7 +45,8 @@ export default function AdminPage() {
           Ver Avaliações
         </Link>
 
-        <button
+        <Link
+          to="/admin/promocoes"
           className="
             flex items-center justify-center w-full py-4.5
             bg-[linear-gradient(135deg,#082d5e,#1a5fa8)]
@@ -58,7 +59,7 @@ export default function AdminPage() {
           "
         >
           Gerenciar Promoções
-        </button>
+        </Link>
 
         <button
           className="

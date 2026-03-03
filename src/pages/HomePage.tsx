@@ -8,9 +8,9 @@ import type { CarouselImage } from '../types';
 import { useRastrearAcesso } from '../hooks/useRastrearAcesso';
 
 const promoImages: CarouselImage[] = [
-  { id: 1, src: '/assets/images/promocoes/promo1.png', alt: 'Promoção 1' },
-  { id: 2, src: '/assets/images/promocoes/promo2.png', alt: 'Promoção 2' },
-  { id: 3, src: '/assets/images/promocoes/promo3.jpeg', alt: 'Promoção 3' },
+  { id: 1, src: '/assets/images/promocoes/promo1.webp', alt: 'Promoção 1' },
+  { id: 2, src: '/assets/images/promocoes/promo2.webp', alt: 'Promoção 2' },
+  { id: 3, src: '/assets/images/promocoes/promo3.webp', alt: 'Promoção 3' },
 ];
 
 const sectorCards = getSectorCards();
@@ -31,11 +31,11 @@ export default function HomePage() {
         </p>
       </div>
 
-      <div className="w-full px-6">
+      <div className="w-full px-6" id="promocoes">
         <PromoCarousel images={promoImages} autoPlayInterval={3500} />
       </div>
 
-      <div className="w-full px-6 text-left mt-4">
+      <div className="w-full px-6 text-left mt-4" id="setores">
         <h2 className="font-roboto font-black uppercase text-[1.5rem] tracking-[1px] text-white">
           Nossos setores
         </h2>
@@ -58,7 +58,7 @@ export default function HomePage() {
         ))}
       </div>
 
-      <div className="flex flex-col items-center mt-5 mb-2 font-roboto">
+      <div className="flex flex-col items-center mt-5 mb-2 font-roboto" id="redes-sociais">
         <h2 className="text-center font-bold uppercase text-[1.1rem] tracking-wider">
           Acesse nossas Redes sociais
         </h2>

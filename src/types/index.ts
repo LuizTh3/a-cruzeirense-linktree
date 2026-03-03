@@ -39,3 +39,13 @@ export interface SocialLink {
   iconClass: string;
   label: string;
 }
+
+export interface Produto {
+  id: string;
+  titulo: string;
+  preco: number;
+  precoPromocional?: number;
+  imagem: string;
+  descricao: string;
+  categoria?: string;
+}
