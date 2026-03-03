@@ -4,7 +4,6 @@ import { useColaborador } from '../hooks/useColaborador';
 import { enviarAvaliacao } from '../services/avaliacoesService';
 import { useRastrearAcesso } from '../hooks/useRastrearAcesso';
 import Footer from '../components/Footer';
-import SidebarMenu from '../components/SidebarMenu';
 
 export default function CollabProfilePage() {
   const { slug, id } = useParams<{ slug: string; id: string }>();
@@ -96,8 +95,6 @@ export default function CollabProfilePage() {
         <i className="fa-solid fa-arrow-left"></i>
         Voltar
       </Link>
-
-      <SidebarMenu variant="minimal" />
 
       <div className="flex flex-col items-center mt-6 w-full">
         <img

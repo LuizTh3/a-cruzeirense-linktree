@@ -17,13 +17,11 @@ interface MenuOption {
 
 const fullMenuOptions: MenuOption[] = [
   { label: 'Setores', icon: 'fa-solid fa-layer-group', targetId: 'setores' },
-  { label: 'Promoções', icon: 'fa-solid fa-tags', href: '/promocoes' },
   { label: 'Redes sociais', icon: 'fa-solid fa-share-nodes', targetId: 'redes-sociais' },
 ];
 
 const minimalMenuOptions: MenuOption[] = [
   { label: 'Home', icon: 'fa-solid fa-house', href: '/' },
-  { label: 'Redes sociais', icon: 'fa-solid fa-share-nodes', targetId: 'redes-sociais' },
 ];
 
 function scrollToSection(id: string) {
@@ -55,7 +53,12 @@ export default function Header({ backgroundImage, variant = 'full' }: HeaderProp
     if (href) {
       navigate(href);
     } else if (targetId) {
-      scrollToSection(targetId);
+      const isHomePage = window.location.pathname === '/';
+      if (isHomePage) {
+        scrollToSection(targetId);
+      } else {
+        navigate(`/#${targetId}`);
+      }
     }
     setMenuOpen(false);
   };
@@ -89,26 +92,39 @@ export default function Header({ backgroundImage, variant = 'full' }: HeaderProp
           <button
             onClick={() => setMenuOpen(!menuOpen)}
             aria-label="Abrir menu"
-            className="w-12 h-12 rounded-full bg-[#082d5e] hover:bg-[#1a5fa8] text-white cursor-pointer flex items-center justify-center transition-all duration-300 shadow-lg"
+            className={`
+              w-12 h-12 rounded-full bg-[#082d5e] text-white
+              flex items-center justify-center text-xl
+              shadow-[0_4px_15px_rgba(0,0,0,0.3)] transition-all duration-300
+              hover:bg-[#1a5fa8] hover:scale-110
+              ${menuOpen ? 'rotate-90' : ''}
+            `}
           >
-            <i className={`fa-solid ${menuOpen ? 'fa-xmark' : 'fa-bars'} text-xl transition-transform ${menuOpen ? '' : 'rotate-0'}`}></i>
+            <i className={menuOpen ? 'fa-solid fa-xmark' : 'fa-solid fa-bars'} />
           </button>
 
           <div
             className={`
-              absolute right-0 top-14 w-48 bg-[#082d5e] rounded-xl shadow-2xl overflow-hidden
-              transition-all duration-200 ease-out origin-top-right
-              ${menuOpen ? 'opacity-100 scale-100' : 'opacity-0 scale-75 pointer-events-none'}
+              absolute right-14 top-0 flex flex-col gap-2
+              transition-all duration-300 ease-out origin-right
+              ${menuOpen ? 'opacity-100 scale-100 translate-x-0' : 'opacity-0 scale-75 translate-x-4 pointer-events-none'}
             `}
           >
-            {menuOptions.map((option) => (
+            {menuOptions.map((option, index) => (
               <button
-                key={option.href || option.targetId}
+                key={option.href || option.targetId || index}
                 onClick={() => handleOptionClick(option.targetId, option.href)}
-                className="w-full px-4 py-3 flex items-center gap-3 text-white hover:bg-white/10 transition-colors text-left"
+                className="
+                  flex items-center gap-2 px-4 py-2
+                  bg-[#082d5e] text-white rounded-full
+                  shadow-[0_4px_15px_rgba(0,0,0,0.3)]
+                  whitespace-nowrap text-sm font-medium
+                  hover:bg-[#1a5fa8] hover:scale-105
+                  transition-all duration-200
+                "
               >
-                <i className={`${option.icon} w-5 text-center`} />
-                <span className="font-medium text-sm">{option.label}</span>
+                <i className={option.icon} />
+                {option.label}
               </button>
             ))}
           </div>

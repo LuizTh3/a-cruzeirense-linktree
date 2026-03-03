@@ -1,22 +1,36 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { useParams, Navigate, Link } from 'react-router-dom';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
-import SidebarMenu from '../components/SidebarMenu';
 import PromoCard from '../components/PromoCard';
 import SkeletonLoader from '../components/SkeletonLoader';
 import { getProdutoById, getProdutosRelacionados } from '../services/promocoesService';
 import { useRastrearAcesso } from '../hooks/useRastrearAcesso';
-import { promoWhatsAppGroup } from '../constants/socialLinks';
-import type { Produto } from '../types';
+import { setores } from '../data/setores';
+import type { Produto, Colaborador } from '../types';
+
+const categoriaParaSetor: Record<string, string> = {
+  'moveis': 'moveis',
+  'calcados': 'confeccao',
+  'confeccao': 'confeccao',
+  'tecidos': 'tecidos',
+};
 
 export default function ProdutoPage() {
   const { id } = useParams<{ id: string }>();
   const [produto, setProduto] = useState<Produto | undefined>(undefined);
   const [relacionados, setRelacionados] = useState<Produto[]>([]);
   const [loading, setLoading] = useState(true);
+  const [mostrarAtendentes, setMostrarAtendentes] = useState(false);
 
   useRastrearAcesso(`produto/${id}`);
+
+  const colaboradores = useMemo(() => {
+    if (!produto?.categoria) return [];
+    const setorSlug = categoriaParaSetor[produto.categoria];
+    const setor = setores.find(s => s.slug === setorSlug);
+    return setor?.colaboradores || [];
+  }, [produto?.categoria]);
 
   useEffect(() => {
     async function fetchData() {
@@ -39,6 +53,14 @@ export default function ProdutoPage() {
     fetchData();
   }, [id]);
 
+  const handleWhatsAppClick = (colaborador: Colaborador) => {
+    const mensagem = encodeURIComponent(
+      `Olá! Tenho interesse no ${produto?.titulo} da promoção. Pode me passar mais detalhes?`
+    );
+    const whatsappUrl = `https://wa.me/${colaborador.whatsappHref}?text=${mensagem}`;
+    window.open(whatsappUrl, '_blank');
+  };
+
   if (loading) {
     return (
       <main className="relative max-w-120 mx-auto min-h-screen bg-container-radial border-x border-white/5 shadow-lateral flex flex-col items-center justify-center overflow-x-hidden pb-10">
@@ -48,7 +70,7 @@ export default function ProdutoPage() {
   }
 
   if (!produto) {
-    return <Navigate to="/promocoes" replace />;
+    return <Navigate to="/" replace />;
   }
 
   const temDesconto = produto.precoPromocional && produto.precoPromocional < produto.preco;
@@ -59,15 +81,14 @@ export default function ProdutoPage() {
   return (
     <main className="relative max-w-120 mx-auto min-h-screen bg-container-radial border-x border-white/5 shadow-lateral flex flex-col items-center overflow-x-hidden pb-10">
       <Header variant="minimal" />
-      <SidebarMenu variant="minimal" />
 
       <div className="w-full px-6 mt-4">
         <Link
-          to="/promocoes"
+          to="/"
           className="inline-flex items-center gap-2 text-white/80 hover:text-white transition-colors text-sm mb-4"
         >
           <i className="fa-solid fa-arrow-left"></i>
-          Voltar para promoções
+          Voltar para início
         </Link>
       </div>
 
@@ -108,19 +129,48 @@ export default function ProdutoPage() {
               )}
             </div>
             
-            <p className="text-[#d1d9e2] text-[0.95rem] leading-[1.5] mb-6">
-              {produto.descricao}
-            </p>
-            
-            <a
-              href={promoWhatsAppGroup}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center justify-center gap-2 w-full py-4 bg-[linear-gradient(135deg,#082d5e,#1a5fa8)] text-white no-underline rounded-xl font-roboto font-bold text-[1rem] transition-all duration-300 hover:brightness-110 hover:-translate-y-1 hover:shadow-[0_8px_25px_rgba(0,86,179,0.4)]"
-            >
-              <i className="fa-brands fa-whatsapp text-xl"></i>
-              Comprar pelo WhatsApp
-            </a>
+            {!mostrarAtendentes ? (
+              <button
+                onClick={() => setMostrarAtendentes(true)}
+                className="flex items-center justify-center gap-2 w-full py-4 bg-[linear-gradient(135deg,#082d5e,#1a5fa8)] text-white no-underline rounded-xl font-roboto font-bold text-[1rem] transition-all duration-300 hover:brightness-110 hover:-translate-y-1 hover:shadow-[0_8px_25px_rgba(0,86,179,0.4)]"
+              >
+                <i className="fa-brands fa-whatsapp text-xl"></i>
+                Comprar pelo WhatsApp
+              </button>
+            ) : (
+              <div className="mt-2">
+                <p className="text-white text-sm mb-3 font-medium">
+                  Selecione um atendente:
+                </p>
+                <div className="grid grid-cols-2 gap-3 max-h-48 overflow-y-auto">
+                  {colaboradores
+                    .filter(colab => colab.whatsappHref && colab.whatsappHref !== '#')
+                    .map((colaborador) => (
+                      <button
+                        key={colaborador.id}
+                        onClick={() => handleWhatsAppClick(colaborador)}
+                        className="flex items-center gap-3 p-3 bg-[#1a2d4a] rounded-lg hover:bg-[#2a3d5a] transition-colors text-left"
+                      >
+                        <img
+                          src={colaborador.avatarSrc}
+                          alt={colaborador.nome}
+                          className="w-12 h-12 rounded-full object-cover"
+                        />
+                        <div>
+                          <p className="text-white font-medium text-sm">{colaborador.nome}</p>
+                          <p className="text-white/60 text-xs">{colaborador.cargo}</p>
+                        </div>
+                      </button>
+                    ))}
+                </div>
+                <button
+                  onClick={() => setMostrarAtendentes(false)}
+                  className="mt-3 text-white/60 text-sm hover:text-white transition-colors"
+                >
+                  Cancelar
+                </button>
+              </div>
+            )}
           </div>
         </div>
       </div>

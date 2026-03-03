@@ -14,8 +14,8 @@ export async function getProdutos(): Promise<Produto[]> {
       preco: data.preco || 0,
       precoPromocional: data.precoPromocional,
       imagem: data.imagem || '',
-      descricao: data.descricao || '',
       categoria: data.categoria,
+      destaque: data.destaque || false,
     };
   });
 }
@@ -38,8 +38,8 @@ export async function getProdutoById(id: string): Promise<Produto | undefined> {
     preco: data.preco || 0,
     precoPromocional: data.precoPromocional,
     imagem: data.imagem || '',
-    descricao: data.descricao || '',
     categoria: data.categoria,
+    destaque: data.destaque || false,
   };
 }
 
@@ -62,8 +62,8 @@ export async function getProdutosRelacionados(categoria: string | undefined, exc
         preco: data.preco || 0,
         precoPromocional: data.precoPromocional,
         imagem: data.imagem || '',
-        descricao: data.descricao || '',
         categoria: data.categoria,
+        destaque: data.destaque || false,
       };
     })
     .filter((produto) => produto.id !== excludeId)
@@ -90,8 +90,8 @@ export async function saveProduto(produto: Produto): Promise<void> {
     preco: produto.preco,
     precoPromocional: produto.precoPromocional ?? null,
     imagem: produto.imagem,
-    descricao: produto.descricao,
     categoria: produto.categoria ?? null,
+    destaque: produto.destaque ?? false,
   }, { merge: true });
 }
 
@@ -101,4 +101,24 @@ export async function deleteProduto(id: string): Promise<void> {
     const docRef = doc(db, 'promocoes', docId);
     await deleteDoc(docRef);
   }
+}
+
+export async function getProdutosPorSetor(setor: string): Promise<Produto[]> {
+  const q = query(collection(db, 'promocoes'));
+  const snapshot = await getDocs(q);
+  
+  return snapshot.docs
+    .map((doc) => {
+      const data = doc.data();
+      return {
+        id: data.id || doc.id,
+        titulo: data.titulo || '',
+        preco: data.preco || 0,
+        precoPromocional: data.precoPromocional,
+        imagem: data.imagem || '',
+        categoria: data.categoria,
+        destaque: data.destaque || false,
+      };
+    })
+    .filter((produto) => produto.categoria === setor);
 }

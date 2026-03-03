@@ -1,13 +1,16 @@
+import { useEffect, useState, useMemo } from 'react';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
-import SidebarMenu from '../components/SidebarMenu';
 import SectorCard from '../components/SectorCard';
 import SocialLinks from '../components/SocialLinks';
 import PromoCarousel from '../components/PromoCarousel';
+import PromoCard from '../components/PromoCard';
 import { getSectorCards } from '../services/setoresService';
+import { getProdutos } from '../services/promocoesService';
 import { promoWhatsAppGroup } from '../constants/socialLinks';
-import type { CarouselImage } from '../types';
+import type { CarouselImage, Produto } from '../types';
 import { useRastrearAcesso } from '../hooks/useRastrearAcesso';
+import { setores } from '../data/setores';
 
 const promoImages: CarouselImage[] = [
   { id: 1, src: '/assets/images/promocoes/promo1.webp', alt: 'Promoção 1' },
@@ -18,12 +21,40 @@ const promoImages: CarouselImage[] = [
 const sectorCards = getSectorCards();
 
 export default function HomePage() {
+  const [produtos, setProdutos] = useState<Produto[]>([]);
+
   useRastrearAcesso('home');
+
+  useEffect(() => {
+    async function fetchProdutos() {
+      try {
+        const data = await getProdutos();
+        setProdutos(data);
+      } catch (error) {
+        console.error('Erro ao buscar promoções:', error);
+      }
+    }
+    fetchProdutos();
+  }, []);
+
+  const produtosDestaque = useMemo(() => {
+    return produtos.filter(p => p.destaque).slice(0, 2);
+  }, [produtos]);
+
+  const setoresComPromocoes = useMemo(() => {
+    const categoriasComPromocoes = new Set(produtos.map(p => p.categoria).filter(Boolean));
+    return setores
+      .filter(setor => categoriasComPromocoes.has(setor.slug))
+      .map(setor => ({
+        slug: setor.slug,
+        title: setor.title,
+        image: setor.cardImage,
+      }));
+  }, [produtos]);
   
   return (
     <main className="relative max-w-120 mx-auto min-h-screen bg-container-radial border-x border-white/5 shadow-lateral flex flex-col items-center gap-4 overflow-x-hidden pb-10">
       <Header />
-      <SidebarMenu variant="full" />
 
       <div className="relative z-10 -mt-20 text-center w-full px-5 mb-4">
         <h2 className="text-[2rem] font-roboto font-bold text-white drop-shadow-[2px_2px_10px_rgba(0,0,0,0.8)] mb-1">
@@ -37,6 +68,49 @@ export default function HomePage() {
       <div className="w-full px-6" id="promocoes">
         <PromoCarousel images={promoImages} autoPlayInterval={3500} />
       </div>
+
+      {produtosDestaque.length > 0 && (
+        <div className="w-full px-6 mt-4">
+          <h3 className="text-white font-roboto font-bold text-lg mb-3">
+            <i className="fa-solid fa-star text-yellow-400 mr-2"></i>
+            Promoções em Destaque
+          </h3>
+          <div className="grid grid-cols-2 gap-3.75">
+            {produtosDestaque.map((produto) => (
+              <PromoCard key={produto.id} produto={produto} />
+            ))}
+          </div>
+        </div>
+      )}
+
+      {setoresComPromocoes.length > 0 && (
+        <div className="w-full px-6 mt-4">
+          <h3 className="text-white font-roboto font-bold text-lg mb-3">
+            <i className="fa-solid fa-layer-group mr-2"></i>
+            Nossas Promoções
+          </h3>
+          <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-thin">
+            {setoresComPromocoes.map((setor) => (
+              <a
+                key={setor.slug}
+                href={`/setor/promocoes?setor=${setor.slug}`}
+                className="flex-shrink-0 flex flex-col items-center gap-2 no-underline"
+              >
+                <div className="w-20 h-20 rounded-full overflow-hidden border-2 border-white/20 shadow-lg">
+                  <img
+                    src={setor.image}
+                    alt={setor.title}
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+                <span className="text-white text-xs text-center font-medium whitespace-nowrap">
+                  {setor.title.replace('Setor de ', '').replace(', Cama, Mesa', '')}
+                </span>
+              </a>
+            ))}
+          </div>
+        </div>
+      )}
 
       <div className="w-full px-6 text-left mt-4" id="setores">
         <h2 className="font-roboto font-black text-[1.5rem] tracking-[1px] text-white">
@@ -68,7 +142,7 @@ export default function HomePage() {
       </div>
 
       <p className="text-center font-medium text-[0.95rem] opacity-80">
-        Confira as melhores promoções da cidade
+        Configure as melhores promoções da cidade
       </p>
 
       <div className="flex flex-col gap-3.75 w-full px-6 my-2">

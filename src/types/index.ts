@@ -47,6 +47,6 @@ export interface Produto {
   preco: number;
   precoPromocional?: number;
   imagem: string;
-  descricao: string;
   categoria?: string;
+  destaque?: boolean;
 }

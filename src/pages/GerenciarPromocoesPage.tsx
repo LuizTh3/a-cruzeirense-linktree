@@ -11,8 +11,8 @@ interface ProdutoFormData {
   preco: string;
   precoPromocional: string;
   imagem: string;
-  descricao: string;
   categoria: string;
+  destaque: boolean;
 }
 
 const initialFormData: ProdutoFormData = {
@@ -21,8 +21,8 @@ const initialFormData: ProdutoFormData = {
   preco: '',
   precoPromocional: '',
   imagem: '',
-  descricao: '',
   categoria: '',
+  destaque: false,
 };
 
 export default function GerenciarPromocoesPage() {
@@ -49,8 +49,13 @@ export default function GerenciarPromocoesPage() {
   }
 
   function handleInputChange(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) {
-    const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+    const { name, value, type } = e.target;
+    if (type === 'checkbox') {
+      const checked = (e.target as HTMLInputElement).checked;
+      setFormData(prev => ({ ...prev, [name]: checked }));
+    } else {
+      setFormData(prev => ({ ...prev, [name]: value }));
+    }
   }
 
   function handleEdit(produto: Produto) {
@@ -60,8 +65,8 @@ export default function GerenciarPromocoesPage() {
       preco: produto.preco.toString(),
       precoPromocional: produto.precoPromocional?.toString() || '',
       imagem: produto.imagem,
-      descricao: produto.descricao,
       categoria: produto.categoria || 'moveis',
+      destaque: produto.destaque || false,
     });
     setEditando(true);
     setMensagem('');
@@ -70,7 +75,7 @@ export default function GerenciarPromocoesPage() {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     
-    if (!formData.titulo || !formData.preco || !formData.imagem || !formData.descricao) {
+    if (!formData.titulo || !formData.preco || !formData.imagem) {
       setMensagem('Preencha todos os campos obrigatórios');
       return;
     }
@@ -96,8 +101,8 @@ export default function GerenciarPromocoesPage() {
         preco,
         precoPromocional,
         imagem: formData.imagem,
-        descricao: formData.descricao,
         categoria: formData.categoria,
+        destaque: formData.destaque,
       };
 
       await saveProduto(produto);
@@ -231,16 +236,18 @@ export default function GerenciarPromocoesPage() {
           </select>
         </div>
 
-        <div>
-          <label className="block text-white text-sm mb-1">Descrição *</label>
-          <textarea
-            name="descricao"
-            value={formData.descricao}
+        <div className="flex items-center gap-3">
+          <input
+            type="checkbox"
+            name="destaque"
+            id="destaque"
+            checked={formData.destaque}
             onChange={handleInputChange}
-            rows={3}
-            className="w-full px-4 py-3 rounded-lg bg-[#1a2d4a] text-white border border-white/10 focus:border-bg-container-top outline-none resize-none"
-            placeholder="Descrição do produto"
+            className="w-5 h-5 rounded bg-[#1a2d4a] border-white/20 text-[#1a5fa8] focus:ring-[#1a5fa8]"
           />
+          <label htmlFor="destaque" className="text-white text-sm">
+            Marcar como Destaque (aparece nos 2 primeiros cards)
+          </label>
         </div>
 
         <div className="flex gap-3 mt-2">
@@ -282,7 +289,14 @@ export default function GerenciarPromocoesPage() {
                   className="w-16 h-16 object-cover rounded"
                 />
                 <div className="flex-1 min-w-0">
-                  <h3 className="text-white font-medium text-sm truncate">{produto.titulo}</h3>
+                  <div className="flex items-center gap-2">
+                    <h3 className="text-white font-medium text-sm truncate">{produto.titulo}</h3>
+                    {produto.destaque && (
+                      <span className="text-yellow-400 text-xs">
+                        <i className="fa-solid fa-star"></i>
+                      </span>
+                    )}
+                  </div>
                   <p className="text-[#4caf50] font-bold text-sm">
                     R$ {produto.precoPromocional?.toFixed(2).replace('.', ',') || produto.preco.toFixed(2).replace('.', ',')}
                   </p>

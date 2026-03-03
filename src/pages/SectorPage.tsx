@@ -4,7 +4,6 @@ import CollabCard from '../components/CollabCard';
 import SocialLinks from '../components/SocialLinks';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
-import SidebarMenu from '../components/SidebarMenu';
 import { useRastrearAcesso } from '../hooks/useRastrearAcesso';
 
 export default function SectorPage() {
@@ -33,7 +32,6 @@ export default function SectorPage() {
       overflow-x-hidden pb-10
     ">
       <Header backgroundImage={setor.heroImage} variant="minimal" />
-      <SidebarMenu variant="minimal" />
 
       <div className="relative z-10 -mt-20 text-center w-full px-5 mb-4">
         <h2 className="
