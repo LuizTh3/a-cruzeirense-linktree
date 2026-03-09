@@ -15,8 +15,6 @@ export default function Footer() {
             <i className="fa-solid fa-location-dot text-action"></i>
             {endereco}
           </a>
-          
-          <span className="hidden sm:inline text-white/20">|</span>
         </div>
 
         <div className="text-center border-t border-white/10 pt-4">

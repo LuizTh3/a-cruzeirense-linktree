@@ -1,15 +1,9 @@
 import { collection, addDoc, serverTimestamp, getDocs, query, orderBy, where } from 'firebase/firestore';
 import { db } from '../lib/firebase';
 
-interface AcessoData {
-  pagina: string;
-  cookieId: string;
-}
-
 export interface Acesso {
   id: string;
   ip: string;
-  pagina: string;
   cookieId: string;
   data: Date;
 }
@@ -24,13 +18,12 @@ async function getClientIp(): Promise<string> {
   }
 }
 
-export async function registrarAcesso(data: AcessoData): Promise<void> {
+export async function registrarAcesso(cookieId: string): Promise<void> {
   const ip = await getClientIp();
   
   await addDoc(collection(db, 'acessos'), {
     ip,
-    pagina: data.pagina,
-    cookieId: data.cookieId,
+    cookieId,
     data: serverTimestamp(),
   });
 }
@@ -96,7 +89,6 @@ export async function getAcessosRecentes(limite: number = 20): Promise<Acesso[]>
     return {
       id: doc.id,
       ip: data.ip,
-      pagina: data.pagina,
       cookieId: data.cookieId,
       data: data.data?.toDate() || new Date(),
     };

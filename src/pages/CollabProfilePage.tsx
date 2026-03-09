@@ -9,7 +9,7 @@ export default function CollabProfilePage() {
   const { slug, id } = useParams<{ slug: string; id: string }>();
   const { colaborador, setorSlug, setorTitle, loading, error } = useColaborador(slug, id);
 
-  useRastrearAcesso(`colaborador/${slug}/${id}`);
+  useRastrearAcesso();
   const [rating, setRating] = useState(0);
   const [hoverRating, setHoverRating] = useState(0);
   const [feedback, setFeedback] = useState('');

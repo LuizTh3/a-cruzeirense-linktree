@@ -18,8 +18,8 @@ function setCookie(name: string, value: string, days: number): void {
   document.cookie = `${name}=${value};expires=${expires.toUTCString()};path=/`;
 }
 
-function podeRegistrarAcesso(pagina: string): boolean {
-  const chave = `ultimo_acesso_${pagina}`;
+function podeRegistrarAcesso(): boolean {
+  const chave = 'ultimo_acesso_usuario';
   const ultimoAcesso = localStorage.getItem(chave);
   
   if (!ultimoAcesso) return true;
@@ -32,8 +32,8 @@ function podeRegistrarAcesso(pagina: string): boolean {
   return true;
 }
 
-function registrarNovoAcesso(pagina: string): void {
-  const chave = `ultimo_acesso_${pagina}`;
+function registrarNovoAcesso(): void {
+  const chave = 'ultimo_acesso_usuario';
   localStorage.setItem(chave, Date.now().toString());
 }
 
@@ -48,22 +48,19 @@ function getOrCreateVisitanteId(): string {
   return visitanteId;
 }
 
-export function useRastrearAcesso(pagina: string) {
+export function useRastrearAcesso() {
   const registrado = useRef(false);
 
   useEffect(() => {
     if (registrado.current) return;
     
-    if (!podeRegistrarAcesso(pagina)) return;
+    if (!podeRegistrarAcesso()) return;
     
     registrado.current = true;
-    registrarNovoAcesso(pagina);
+    registrarNovoAcesso();
 
     const cookieId = getOrCreateVisitanteId();
     
-    registrarAcesso({
-      pagina,
-      cookieId,
-    }).catch(console.error);
-  }, [pagina]);
+    registrarAcesso(cookieId).catch(console.error);
+  });
 }

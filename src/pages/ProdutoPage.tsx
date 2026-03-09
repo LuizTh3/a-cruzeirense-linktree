@@ -23,7 +23,7 @@ export default function ProdutoPage() {
   const [loading, setLoading] = useState(true);
   const [mostrarAtendentes, setMostrarAtendentes] = useState(false);
 
-  useRastrearAcesso(`produto/${id}`);
+  useRastrearAcesso();
 
   const colaboradores = useMemo(() => {
     if (!produto?.categoria) return [];

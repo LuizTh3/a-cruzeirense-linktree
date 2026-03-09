@@ -15,7 +15,7 @@ export default function SectorPage() {
   const [temPromocoes, setTemPromocoes] = useState(false);
   const [loadingPromocoes, setLoadingPromocoes] = useState(true);
 
-  useRastrearAcesso(`setor/${slug}`);
+  useRastrearAcesso();
 
   useEffect(() => {
     async function verificarPromocoes() {

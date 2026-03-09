@@ -25,7 +25,7 @@ export default function HomePage() {
   const [produtos, setProdutos] = useState<Produto[]>([]);
   const [carouselSlides, setCarouselSlides] = useState<CarouselSlide[]>([]);
 
-  useRastrearAcesso('home');
+  useRastrearAcesso();
 
   useEffect(() => {
     async function fetchProdutos() {

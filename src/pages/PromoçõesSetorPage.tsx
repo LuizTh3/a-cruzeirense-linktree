@@ -18,7 +18,7 @@ export default function PromoçõesSetorPage() {
 
   const setor = setorSlug ? getSetorBySlug(setorSlug) : undefined;
 
-  useRastrearAcesso(`setor/promocoes?setor=${setorSlug}`);
+  useRastrearAcesso();
 
   useEffect(() => {
     async function fetchProdutos() {
