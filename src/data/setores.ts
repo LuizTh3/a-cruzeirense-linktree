@@ -21,7 +21,7 @@ export const setores: Setor[] = [
         cargo: "Atendente",
         avatarSrc: "/assets/images/funcionarios/moveis/ELISANGELA.webp",
         profileHref: "/colaborador/moveis/1",
-        whatsappHref: "https://wa.me/SEU_NUMERO",
+        whatsappHref: "+556892287621",
       },
       {
         id: 2,
@@ -131,7 +131,7 @@ export const setores: Setor[] = [
         cargo: "Atendente",
         avatarSrc: "/assets/images/funcionarios/tecidos/CONCEICAO.webp",
         profileHref: "/colaborador/tecidos/1",
-        whatsappHref: "#",
+        whatsappHref: "+556892287621",
       },
       {
         id: 2,
@@ -181,7 +181,7 @@ export const setores: Setor[] = [
     colaboradores: [
       {
         id: 1,
-        nome: "Boletos/Crediário",
+        nome: "Crediário",
         cargo: "Atendente",
         avatarSrc: "/assets/images/funcionarios/negociacoes/negociacao.webp",
         profileHref: "/colaborador/negociacao/1",

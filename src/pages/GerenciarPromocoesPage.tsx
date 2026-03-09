@@ -1,9 +1,11 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { getProdutos, saveProduto, deleteProduto } from '../services/promocoesService';
 import type { Produto } from '../types';
+import Footer from '../components/Footer';
 
-const MAX_PROMOCOES = 8;
+const ITENS_POR_PAGINA = 10;
+const MAX_PROMOCOES = 30;
 
 interface ProdutoFormData {
   id: string;
@@ -13,6 +15,7 @@ interface ProdutoFormData {
   imagem: string;
   categoria: string;
   destaque: boolean;
+  tipo: 'promocao' | 'oferta';
 }
 
 const initialFormData: ProdutoFormData = {
@@ -23,6 +26,7 @@ const initialFormData: ProdutoFormData = {
   imagem: '',
   categoria: '',
   destaque: false,
+  tipo: 'promocao',
 };
 
 export default function GerenciarPromocoesPage() {
@@ -32,6 +36,8 @@ export default function GerenciarPromocoesPage() {
   const [formData, setFormData] = useState<ProdutoFormData>(initialFormData);
   const [editando, setEditando] = useState(false);
   const [mensagem, setMensagem] = useState('');
+  const [paginaAtual, setPaginaAtual] = useState(1);
+  const [filtroSetor, setFiltroSetor] = useState<string>('');
 
   useEffect(() => {
     fetchProdutos();
@@ -67,6 +73,7 @@ export default function GerenciarPromocoesPage() {
       imagem: produto.imagem,
       categoria: produto.categoria || 'moveis',
       destaque: produto.destaque || false,
+      tipo: produto.tipo || 'promocao',
     });
     setEditando(true);
     setMensagem('');
@@ -81,7 +88,7 @@ export default function GerenciarPromocoesPage() {
     }
 
     const preco = parseFloat(formData.preco);
-    const precoPromocional = formData.precoPromocional ? parseFloat(formData.precoPromocional) : undefined;
+    const precoPromocional = formData.tipo === 'promocao' && formData.precoPromocional ? parseFloat(formData.precoPromocional) : undefined;
 
     if (precoPromocional && precoPromocional >= preco) {
       setMensagem('O preço promocional deve ser menor que o preço original');
@@ -89,7 +96,7 @@ export default function GerenciarPromocoesPage() {
     }
 
     if (!editando && produtos.length >= MAX_PROMOCOES) {
-      setMensagem(`Máximo de ${MAX_PROMOCOES} promoções permitido`);
+      setMensagem(`Máximo de ${MAX_PROMOCOES} promoções/ofertas permitido`);
       return;
     }
 
@@ -103,15 +110,17 @@ export default function GerenciarPromocoesPage() {
         imagem: formData.imagem,
         categoria: formData.categoria,
         destaque: formData.destaque,
+        tipo: formData.tipo,
       };
 
       await saveProduto(produto);
-      setMensagem(editando ? 'Promoção atualizada com sucesso!' : 'Promoção adicionada com sucesso!');
+      const labelTipo = formData.tipo === 'promocao' ? 'Promoção' : 'Oferta';
+      setMensagem(editando ? `${labelTipo} atualizada com sucesso!` : `${labelTipo} adicionada com sucesso!`);
       setFormData(initialFormData);
       setEditando(false);
       fetchProdutos();
     } catch (error) {
-      setMensagem('Erro ao salvar promoção');
+      setMensagem('Erro ao salvar');
       console.error(error);
     } finally {
       setSaving(false);
@@ -119,14 +128,14 @@ export default function GerenciarPromocoesPage() {
   }
 
   async function handleDelete(id: string) {
-    if (!confirm('Tem certeza que deseja excluir esta promoção?')) return;
+    if (!confirm('Tem certeza que deseja excluir esta promoção/oferta?')) return;
     
     try {
       await deleteProduto(id);
-      setMensagem('Promoção excluída com sucesso!');
+      setMensagem('Promoção/Oferta excluída com sucesso!');
       fetchProdutos();
     } catch (error) {
-      setMensagem('Erro ao excluir promoção');
+      setMensagem('Erro ao excluir');
       console.error(error);
     }
   }
@@ -137,22 +146,74 @@ export default function GerenciarPromocoesPage() {
     setMensagem('');
   }
 
+  const produtosFiltrados = useMemo(() => {
+    if (!filtroSetor) return produtos;
+    return produtos.filter(p => p.categoria === filtroSetor);
+  }, [produtos, filtroSetor]);
+
+  const totalPaginas = Math.ceil(produtosFiltrados.length / ITENS_POR_PAGINA);
+
+  const produtosPagina = useMemo(() => {
+    const inicio = (paginaAtual - 1) * ITENS_POR_PAGINA;
+    const fim = inicio + ITENS_POR_PAGINA;
+    return produtosFiltrados.slice(inicio, fim);
+  }, [produtosFiltrados, paginaAtual]);
+
+  const irParaPagina = (pagina: number) => {
+    if (pagina >= 1 && pagina <= totalPaginas) {
+      setPaginaAtual(pagina);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  };
+
+  const getIntervaloPaginas = () => {
+    const paginas: (number | string)[] = [];
+    const maxVisiveis = 5;
+
+    if (totalPaginas <= maxVisiveis) {
+      for (let i = 1; i <= totalPaginas; i++) {
+        paginas.push(i);
+      }
+    } else {
+      if (paginaAtual <= 3) {
+        for (let i = 1; i <= 4; i++) paginas.push(i);
+        paginas.push('...');
+        paginas.push(totalPaginas);
+      } else if (paginaAtual >= totalPaginas - 2) {
+        paginas.push(1);
+        paginas.push('...');
+        for (let i = totalPaginas - 3; i <= totalPaginas; i++) paginas.push(i);
+      } else {
+        paginas.push(1);
+        paginas.push('...');
+        for (let i = paginaAtual - 1; i <= paginaAtual + 1; i++) paginas.push(i);
+        paginas.push('...');
+        paginas.push(totalPaginas);
+      }
+    }
+
+    return paginas;
+  };
+
   if (loading) {
     return (
-      <main className="relative max-w-120 mx-auto min-h-screen bg-container-radial border-x border-white/5 shadow-lateral flex flex-col items-center justify-center overflow-x-hidden pb-10 px-6">
-        <div className="text-white">Carregando...</div>
+      <main className="relative max-w-120 mx-auto min-h-screen bg-container-radial border-x border-white/5 shadow-lateral flex flex-col overflow-x-hidden pb-10 px-6">
+        <div className="flex-1 flex items-center justify-center">
+          <div className="text-white">Carregando...</div>
+        </div>
       </main>
     );
   }
 
   return (
-    <main className="relative max-w-120 mx-auto min-h-screen bg-container-radial border-x border-white/5 shadow-lateral flex flex-col items-center overflow-x-hidden pb-10 px-6">
+    <main className="relative max-w-120 mx-auto min-h-screen bg-container-radial border-x border-white/5 shadow-lateral flex flex-col overflow-x-hidden">
+      <div className="flex-1 px-6 pb-10">
       <h1 className="text-[1.8rem] font-roboto font-bold text-white mt-8 mb-4">
-        Gerenciar Promoções
+        Gerenciar Promoções/Ofertas
       </h1>
 
       <p className="text-white/70 text-sm mb-6">
-        {produtos.length}/{MAX_PROMOCOES} promoções cadastradas
+        {produtos.length}/{MAX_PROMOCOES} promoções/ofertas cadastradas
       </p>
 
       {mensagem && (
@@ -178,9 +239,24 @@ export default function GerenciarPromocoesPage() {
           />
         </div>
 
+        <div>
+          <label className="block text-white text-sm mb-1">Tipo</label>
+          <select
+            name="tipo"
+            value={formData.tipo}
+            onChange={handleInputChange}
+            className="w-full px-4 py-3 rounded-lg bg-[#1a2d4a] text-white border border-white/10 focus:border-[#1a5fa8] outline-none"
+          >
+            <option value="promocao" style={{ color: 'White' }}>Promoção (com dois preços)</option>
+            <option value="oferta" style={{ color: 'White' }}>Oferta (com um preço)</option>
+          </select>
+        </div>
+
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <label className="block text-white text-sm mb-1">Preço Original *</label>
+            <label className="block text-white text-sm mb-1">
+              {formData.tipo === 'promocao' ? 'Preço Original' : 'Preço'} *
+            </label>
             <input
               type="number"
               name="preco"
@@ -192,6 +268,7 @@ export default function GerenciarPromocoesPage() {
               placeholder="0.00"
             />
           </div>
+          {formData.tipo === 'promocao' && (
           <div>
             <label className="block text-white text-sm mb-1">Preço Promocional</label>
             <input
@@ -205,6 +282,7 @@ export default function GerenciarPromocoesPage() {
               placeholder="0.00"
             />
           </div>
+          )}
         </div>
 
         <div>
@@ -229,10 +307,10 @@ export default function GerenciarPromocoesPage() {
             style={{ color: 'white' }}
           >
             <option value="" disabled style={{ color: '#94a3b8' }}>Selecione uma categoria</option>
-            <option value="moveis" style={{ color: 'Black' }}>Móveis</option>
-            <option value="calcados" style={{ color: 'Black' }}>Calçados</option>
-            <option value="confeccao" style={{ color: 'Black' }}>Confecção</option>
-            <option value="tecidos" style={{ color: 'Black' }}>Tecidos</option>
+            <option value="moveis" style={{ color: 'White' }}>Móveis</option>
+            <option value="calcados" style={{ color: 'White' }}>Calçados</option>
+            <option value="confeccao" style={{ color: 'White' }}>Confecção</option>
+            <option value="tecidos" style={{ color: 'White' }}>Tecidos</option>
           </select>
         </div>
 
@@ -256,7 +334,9 @@ export default function GerenciarPromocoesPage() {
             disabled={saving}
             className="flex-1 py-3 bg-[linear-gradient(135deg,#082d5e,#1a5fa8)] text-white rounded-lg font-bold transition-all duration-300 hover:brightness-110 disabled:opacity-50"
           >
-            {saving ? 'Salvando...' : editando ? 'Atualizar Promoção' : 'Adicionar Promoção'}
+            {saving ? 'Salvando...' : editando 
+              ? `Atualizar ${formData.tipo === 'promocao' ? 'Promoção' : 'Oferta'}` 
+              : `Adicionar ${formData.tipo === 'promocao' ? 'Promoção' : 'Oferta'}`}
           </button>
           
           {editando && (
@@ -272,13 +352,39 @@ export default function GerenciarPromocoesPage() {
       </form>
 
       <div className="w-full max-w-md">
-        <h2 className="text-white font-bold text-lg mb-4">Promoções Cadastradas</h2>
+        <div className="flex flex-col sm:flex-row gap-3 w-full mb-4">
+          <select
+            value={filtroSetor}
+            onChange={(e) => {
+              setFiltroSetor(e.target.value);
+              setPaginaAtual(1);
+            }}
+            className="flex-1 px-4 py-2.5 rounded-lg bg-[#1a2d4a] text-white border border-white/10 focus:border-[#1a5fa8] outline-none text-sm"
+          >
+            <option value="" style={{ color: '#94a3b8' }}>Todos os setores</option>
+            <option value="moveis" style={{ color: 'white' }}>Móveis</option>
+            <option value="calcados" style={{ color: 'white' }}>Calçados</option>
+            <option value="confeccao" style={{ color: 'white' }}>Confecção</option>
+            <option value="tecidos" style={{ color: 'white' }}>Tecidos</option>
+          </select>
+        </div>
+
+        <h2 className="text-white font-bold text-lg mb-4">
+          Promoções/Ofertas Cadastradas
+          {filtroSetor && (
+            <span className="text-white/50 text-sm font-normal ml-2">
+              ({produtosFiltrados.length} {produtosFiltrados.length === 1 ? 'item' : 'itens'})
+            </span>
+          )}
+        </h2>
         
-        {produtos.length === 0 ? (
-          <p className="text-white/50 text-center py-4">Nenhuma promoção cadastrada</p>
+        {produtosFiltrados.length === 0 ? (
+          <p className="text-white/50 text-center py-4">
+            {filtroSetor ? 'Nenhuma promoção/oferta neste setor' : 'Nenhuma promoção/oferta cadastrada'}
+          </p>
         ) : (
           <div className="flex flex-col gap-3">
-            {produtos.map((produto) => (
+            {produtosPagina.map((produto) => (
               <div
                 key={produto.id}
                 className="flex items-center gap-3 p-3 bg-[#1a2d4a] rounded-lg border border-white/10"
@@ -294,6 +400,16 @@ export default function GerenciarPromocoesPage() {
                     {produto.destaque && (
                       <span className="text-yellow-400 text-xs">
                         <i className="fa-solid fa-star"></i>
+                      </span>
+                    )}
+                    {produto.tipo === 'oferta' && (
+                      <span className="bg-orange-500/20 text-orange-400 text-[0.65rem] px-1.5 py-0.5 rounded">
+                        OFERTA
+                      </span>
+                    )}
+                    {produto.tipo === 'promocao' && (
+                      <span className="bg-blue-500/20 text-blue-400 text-[0.65rem] px-1.5 py-0.5 rounded">
+                        PROMO
                       </span>
                     )}
                   </div>
@@ -319,6 +435,52 @@ export default function GerenciarPromocoesPage() {
             ))}
           </div>
         )}
+
+        {totalPaginas > 1 && (
+          <div className="flex flex-col items-center gap-4 mt-8 pb-8">
+            <p className="text-white/60 text-sm">
+              Página {paginaAtual} de {totalPaginas}
+            </p>
+
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => irParaPagina(paginaAtual - 1)}
+                disabled={paginaAtual === 1}
+                className="px-3 py-2 bg-[#1a2d4a] text-white rounded-lg font-medium text-sm disabled:opacity-30 disabled:cursor-not-allowed hover:bg-[#2a4d7a] transition-colors"
+              >
+                <i className="fa-solid fa-chevron-left"></i>
+              </button>
+
+              {getIntervaloPaginas().map((pagina, index) => (
+                typeof pagina === 'number' ? (
+                  <button
+                    key={index}
+                    onClick={() => irParaPagina(pagina)}
+                    className={`px-3 py-2 rounded-lg font-medium text-sm transition-colors ${
+                      pagina === paginaAtual
+                        ? 'bg-[#1a5fa8] text-white'
+                        : 'bg-[#1a2d4a] text-white hover:bg-[#2a4d7a]'
+                    }`}
+                  >
+                    {pagina}
+                  </button>
+                ) : (
+                  <span key={index} className="px-2 text-white/40">
+                    {pagina}
+                  </span>
+                )
+              ))}
+
+              <button
+                onClick={() => irParaPagina(paginaAtual + 1)}
+                disabled={paginaAtual === totalPaginas}
+                className="px-3 py-2 bg-[#1a2d4a] text-white rounded-lg font-medium text-sm disabled:opacity-30 disabled:cursor-not-allowed hover:bg-[#2a4d7a] transition-colors"
+              >
+                <i className="fa-solid fa-chevron-right"></i>
+              </button>
+            </div>
+          </div>
+        )}
       </div>
 
       <Link
@@ -327,6 +489,9 @@ export default function GerenciarPromocoesPage() {
       >
         Voltar ao Painel
       </Link>
+      </div>
+
+      <Footer />
     </main>
   );
 }

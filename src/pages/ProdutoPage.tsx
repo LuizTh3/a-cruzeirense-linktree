@@ -79,8 +79,10 @@ export default function ProdutoPage() {
     : 0;
 
   return (
-    <main className="relative max-w-120 mx-auto min-h-screen bg-container-radial border-x border-white/5 shadow-lateral flex flex-col items-center overflow-x-hidden pb-10">
+    <main className="relative max-w-120 mx-auto min-h-screen bg-container-radial border-x border-white/5 shadow-lateral flex flex-col overflow-x-hidden">
       <Header variant="minimal" />
+
+      <div className="flex-1 px-6 pb-10">
 
       <div className="w-full px-6 mt-4">
         <Link
@@ -112,14 +114,14 @@ export default function ProdutoPage() {
               {produto.titulo}
             </h1>
             
-            <div className="flex items-center gap-3 mb-4">
+            <div className="flex flex-col gap-1 mb-4">
               {temDesconto ? (
                 <>
-                  <span className="text-[#4caf50] font-bold text-[1.8rem]">
-                    R$ {produto.precoPromocional?.toFixed(2).replace('.', ',')}
-                  </span>
                   <span className="text-[#6b7c93] text-[1rem] line-through">
                     R$ {produto.preco.toFixed(2).replace('.', ',')}
+                  </span>
+                  <span className="text-[#4caf50] font-bold text-[1.8rem]">
+                    R$ {produto.precoPromocional?.toFixed(2).replace('.', ',')}
                   </span>
                 </>
               ) : (
@@ -187,7 +189,8 @@ export default function ProdutoPage() {
             ))}
           </div>
         </div>
-      )}
+        )}
+      </div>
 
       <Footer />
     </main>

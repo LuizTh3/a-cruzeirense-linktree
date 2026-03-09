@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '../lib/firebase';
 import { useNavigate } from 'react-router-dom';
+import Footer from '../components/Footer';
 
 export default function LoginPage() {
   const navigate = useNavigate();
@@ -29,9 +30,10 @@ export default function LoginPage() {
     <main className="
       relative max-w-120 mx-auto min-h-screen
       bg-container-radial border-x border-white/5
-      shadow-lateral flex flex-col items-center
-      overflow-x-hidden pb-10 px-6
+      shadow-lateral flex flex-col
+      overflow-x-hidden
     ">
+      <div className="flex-1 px-6 pb-10">
       <div className="w-full max-w-sm mt-20">
         <h1 className="text-[2rem] font-roboto font-bold text-white text-center mb-2">
           A Cruzeirense
@@ -121,6 +123,9 @@ export default function LoginPage() {
           </a>
         </div>
       </div>
+      </div>
+
+      <Footer />
     </main>
   );
 }

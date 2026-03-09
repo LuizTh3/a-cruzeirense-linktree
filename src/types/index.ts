@@ -33,6 +33,15 @@ export interface CarouselImage {
   id: number;
   src: string;
   alt: string;
+  href?: string;
+}
+
+export interface CarouselSlide {
+  id: string;
+  src: string;
+  href: string;
+  alt?: string;
+  ordem: number;
 }
 
 export interface SocialLink {
@@ -49,4 +58,5 @@ export interface Produto {
   imagem: string;
   categoria?: string;
   destaque?: boolean;
+  tipo?: 'promocao' | 'oferta';
 }

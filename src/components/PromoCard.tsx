@@ -9,6 +9,7 @@ export default function PromoCard({ produto }: PromoCardProps) {
   const desconto = temDesconto 
     ? Math.round(((produto.preco - produto.precoPromocional!) / produto.preco) * 100)
     : 0;
+  const isOferta = produto.tipo === 'oferta';
 
   return (
     <a 
@@ -19,7 +20,7 @@ export default function PromoCard({ produto }: PromoCardProps) {
         <img 
           src={produto.imagem} 
           alt={produto.titulo} 
-          className="w-full h-40 object-cover block"
+          className="w-full h-32 object-cover block"
           loading="eager"
           fetchPriority="high"
           decoding="async"
@@ -29,31 +30,36 @@ export default function PromoCard({ produto }: PromoCardProps) {
             -{desconto}%
           </div>
         )}
+        {isOferta && (
+          <div className="absolute top-2 left-2 bg-orange-500 text-white text-xs font-bold px-2 py-1 rounded-lg">
+            OFERTA
+          </div>
+        )}
       </div>
       
-      <div className="p-3 flex flex-col grow">
-        <h3 className="text-white font-roboto text-[1rem] font-semibold mb-2 text-left line-clamp-2">
+      <div className="p-2 flex flex-col grow">
+        <h3 className="text-white font-roboto text-[0.85rem] font-semibold mb-2 text-left line-clamp-2">
           {produto.titulo}
         </h3>
         
-        <div className="flex items-center gap-2 mb-3">
-          {temDesconto ? (
+        <div className="flex flex-col gap-1 mb-2">
+          {temDesconto && !isOferta ? (
             <>
-              <span className="text-[#4caf50] font-bold text-[1.1rem]">
-                R$ {produto.precoPromocional?.toFixed(2).replace('.', ',')}
-              </span>
-              <span className="text-[#6b7c93] text-[0.8rem] line-through">
+              <span className="text-[#6b7c93] text-[0.75rem] line-through">
                 R$ {produto.preco.toFixed(2).replace('.', ',')}
+              </span>
+              <span className="text-[#4caf50] font-bold text-[1rem]">
+                R$ {produto.precoPromocional?.toFixed(2).replace('.', ',')}
               </span>
             </>
           ) : (
-            <span className="text-white font-bold text-[1.1rem]">
+            <span className={isOferta ? "text-orange-400 font-bold text-[1rem]" : "text-white font-bold text-[1rem]"}>
               R$ {produto.preco.toFixed(2).replace('.', ',')}
             </span>
           )}
         </div>
         
-        <div className="bg-action text-surface-card text-center py-2 rounded-lg font-bold text-[0.9rem] mt-auto transition-colors duration-200 hover:bg-action-hover">
+        <div className="bg-action text-surface-card text-center py-1.5 rounded-lg font-bold text-[0.8rem] mt-auto transition-colors duration-200 hover:bg-action-hover">
           Ver detalhes
         </div>
       </div>

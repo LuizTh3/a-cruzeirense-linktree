@@ -85,9 +85,10 @@ export default function CollabProfilePage() {
     <main className="
       relative max-w-120 mx-auto min-h-screen
       bg-container-radial border-x border-white/5
-      shadow-lateral flex flex-col items-center
-      overflow-x-hidden pb-10 px-6
+      shadow-lateral flex flex-col
+      overflow-x-hidden
     ">
+      <div className="flex-1 px-6 pb-10">
       <Link
         to={`/setor/${setorSlug}`}
         className="self-start mt-6 text-white/70 hover:text-white transition-colors flex items-center gap-2"
@@ -239,6 +240,7 @@ export default function CollabProfilePage() {
             </button>
           </form>
         )}
+      </div>
       </div>
 
       <Footer />

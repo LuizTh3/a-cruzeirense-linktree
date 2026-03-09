@@ -48,8 +48,10 @@ export default function PromoçõesSetorPage() {
   }
 
   return (
-    <main className="relative max-w-120 mx-auto min-h-screen bg-container-radial border-x border-white/5 shadow-lateral flex flex-col items-center overflow-x-hidden pb-10">
+    <main className="relative max-w-120 mx-auto min-h-screen bg-container-radial border-x border-white/5 shadow-lateral flex flex-col overflow-x-hidden">
       <Header backgroundImage={setor?.heroImage || '/assets/images/promocoes-header.webp'} variant="minimal" />
+
+      <div className="flex-1 px-6 pb-10">
 
       <div className="relative z-10 -mt-20 text-center w-full px-5 mb-4">
         <Link
@@ -90,6 +92,7 @@ export default function PromoçõesSetorPage() {
 
       <div className="flex flex-col gap-3.75 w-full px-6 my-5">
         <SocialLinks />
+      </div>
       </div>
 
       <Footer />

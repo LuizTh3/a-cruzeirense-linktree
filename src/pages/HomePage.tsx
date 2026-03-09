@@ -7,8 +7,9 @@ import PromoCarousel from '../components/PromoCarousel';
 import PromoCard from '../components/PromoCard';
 import { getSectorCards } from '../services/setoresService';
 import { getProdutos } from '../services/promocoesService';
+import { getSlides } from '../services/carouselService';
 import { promoWhatsAppGroup } from '../constants/socialLinks';
-import type { CarouselImage, Produto } from '../types';
+import type { CarouselImage, Produto, CarouselSlide } from '../types';
 import { useRastrearAcesso } from '../hooks/useRastrearAcesso';
 import { setores } from '../data/setores';
 
@@ -22,6 +23,7 @@ const sectorCards = getSectorCards();
 
 export default function HomePage() {
   const [produtos, setProdutos] = useState<Produto[]>([]);
+  const [carouselSlides, setCarouselSlides] = useState<CarouselSlide[]>([]);
 
   useRastrearAcesso('home');
 
@@ -36,6 +38,27 @@ export default function HomePage() {
     }
     fetchProdutos();
   }, []);
+
+  useEffect(() => {
+    async function fetchSlides() {
+      try {
+        const data = await getSlides();
+        setCarouselSlides(data);
+      } catch (error) {
+        console.error('Erro ao buscar slides:', error);
+      }
+    }
+    fetchSlides();
+  }, []);
+
+  const carouselImages: CarouselImage[] = carouselSlides.length > 0
+    ? carouselSlides.map((slide, index) => ({
+        id: index + 1,
+        src: slide.src,
+        alt: slide.alt || `Banner ${index + 1}`,
+        href: slide.href,
+      }))
+    : promoImages;
 
   const produtosDestaque = useMemo(() => {
     return produtos.filter(p => p.destaque).slice(0, 2);
@@ -53,8 +76,10 @@ export default function HomePage() {
   }, [produtos]);
   
   return (
-    <main className="relative max-w-120 mx-auto min-h-screen bg-container-radial border-x border-white/5 shadow-lateral flex flex-col items-center gap-4 overflow-x-hidden pb-10">
+    <main className="relative max-w-120 mx-auto min-h-screen bg-container-radial border-x border-white/5 shadow-lateral flex flex-col overflow-x-hidden">
       <Header />
+
+      <div className="flex-1 px-6 pb-10">
 
       <div className="relative z-10 -mt-20 text-center w-full px-5 mb-4">
         <h2 className="text-[2rem] font-roboto font-bold text-white drop-shadow-[2px_2px_10px_rgba(0,0,0,0.8)] mb-1">
@@ -66,7 +91,7 @@ export default function HomePage() {
       </div>
 
       <div className="w-full px-6" id="promocoes">
-        <PromoCarousel images={promoImages} autoPlayInterval={3500} />
+        <PromoCarousel images={carouselImages} autoPlayInterval={3500} />
       </div>
 
       {produtosDestaque.length > 0 && (
@@ -87,14 +112,14 @@ export default function HomePage() {
         <div className="w-full px-6 mt-4">
           <h3 className="text-white font-roboto font-bold text-lg mb-3">
             <i className="fa-solid fa-layer-group mr-2"></i>
-            Nossas Promoções
+            Promoções e Ofertas!
           </h3>
           <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-thin">
             {setoresComPromocoes.map((setor) => (
               <a
                 key={setor.slug}
                 href={`/setor/promocoes?setor=${setor.slug}`}
-                className="flex-shrink-0 flex flex-col items-center gap-2 no-underline"
+                className="shrink-0 flex flex-col items-center gap-2 no-underline"
               >
                 <div className="w-20 h-20 rounded-full overflow-hidden border-2 border-white/20 shadow-lg">
                   <img
@@ -158,6 +183,7 @@ export default function HomePage() {
         >
           Grupo de Clientes (Promoções)
         </a>
+      </div>
       </div>
 
       <Footer />

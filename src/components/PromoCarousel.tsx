@@ -1,9 +1,11 @@
 import { useState, useEffect, useRef } from 'react';
+import { Link } from 'react-router-dom';
 
 export interface CarouselImage {
   id: number;
   src: string;
   alt: string;
+  href?: string;
 }
 
 interface PromoCarouselProps {
@@ -69,19 +71,39 @@ export default function PromoCarousel({ images, autoPlayInterval = 3000 }: Promo
         className="flex w-full transition-transform duration-500 ease-in-out will-change-transform"
         style={{ transform: `translateX(-${currentIndex * 100}%)` }}
       >
-        {images.map((image, index) => (
-          <img
-            key={image.id}
-            src={image.src}
-            alt={image.alt}
-            className="min-w-full w-full object-cover block shrink-0"
-            loading={index === 0 ? 'eager' : 'lazy'}
-            fetchPriority={index === 0 ? 'high' : 'low'}
-            decoding="async"
-            width="860"
-            height="430"
-          />
-        ))}
+        {images.map((image, index) => {
+          const content = (
+            <img
+              key={image.id}
+              src={image.src}
+              alt={image.alt}
+              className="min-w-full w-full object-cover block shrink-0"
+              loading={index === 0 ? 'eager' : 'lazy'}
+              fetchPriority={index === 0 ? 'high' : 'low'}
+              decoding="async"
+              width="860"
+              height="430"
+            />
+          );
+
+          if (image.href) {
+            return (
+              <Link
+                key={image.id}
+                to={image.href}
+                className="min-w-full w-full block shrink-0"
+              >
+                {content}
+              </Link>
+            );
+          }
+
+          return (
+            <div key={image.id} className="min-w-full w-full block shrink-0">
+              {content}
+            </div>
+          );
+        })}
       </div>
 
       <div className="absolute bottom-3.75 left-1/2 -translate-x-1/2 flex gap-2 z-10">

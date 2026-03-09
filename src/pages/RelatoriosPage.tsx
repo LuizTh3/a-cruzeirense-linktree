@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { getTotalAcessos, getAcessosSemana, getAcessosPorDia } from '../services/acessosService';
+import Footer from '../components/Footer';
 
 interface DadosAcesso {
   total: number;
@@ -36,8 +37,10 @@ export default function RelatoriosPage() {
 
   if (loading) {
     return (
-      <main className="relative max-w-120 mx-auto min-h-screen bg-container-radial border-x border-white/5 shadow-lateral flex flex-col items-center justify-center overflow-x-hidden pb-10">
-        <div className="w-8 h-8 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+      <main className="relative max-w-120 mx-auto min-h-screen bg-container-radial border-x border-white/5 shadow-lateral flex flex-col overflow-x-hidden pb-10">
+        <div className="flex-1 flex items-center justify-center">
+          <div className="w-8 h-8 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+        </div>
       </main>
     );
   }
@@ -46,9 +49,10 @@ export default function RelatoriosPage() {
     <main className="
       relative max-w-120 mx-auto min-h-screen
       bg-container-radial border-x border-white/5
-      shadow-lateral flex flex-col items-center
-      overflow-x-hidden pb-10 px-6
+      shadow-lateral flex flex-col
+      overflow-x-hidden
     ">
+      <div className="flex-1 px-6 pb-10">
       <Link
         to="/admin/dashboard"
         className="self-start mt-6 text-white/70 hover:text-white transition-colors flex items-center gap-2"
@@ -134,6 +138,9 @@ export default function RelatoriosPage() {
           </div>
         </div>
       </div>
+      </div>
+
+      <Footer />
     </main>
   );
 }

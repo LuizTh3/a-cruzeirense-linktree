@@ -1,18 +1,38 @@
 import { useParams, Navigate, Link } from 'react-router-dom';
+import { useEffect, useState } from 'react';
 import { useSetor } from '../hooks/useSetor';
 import CollabCard from '../components/CollabCard';
 import SocialLinks from '../components/SocialLinks';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
+import SetorPromoCard from '../components/SetorPromoCard';
 import { useRastrearAcesso } from '../hooks/useRastrearAcesso';
+import { getProdutosPorSetor } from '../services/promocoesService';
 
 export default function SectorPage() {
   const { slug } = useParams<{ slug: string }>();
-  const { setor, loading, error } = useSetor(slug);
+  const { setor, loading: loadingSetor, error } = useSetor(slug);
+  const [temPromocoes, setTemPromocoes] = useState(false);
+  const [loadingPromocoes, setLoadingPromocoes] = useState(true);
 
   useRastrearAcesso(`setor/${slug}`);
 
-  if (loading) {
+  useEffect(() => {
+    async function verificarPromocoes() {
+      if (!slug) return;
+      try {
+        const produtos = await getProdutosPorSetor(slug);
+        setTemPromocoes(produtos.length > 0);
+      } catch (error) {
+        console.error('Erro ao verificar promoções:', error);
+      } finally {
+        setLoadingPromocoes(false);
+      }
+    }
+    verificarPromocoes();
+  }, [slug]);
+
+  if (loadingSetor || loadingPromocoes) {
     return (
       <main className="relative max-w-120 mx-auto min-h-screen bg-container-radial border-x border-white/5 shadow-lateral flex flex-col items-center justify-center overflow-x-hidden pb-10">
         <div className="w-8 h-8 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
@@ -28,10 +48,12 @@ export default function SectorPage() {
     <main className="
       relative max-w-120 mx-auto min-h-screen
       bg-container-radial border-x border-white/5
-      shadow-lateral flex flex-col items-center
-      overflow-x-hidden pb-10
+      shadow-lateral flex flex-col
+      overflow-x-hidden
     ">
       <Header backgroundImage={setor.heroImage} variant="minimal" />
+
+      <div className="flex-1 px-6 pb-10">
 
       <div className="relative z-10 -mt-20 text-center w-full px-5 mb-4">
         <h2 className="
@@ -45,6 +67,12 @@ export default function SectorPage() {
           {setor.subtitle}
         </p>
       </div>
+
+      {temPromocoes && (
+        <div className="w-full px-6 mt-4">
+          <SetorPromoCard setorSlug={slug!} />
+        </div>
+      )}
 
       <p className="
         text-center font-roboto w-full
@@ -88,6 +116,7 @@ export default function SectorPage() {
         >
           Grupo de Clientes (Promoções)
         </Link>
+      </div>
       </div>
 
       <Footer />
