@@ -5,6 +5,7 @@ import CollabCard from '../components/CollabCard';
 import SocialLinks from '../components/SocialLinks';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
+import { promoWhatsAppGroup } from '../constants/socialLinks';
 import SetorPromoCard from '../components/SetorPromoCard';
 import { useRastrearAcesso } from '../hooks/useRastrearAcesso';
 import { getProdutosPorSetor } from '../services/promocoesService';
@@ -56,6 +57,13 @@ export default function SectorPage() {
       <div className="flex-1 px-4 xs:px-3 xxs:px-3 pb-10">
 
       <div className="relative z-10 -mt-20 text-center w-full px-5 mb-4">
+        <Link
+          to="/"
+          className="inline-flex items-center gap-2 text-white/80 hover:text-white transition-colors text-sm mb-2"
+        >
+          <i className="fa-solid fa-arrow-left"></i>
+          Voltar para início
+        </Link>
         <h2 className="
           text-[2rem] xs:text-[1.75rem] xxs:text-[1.6rem] font-roboto font-bold text-white
           drop-shadow-[2px_2px_10px_rgba(0,0,0,0.8)]
@@ -100,22 +108,15 @@ export default function SectorPage() {
         <SocialLinks />
       </div>
 
-      <div className="w-full mt-5 mb-10 px-4 xs:px-3 xxs:px-3">
-        <Link
-          to="/"
-          className="
-            flex items-center justify-center w-full py-4.5
-            bg-[linear-gradient(135deg,#082d5e,#1a5fa8)]
-            text-white no-underline rounded-2xl
-            font-roboto font-bold uppercase text-[0.85rem] xs:text-[0.8rem] xxs:text-[0.75rem] tracking-[1px]
-            border-none transition-all duration-300
-            ease-[cubic-bezier(0.25,0.8,0.25,1)]
-            hover:brightness-110 hover:-translate-y-0.75
-            hover:shadow-[0_8px_25px_rgba(0,86,179,0.4)]
-          "
+      <div className="w-full mt-4 mb-10 px-4 xs:px-3 xxs:px-3">
+        <a
+          href={promoWhatsAppGroup}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="flex items-center justify-center w-full py-4.5 bg-[linear-gradient(135deg,#082d5e,#1a5fa8)] text-white no-underline rounded-2xl font-roboto font-bold uppercase text-[0.85rem] tracking-[1px] border-none transition-all duration-300 ease-[cubic-bezier(0.25,0.8,0.25,1)] hover:brightness-110 hover:-translate-y-0.75 hover:shadow-[0_8px_25px_rgba(0,86,179,0.4)]"
         >
           Grupo de Clientes (Promoções)
-        </Link>
+        </a>
       </div>
       </div>
 

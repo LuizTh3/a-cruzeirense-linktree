@@ -68,7 +68,7 @@ export default function PromoCarousel({ images, autoPlayInterval = 3000 }: Promo
       onTouchEnd={handleTouchEnd}
     >
       <div 
-        className="flex w-full transition-transform duration-500 ease-in-out will-change-transform"
+        className="flex w-full transition-transform duration-800 ease-in-out will-change-transform"
         style={{ transform: `translateX(-${currentIndex * 100}%)` }}
       >
         {images.map((image, index) => {
@@ -77,12 +77,10 @@ export default function PromoCarousel({ images, autoPlayInterval = 3000 }: Promo
               key={image.id}
               src={image.src}
               alt={image.alt}
-              className="min-w-full w-full object-cover block shrink-0"
+              className="min-w-full w-full h-auto block shrink-0"
               loading={index === 0 ? 'eager' : 'lazy'}
               fetchPriority={index === 0 ? 'high' : 'low'}
               decoding="async"
-              width="860"
-              height="430"
             />
           );
 

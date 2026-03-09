@@ -86,12 +86,12 @@ export default function HomePage() {
           Tudo em um só lugar!
         </h2>
         <p className="text-[1.3rem] xs:text-[1.1rem] xxs:text-[1rem] text-white drop-shadow-[1px_1px_5px_rgba(0,0,0,0.8)]">
-          Móveis • Calçados • Roupas • Tecidos
+          Móveis • Calçados • Confecção • Tecidos • Cama • Mesa • Banho
         </p>
       </div>
 
       <div className="w-full px-4 xs:px-3 xxs:px-3" id="promocoes">
-        <PromoCarousel images={carouselImages} autoPlayInterval={3500} />
+        <PromoCarousel images={carouselImages} autoPlayInterval={5000} />
       </div>
 
       {produtosDestaque.length > 0 && (

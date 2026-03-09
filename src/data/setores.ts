@@ -17,7 +17,7 @@ export const setores: Setor[] = [
     colaboradores: [
       {
         id: 1,
-        nome: "Elisangela",
+        nome: "Elizângela",
         cargo: "Atendente",
         avatarSrc: "/assets/images/funcionarios/moveis/ELISANGELA.webp",
         profileHref: "/colaborador/moveis/1",
@@ -76,7 +76,7 @@ export const setores: Setor[] = [
       },
       {
         id: 3,
-        nome: "Fabiula",
+        nome: "Fabíola",
         cargo: "Atendente",
         avatarSrc: "/assets/images/funcionarios/confeccao/FABIULA.webp",
         profileHref: "/colaborador/confeccao/3",
@@ -84,7 +84,7 @@ export const setores: Setor[] = [
       },
       {
         id: 4,
-        nome: "Francisca",
+        nome: "Maria Francisca",
         cargo: "Atendente",
         avatarSrc: "/assets/images/funcionarios/confeccao/FRANCISCA.webp",
         profileHref: "/colaborador/confeccao/4",
@@ -113,6 +113,14 @@ export const setores: Setor[] = [
         avatarSrc: "/assets/images/funcionarios/confeccao/ZENAIDE.webp",
         profileHref: "/colaborador/confeccao/7",
         whatsappHref: "https://wa.me/",
+      },
+      {
+        id: 8,
+        nome: "Maria José",
+        cargo: "Atendente",
+        avatarSrc: "/assets/images/funcionarios/agente.webp",
+        profileHref: "/colaborador/confeccao/8",
+        whatsappHref: "https://wa.me/+556899335255",
       },
     ],
   },
@@ -148,6 +156,14 @@ export const setores: Setor[] = [
         avatarSrc: "/assets/images/funcionarios/tecidos/SUMAYA.webp",
         profileHref: "/colaborador/tecidos/3",
         whatsappHref: "https://wa.me/+5568992244656",
+      },
+      {
+        id: 4,
+        nome: "Auxiliadora",
+        cargo: "Atendente",
+        avatarSrc: "/assets/images/funcionarios/agente.webp",
+        profileHref: "/colaborador/tecidos/4",
+        whatsappHref: "https://wa.me/+556899840078",
       },
     ],
   },
