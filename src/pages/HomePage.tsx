@@ -121,14 +121,14 @@ export default function HomePage() {
                 href={`/setor/promocoes?setor=${setor.slug}`}
                 className="shrink-0 flex flex-col items-center gap-2 no-underline"
               >
-                <div className="w-20 h-20 rounded-full overflow-hidden border-2 border-white/20 shadow-lg">
+                <div className="w-20 h-20 xs:w-16 xs:h-16 xxs:w-14 xxs:h-14 rounded-full overflow-hidden border-2 border-action shadow-lg">
                   <img
                     src={setor.image}
                     alt={setor.title}
                     className="w-full h-full object-cover"
                   />
                 </div>
-                <span className="text-white text-xs text-center font-medium whitespace-nowrap">
+                <span className="text-white text-xs xs:text-[0.65rem] xxs:text-[0.6rem] text-center font-medium whitespace-nowrap">
                   {setor.title.replace('Setor de ', '').replace(', Cama, Mesa', '')}
                 </span>
               </a>
@@ -167,7 +167,7 @@ export default function HomePage() {
       </div>
 
       <p className="text-center font-medium text-[0.95rem] opacity-80">
-        Configure as melhores promoções da cidade
+        Confira as melhores promoções da cidade
       </p>
 
       <div className="flex flex-col gap-3.75 w-full px-4 xs:px-3 xxs:px-3 my-2">

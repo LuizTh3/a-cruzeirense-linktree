@@ -55,7 +55,7 @@ export default function ProdutoPage() {
 
   const handleWhatsAppClick = (colaborador: Colaborador) => {
     const mensagem = encodeURIComponent(
-      `Olá! Tenho interesse no ${produto?.titulo} da promoção. Pode me passar mais detalhes?`
+      `Olá! Tenho interesse em saber mais sobre o produto ${produto?.titulo}. Pode me passar mais informações?`
     );
     
     let whatsappUrl: string;

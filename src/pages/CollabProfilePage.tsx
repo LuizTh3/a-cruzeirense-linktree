@@ -118,23 +118,40 @@ export default function CollabProfilePage() {
           </p>
         )}
 
-        {colaborador.whatsappHref && colaborador.whatsappHref !== '#' && (
-          <a
-            href={colaborador.whatsappHref}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="
-              flex items-center justify-center gap-2 w-full py-3.5 mt-4
-              bg-whatsapp text-white no-underline rounded-xl
-              font-roboto font-bold text-[0.9rem]
-              transition-all duration-300
-              hover:bg-[#1DA851]
-            "
-          >
-            <i className="fa-brands fa-whatsapp text-xl"></i>
-            Entrar em contato
-          </a>
-        )}
+        {colaborador.whatsappHref && colaborador.whatsappHref !== '#' && (() => {
+            const getWhatsAppMessage = () => {
+              if (setorSlug === 'pagamento') {
+                return 'Olá, gostaria de realizar o pagamento de uma fatura, poderia me ajudar?';
+              }
+              if (setorSlug === 'negociacao') {
+                return 'Olá, gostaria de saber mais sobre um crediario, poderia me ajudar?';
+              }
+              return 'Olá, gostaria de saber mais sobre um produto da loja, poderia me ajudar?';
+            };
+            const mensagem = encodeURIComponent(getWhatsAppMessage());
+            const baseUrl = colaborador.whatsappHref!;
+            const whatsappUrl = baseUrl.includes('wa.me') 
+              ? `${baseUrl}${baseUrl.includes('?') ? '&' : '?'}text=${mensagem}`
+              : `https://wa.me/${baseUrl}?text=${mensagem}`;
+            
+            return (
+              <a
+                href={whatsappUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="
+                  flex items-center justify-center gap-2 w-full py-3.5 mt-4
+                  bg-whatsapp text-white no-underline rounded-xl
+                  font-roboto font-bold text-[0.9rem]
+                  transition-all duration-300
+                  hover:bg-[#1DA851]
+                "
+              >
+                <i className="fa-brands fa-whatsapp text-xl"></i>
+                Entrar em contato
+              </a>
+            );
+          })()}
       </div>
 
       <div className="w-full mt-8">

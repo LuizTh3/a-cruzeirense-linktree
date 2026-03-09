@@ -16,6 +16,11 @@ export const socialLinks: SocialLink[] = [
     iconClass: 'fa-brands fa-facebook text-[#1877F2]',
     label: 'Curta nossa página',
   },
+  {
+    href: 'https://www.instagram.com/kilo_a_kilo21?igsh=MXN3cmMyNWlhemY4bw==',
+    iconClass: 'fa-brands fa-instagram text-[#E1306C]',
+    label: 'Siga nossa Filial',
+  },
 ];
 
 export const promoWhatsAppGroup = 'https://chat.whatsapp.com/Jg82DRMjGz3BdjkF580Lvz?mode=gi_t';

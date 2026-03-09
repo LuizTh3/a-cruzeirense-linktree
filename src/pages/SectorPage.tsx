@@ -83,7 +83,7 @@ export default function SectorPage() {
 
       <div className="flex flex-col gap-3.75 xs:gap-2.5 xxs:gap-2 w-full px-8.5 xs:px-6 xxs:px-5 box-border mt-5">
         {setor.colaboradores.map((colab) => (
-          <CollabCard key={colab.id} colaborador={colab} setorTitle={setor.title} />
+          <CollabCard key={colab.id} colaborador={colab} setorTitle={setor.title} setorSlug={setor.slug} />
         ))}
       </div>
 

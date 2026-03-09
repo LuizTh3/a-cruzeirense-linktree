@@ -4,6 +4,7 @@ import type { Colaborador } from '../types';
 interface CollabCardProps {
   colaborador: Colaborador;
   setorTitle?: string;
+  setorSlug?: string;
 }
 
 interface CardContentProps {
@@ -52,8 +53,27 @@ const baseClass = `
   no-underline text-white cursor-pointer
 `;
 
-export default function CollabCard({ colaborador, setorTitle }: CollabCardProps) {
+export default function CollabCard({ colaborador, setorTitle, setorSlug }: CollabCardProps) {
   const { nome, avatarSrc, profileHref, whatsappHref } = colaborador;
+
+  const getWhatsAppMessage = () => {
+    if (setorSlug === 'pagamento') {
+      return 'Olá, gostaria de realizar o pagamento de uma fatura, poderia me ajudar?';
+    }
+    if (setorSlug === 'negociacao') {
+      return 'Olá, gostaria de saber mais sobre um crediario, poderia me ajudar?';
+    }
+    return 'Olá, gostaria de saber mais sobre um produto da loja, poderia me ajudar?';
+  };
+
+  const buildWhatsAppUrl = (baseUrl: string) => {
+    const mensagem = encodeURIComponent(getWhatsAppMessage());
+    if (baseUrl.includes('wa.me')) {
+      const separator = baseUrl.includes('?') ? '&' : '?';
+      return `${baseUrl}${separator}text=${mensagem}`;
+    }
+    return `https://wa.me/${baseUrl}?text=${mensagem}`;
+  };
 
   if (profileHref) {
     return (
@@ -65,8 +85,9 @@ export default function CollabCard({ colaborador, setorTitle }: CollabCardProps)
   }
 
   if (whatsappHref && whatsappHref !== '#') {
+    const whatsappUrl = buildWhatsAppUrl(whatsappHref);
     return (
-      <a href={whatsappHref} target="_blank" rel="noopener noreferrer" className={baseClass}>
+      <a href={whatsappUrl} target="_blank" rel="noopener noreferrer" className={baseClass}>
         <CardContent nome={nome} avatarSrc={avatarSrc} setorTitle={setorTitle} />
       </a>
     );

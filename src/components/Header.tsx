@@ -65,13 +65,13 @@ export default function Header({ backgroundImage, variant = 'full' }: HeaderProp
 
   return (
     <div 
-      className="relative w-full min-h-70 xs:min-h-60 xxs:min-h-56 flex flex-col justify-end items-center pb-10 z-10 mb-2.5 text-center text-white"
+      className="relative w-full min-h-60 xs:min-h-52 xxs:min-h-48 flex flex-col justify-end items-center pb-6 xs:pb-5 xxs:pb-4 z-10 mb-2.5 text-center text-white"
       style={{
         background: `linear-gradient(180deg, transparent 50%, rgba(0, 0, 0, 0.4) 100%), url('${bgImage}')`,
         backgroundSize: 'cover',
         backgroundPosition: 'center',
-        WebkitMaskImage: 'linear-gradient(to bottom, black 80%, transparent 100%)',
-        maskImage: 'linear-gradient(to bottom, black 40%, transparent 100%)'
+        WebkitMaskImage: 'linear-gradient(to bottom, black 65%, transparent 100%)',
+        maskImage: 'linear-gradient(to bottom, black 50%, transparent 100%)'
       }}
     >
       <header className="absolute top-0 left-0 w-full px-4 xs:px-3 xxs:px-3 py-5 flex justify-between items-center pointer-events-none z-20">
