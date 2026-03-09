@@ -57,7 +57,14 @@ export default function ProdutoPage() {
     const mensagem = encodeURIComponent(
       `Olá! Tenho interesse no ${produto?.titulo} da promoção. Pode me passar mais detalhes?`
     );
-    const whatsappUrl = `https://wa.me/${colaborador.whatsappHref}?text=${mensagem}`;
+    
+    let whatsappUrl: string;
+    if (colaborador.whatsappHref?.includes('wa.me')) {
+      whatsappUrl = `${colaborador.whatsappHref}?text=${mensagem}`;
+    } else {
+      whatsappUrl = `https://wa.me/${colaborador.whatsappHref}?text=${mensagem}`;
+    }
+    
     window.open(whatsappUrl, '_blank');
   };
 
