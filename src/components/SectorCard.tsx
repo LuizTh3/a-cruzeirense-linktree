@@ -20,7 +20,7 @@ export default function SectorCard({ href, imgSrc, imgAlt, title, tags, desc }: 
       <img 
         src={imgSrc} 
         alt={imgAlt} 
-        className="w-full h-27.5 object-cover block"
+        className="w-full h-27.5 xs:h-24 xxs:h-22 object-cover block"
         loading="eager"
         fetchPriority="high"
         decoding="async"
@@ -29,19 +29,19 @@ export default function SectorCard({ href, imgSrc, imgAlt, title, tags, desc }: 
       />
       
       <div className="p-3 flex flex-col grow">
-        <h3 className="text-white font-roboto text-[1.1rem] font-semibold mb-0.5 text-left">
+        <h3 className="text-white font-roboto text-[1.1rem] xs:text-[1rem] xxs:text-[0.9rem] font-semibold mb-0.5 text-left">
           {title}
         </h3>
         
-        <span className="text-[#6b7c93] text-[0.65rem] mb-2 text-left tracking-[0.5px]">
+        <span className="text-[#6b7c93] text-[0.65rem] xs:text-[0.6rem] xxs:text-[0.55rem] mb-2 text-left tracking-[0.5px]">
           {tags}
         </span>
         
-        <p className="text-[#d1d9e2] text-[0.75rem] leading-[1.3] mb-3.75 text-left grow">
+        <p className="text-[#d1d9e2] text-[0.75rem] xs:text-[0.7rem] xxs:text-[0.65rem] leading-[1.3] mb-3.75 text-left grow">
           {desc}
         </p>
         
-        <div className="bg-action text-surface-card text-center py-2 rounded-lg font-bold text-[0.9rem] mt-auto transition-colors duration-200 hover:bg-action-hover">
+        <div className="bg-action text-surface-card text-center py-2 rounded-lg font-bold text-[0.9rem] xs:text-[0.8rem] xxs:text-[0.75rem] mt-auto transition-colors duration-200 hover:bg-action-hover">
           Acesse agora
         </div>
       </div>

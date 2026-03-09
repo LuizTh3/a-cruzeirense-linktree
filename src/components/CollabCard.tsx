@@ -19,7 +19,7 @@ function CardContent({ nome, avatarSrc, setorTitle }: CardContentProps) {
         <img
           src={avatarSrc}
           alt={`Foto ${nome}`}
-          className="w-27 h-27 rounded-full object-cover border-2 border-white/20"
+          className="w-27 h-27 xs:w-24 xs:h-24 xxs:w-22 xxs:h-22 rounded-full object-cover border-2 border-white/20"
           loading="lazy"
           decoding="async"
           width={104}
@@ -27,12 +27,12 @@ function CardContent({ nome, avatarSrc, setorTitle }: CardContentProps) {
         />
         <div className="flex flex-col leading-tight">
           <h3 className="
-            font-sans text-[24px] font-bold text-white m-0
+            font-sans text-[24px] xs:text-[20px] xxs:text-[18px] font-bold text-white m-0
             border-b-2 border-[#A9B0B7] pb-1.25 mb-1.25 w-full
           ">
             {nome}
           </h3>
-          <span className="font-sans text-[14px] text-white/60 font-normal">
+          <span className="font-sans text-[14px] xs:text-[12px] xxs:text-[11px] text-white/60 font-normal">
             {setorTitle}
           </span>
         </div>
@@ -44,7 +44,7 @@ function CardContent({ nome, avatarSrc, setorTitle }: CardContentProps) {
 const baseClass = `
   group w-full box-border
   bg-[#0d2137]
-  rounded-[20px] p-[20px_15px]
+  rounded-[20px] p-[20px_15px] xs:p-[16px_12px] xxs:p-[14px_10px]
   flex justify-between items-center
   shadow-[0_4px_10px_rgba(0,0,0,0.4)]
   transition-transform duration-200 ease-in-out

@@ -51,7 +51,7 @@ export default function PromoçõesSetorPage() {
     <main className="relative max-w-120 mx-auto min-h-screen bg-container-radial border-x border-white/5 shadow-lateral flex flex-col overflow-x-hidden">
       <Header backgroundImage={setor?.heroImage || '/assets/images/promocoes-header.webp'} variant="minimal" />
 
-      <div className="flex-1 px-6 pb-10">
+      <div className="flex-1 px-4 xs:px-3 xxs:px-3 pb-10">
 
       <div className="relative z-10 -mt-20 text-center w-full px-5 mb-4">
         <Link
@@ -61,15 +61,15 @@ export default function PromoçõesSetorPage() {
           <i className="fa-solid fa-arrow-left"></i>
           Voltar para início
         </Link>
-        <h2 className="text-[2rem] font-roboto font-bold text-white drop-shadow-[2px_2px_10px_rgba(0,0,0,0.8)] mb-1">
+        <h2 className="text-[2rem] xs:text-[1.75rem] xxs:text-[1.6rem] font-roboto font-bold text-white drop-shadow-[2px_2px_10px_rgba(0,0,0,0.8)] mb-1">
           {setor?.title || 'Promoções'}
         </h2>
-        <p className="text-[1.3rem] text-white drop-shadow-[1px_1px_5px_rgba(0,0,0,0.8)]">
+        <p className="text-[1.3rem] xs:text-[1.1rem] xxs:text-[1rem] text-white drop-shadow-[1px_1px_5px_rgba(0,0,0,0.8)]">
           As melhores ofertas para você
         </p>
       </div>
 
-      <div className="w-full px-6 grid grid-cols-2 gap-3.75">
+      <div className="w-full px-4 xs:px-3 xxs:px-3 grid grid-cols-2 gap-3.75 xs:gap-2.5 xxs:gap-2">
         {produtos.map((produto) => (
           <PromoCard key={produto.id} produto={produto} />
         ))}
@@ -81,8 +81,8 @@ export default function PromoçõesSetorPage() {
         </div>
       )}
 
-      <div className="flex flex-col items-center mt-8 mb-2 font-roboto px-6 w-full">
-        <h2 className="text-center font-bold uppercase text-[1.1rem] tracking-wider">
+      <div className="flex flex-col items-center mt-8 mb-2 font-roboto px-4 xs:px-3 xxs:px-3 w-full">
+        <h2 className="text-center font-bold uppercase text-[1.1rem] xs:text-[1rem] xxs:text-[0.9rem] tracking-wider">
           Acesse nossas Redes sociais
         </h2>
         <p className="text-center font-medium text-[0.95rem] opacity-80 mt-1">
@@ -90,7 +90,7 @@ export default function PromoçõesSetorPage() {
         </p>
       </div>
 
-      <div className="flex flex-col gap-3.75 w-full px-6 my-5">
+      <div className="flex flex-col gap-3.75 xs:gap-2.5 xxs:gap-2 w-full px-4 xs:px-3 xxs:px-3 my-5">
         <SocialLinks />
       </div>
       </div>

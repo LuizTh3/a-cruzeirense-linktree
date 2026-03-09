@@ -82,9 +82,9 @@ export default function ProdutoPage() {
     <main className="relative max-w-120 mx-auto min-h-screen bg-container-radial border-x border-white/5 shadow-lateral flex flex-col overflow-x-hidden">
       <Header variant="minimal" />
 
-      <div className="flex-1 px-6 pb-10">
+      <div className="flex-1 px-4 xs:px-3 xxs:px-3 pb-10">
 
-      <div className="w-full px-6 mt-4">
+      <div className="w-full px-4 xs:px-3 xxs:px-3 mt-4">
         <Link
           to="/"
           className="inline-flex items-center gap-2 text-white/80 hover:text-white transition-colors text-sm mb-4"
@@ -94,12 +94,12 @@ export default function ProdutoPage() {
         </Link>
       </div>
 
-      <div className="w-full px-6">
+      <div className="w-full px-4 xs:px-3 xxs:px-3">
         <div className="bg-surface-card rounded-xl overflow-hidden shadow-[0_4px_10px_rgba(0,0,0,0.25)] border border-white/5">
           <img 
             src={produto.imagem} 
             alt={produto.titulo} 
-            className="w-full h-64 object-contain bg-[#0a1628]"
+            className="w-full h-64 xs:h-56 xxs:h-48 object-contain bg-[#0a1628]"
             fetchPriority="high"
           />
           
@@ -110,22 +110,22 @@ export default function ProdutoPage() {
               </div>
             )}
             
-            <h1 className="text-white font-roboto text-[1.5rem] font-bold mb-3">
+            <h1 className="text-white font-roboto text-[1.5rem] xs:text-[1.3rem] xxs:text-[1.2rem] font-bold mb-3">
               {produto.titulo}
             </h1>
             
             <div className="flex flex-col gap-1 mb-4">
               {temDesconto ? (
                 <>
-                  <span className="text-[#6b7c93] text-[1rem] line-through">
+                  <span className="text-[#6b7c93] text-[1rem] xs:text-[0.9rem] xxs:text-[0.85rem] line-through">
                     R$ {produto.preco.toFixed(2).replace('.', ',')}
                   </span>
-                  <span className="text-[#4caf50] font-bold text-[1.8rem]">
+                  <span className="text-[#4caf50] font-bold text-[1.8rem] xs:text-[1.6rem] xxs:text-[1.4rem]">
                     R$ {produto.precoPromocional?.toFixed(2).replace('.', ',')}
                   </span>
                 </>
               ) : (
-                <span className="text-white font-bold text-[1.8rem]">
+                <span className="text-white font-bold text-[1.8rem] xs:text-[1.6rem] xxs:text-[1.4rem]">
                   R$ {produto.preco.toFixed(2).replace('.', ',')}
                 </span>
               )}
@@ -134,7 +134,7 @@ export default function ProdutoPage() {
             {!mostrarAtendentes ? (
               <button
                 onClick={() => setMostrarAtendentes(true)}
-                className="flex items-center justify-center gap-2 w-full py-4 bg-[linear-gradient(135deg,#082d5e,#1a5fa8)] text-white no-underline rounded-xl font-roboto font-bold text-[1rem] transition-all duration-300 hover:brightness-110 hover:-translate-y-1 hover:shadow-[0_8px_25px_rgba(0,86,179,0.4)]"
+                className="flex items-center justify-center gap-2 w-full py-4 bg-[linear-gradient(135deg,#082d5e,#1a5fa8)] text-white no-underline rounded-xl font-roboto font-bold text-[1rem] xs:text-[0.9rem] xxs:text-[0.85rem] transition-all duration-300 hover:brightness-110 hover:-translate-y-1 hover:shadow-[0_8px_25px_rgba(0,86,179,0.4)]"
               >
                 <i className="fa-brands fa-whatsapp text-xl"></i>
                 Comprar pelo WhatsApp
@@ -144,22 +144,22 @@ export default function ProdutoPage() {
                 <p className="text-white text-sm mb-3 font-medium">
                   Selecione um atendente:
                 </p>
-                <div className="grid grid-cols-2 gap-3 max-h-48 overflow-y-auto">
+                <div className="grid grid-cols-2 gap-3 xs:gap-2 xxs:gap-2 max-h-48 xs:max-h-40 xxs:max-h-36 overflow-y-auto">
                   {colaboradores
                     .filter(colab => colab.whatsappHref && colab.whatsappHref !== '#')
                     .map((colaborador) => (
                       <button
                         key={colaborador.id}
                         onClick={() => handleWhatsAppClick(colaborador)}
-                        className="flex items-center gap-3 p-3 bg-[#1a2d4a] rounded-lg hover:bg-[#2a3d5a] transition-colors text-left"
+                        className="flex items-center gap-2 xs:gap-1.5 p-3 xs:p-2 xxs:p-2 bg-[#1a2d4a] rounded-lg hover:bg-[#2a3d5a] transition-colors text-left"
                       >
                         <img
                           src={colaborador.avatarSrc}
                           alt={colaborador.nome}
-                          className="w-12 h-12 rounded-full object-cover"
+                          className="w-12 h-12 xs:w-10 xs:h-10 xxs:w-9 xxs:h-9 rounded-full object-cover"
                         />
                         <div>
-                          <p className="text-white font-medium text-sm">{colaborador.nome}</p>
+                          <p className="text-white font-medium text-sm xs:text-xs xxs:text-xs">{colaborador.nome}</p>
                           <p className="text-white/60 text-xs">{colaborador.cargo}</p>
                         </div>
                       </button>
@@ -178,12 +178,12 @@ export default function ProdutoPage() {
       </div>
 
       {relacionados.length > 0 && (
-        <div className="w-full px-6 mt-8">
-          <h2 className="text-white font-roboto text-[1.3rem] font-bold mb-4">
+        <div className="w-full px-4 xs:px-3 xxs:px-3 mt-8">
+          <h2 className="text-white font-roboto text-[1.3rem] xs:text-[1.2rem] xxs:text-[1.1rem] font-bold mb-4">
             Produtos Relacionados
           </h2>
           
-          <div className="grid grid-cols-2 gap-3.75">
+          <div className="grid grid-cols-2 gap-3.75 xs:gap-2.5 xxs:gap-2">
             {relacionados.map((prod) => (
               <PromoCard key={prod.id} produto={prod} />
             ))}

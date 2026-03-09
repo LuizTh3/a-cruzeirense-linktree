@@ -65,7 +65,7 @@ export default function Header({ backgroundImage, variant = 'full' }: HeaderProp
 
   return (
     <div 
-      className="relative w-full min-h-70 flex flex-col justify-end items-center pb-10 z-10 mb-2.5 text-center text-white"
+      className="relative w-full min-h-70 xs:min-h-60 xxs:min-h-56 flex flex-col justify-end items-center pb-10 z-10 mb-2.5 text-center text-white"
       style={{
         background: `linear-gradient(180deg, transparent 50%, rgba(0, 0, 0, 0.4) 100%), url('${bgImage}')`,
         backgroundSize: 'cover',
@@ -74,13 +74,13 @@ export default function Header({ backgroundImage, variant = 'full' }: HeaderProp
         maskImage: 'linear-gradient(to bottom, black 40%, transparent 100%)'
       }}
     >
-      <header className="absolute top-0 left-0 w-full px-6 py-5 flex justify-between items-center pointer-events-none z-20">
+      <header className="absolute top-0 left-0 w-full px-4 xs:px-3 xxs:px-3 py-5 flex justify-between items-center pointer-events-none z-20">
         
         <a href="/" className="pointer-events-auto shrink-0 hover:opacity-80 transition-opacity duration-300">
           <img 
             src="/assets/images/ACRUZEIRENSE.png" 
             alt="A Cruzeirense Matriz" 
-            className="h-[clamp(40px,12vw,60px)] w-auto block object-contain transition-[height] duration-100 ease-out"
+            className="h-[clamp(40px,12vw,60px)] xs:h-[clamp(35px,10vw,50px)] xxs:h-[clamp(32px,9vw,45px)] w-auto block object-contain transition-[height] duration-100 ease-out"
             loading="eager"
             fetchPriority="high"
             width={200}
@@ -93,7 +93,7 @@ export default function Header({ backgroundImage, variant = 'full' }: HeaderProp
             onClick={() => setMenuOpen(!menuOpen)}
             aria-label="Abrir menu"
             className={`
-              w-12 h-12 rounded-full bg-[#082d5e] text-white
+              w-12 h-12 xs:w-10 xs:h-10 xxs:w-10 xxs:h-10 rounded-full bg-[#082d5e] text-white
               flex items-center justify-center text-xl
               shadow-[0_4px_15px_rgba(0,0,0,0.3)] transition-all duration-300
               hover:bg-[#1a5fa8] hover:scale-110

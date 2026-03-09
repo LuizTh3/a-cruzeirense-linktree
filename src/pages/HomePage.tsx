@@ -79,28 +79,28 @@ export default function HomePage() {
     <main className="relative max-w-120 mx-auto min-h-screen bg-container-radial border-x border-white/5 shadow-lateral flex flex-col overflow-x-hidden">
       <Header />
 
-      <div className="flex-1 px-6 pb-10">
+      <div className="flex-1 px-4 xs:px-3 xxs:px-3 pb-10">
 
       <div className="relative z-10 -mt-20 text-center w-full px-5 mb-4">
-        <h2 className="text-[2rem] font-roboto font-bold text-white drop-shadow-[2px_2px_10px_rgba(0,0,0,0.8)] mb-1">
+        <h2 className="text-[2rem] xs:text-[1.75rem] xxs:text-[1.6rem] font-roboto font-bold text-white drop-shadow-[2px_2px_10px_rgba(0,0,0,0.8)] mb-1">
           Tudo em um só lugar!
         </h2>
-        <p className="text-[1.3rem] text-white drop-shadow-[1px_1px_5px_rgba(0,0,0,0.8)]">
+        <p className="text-[1.3rem] xs:text-[1.1rem] xxs:text-[1rem] text-white drop-shadow-[1px_1px_5px_rgba(0,0,0,0.8)]">
           Móveis • Calçados • Roupas • Tecidos
         </p>
       </div>
 
-      <div className="w-full px-6" id="promocoes">
+      <div className="w-full px-4 xs:px-3 xxs:px-3" id="promocoes">
         <PromoCarousel images={carouselImages} autoPlayInterval={3500} />
       </div>
 
       {produtosDestaque.length > 0 && (
-        <div className="w-full px-6 mt-4">
+        <div className="w-full px-4 xs:px-3 xxs:px-3 mt-4">
           <h3 className="text-white font-roboto font-bold text-lg mb-3">
             <i className="fa-solid fa-star text-yellow-400 mr-2"></i>
             Promoções em Destaque
           </h3>
-          <div className="grid grid-cols-2 gap-3.75">
+          <div className="grid grid-cols-2 gap-3.75 xs:gap-2.5 xxs:gap-2">
             {produtosDestaque.map((produto) => (
               <PromoCard key={produto.id} produto={produto} />
             ))}
@@ -109,7 +109,7 @@ export default function HomePage() {
       )}
 
       {setoresComPromocoes.length > 0 && (
-        <div className="w-full px-6 mt-4">
+        <div className="w-full px-4 xs:px-3 xxs:px-3 mt-4">
           <h3 className="text-white font-roboto font-bold text-lg mb-3">
             <i className="fa-solid fa-layer-group mr-2"></i>
             Promoções e Ofertas!
@@ -137,8 +137,8 @@ export default function HomePage() {
         </div>
       )}
 
-      <div className="w-full px-6 text-left mt-4" id="setores">
-        <h2 className="font-roboto font-black text-[1.5rem] tracking-[1px] text-white">
+      <div className="w-full px-4 xs:px-3 xxs:px-3 text-left mt-4" id="setores">
+        <h2 className="font-roboto font-black text-[1.5rem] xs:text-[1.3rem] xxs:text-[1.2rem] tracking-[1px] text-white">
           Nossos Setores
         </h2>
         <p className="font-medium text-[1.1rem] opacity-80 mb-2 text-white">
@@ -146,7 +146,7 @@ export default function HomePage() {
         </p>
       </div>
 
-      <div className="w-full px-6 grid grid-cols-2 gap-3.75">
+      <div className="w-full px-4 xs:px-3 xxs:px-3 grid grid-cols-2 gap-3.75 xs:gap-2.5 xxs:gap-2">
         {sectorCards.map((setor) => (
           <SectorCard
             key={setor.slug}
@@ -170,11 +170,11 @@ export default function HomePage() {
         Configure as melhores promoções da cidade
       </p>
 
-      <div className="flex flex-col gap-3.75 w-full px-6 my-2">
+      <div className="flex flex-col gap-3.75 w-full px-4 xs:px-3 xxs:px-3 my-2">
         <SocialLinks />
       </div>
 
-      <div className="w-full mt-4 mb-10 px-6">
+      <div className="w-full mt-4 mb-10 px-4 xs:px-3 xxs:px-3">
         <a
           href={promoWhatsAppGroup}
           target="_blank"

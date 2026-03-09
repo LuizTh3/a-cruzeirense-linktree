@@ -1,5 +1,9 @@
 @import "tailwindcss";
 
+/* Breakpoints customizados para telas pequenas */
+@custom-variant xs (@media (max-width: 400px));
+@custom-variant xxs (@media (max-width: 360px));
+
 /* 1. Injetando suas variáveis no Tema do Tailwind v4 */
 @theme {
   /* Cores de Fundo (Body) */
