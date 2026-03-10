@@ -19,7 +19,7 @@ export const socialLinks: SocialLink[] = [
   {
     href: 'https://www.instagram.com/kilo_a_kilo21?igsh=MXN3cmMyNWlhemY4bw==',
     iconClass: 'fa-brands fa-instagram text-[#E1306C]',
-    label: 'Siga nossa Filial',
+    label: 'Siga nossa filial KILO A KILO',
   },
 ];
 
