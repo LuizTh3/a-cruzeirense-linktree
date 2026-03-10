@@ -64,7 +64,7 @@ export const setores: Setor[] = [
         cargo: "Atendente",
         avatarSrc: "/assets/images/funcionarios/confeccao/DAVID.webp",
         profileHref: "/colaborador/confeccao/1",
-        whatsappHref: "https://wa.me/",
+        whatsappHref: "https://wa.me/+556896019780",
       },
       {
         id: 2,
@@ -72,7 +72,7 @@ export const setores: Setor[] = [
         cargo: "Atendente",
         avatarSrc: "/assets/images/funcionarios/confeccao/DENYSE.webp",
         profileHref: "/colaborador/confeccao/2",
-        whatsappHref: "https://wa.me/",
+        whatsappHref: "https://wa.me/+556892370253",
       },
       {
         id: 3,
@@ -80,7 +80,7 @@ export const setores: Setor[] = [
         cargo: "Atendente",
         avatarSrc: "/assets/images/funcionarios/confeccao/FABIULA.webp",
         profileHref: "/colaborador/confeccao/3",
-        whatsappHref: "https://wa.me/",
+        whatsappHref: "https://wa.me/+556896010998",
       },
       {
         id: 4,
@@ -88,7 +88,7 @@ export const setores: Setor[] = [
         cargo: "Atendente",
         avatarSrc: "/assets/images/funcionarios/confeccao/FRANCISCA.webp",
         profileHref: "/colaborador/confeccao/4",
-        whatsappHref: "https://wa.me/",
+        whatsappHref: "https://wa.me/+556899698627",
       },
       {
         id: 5,
@@ -96,7 +96,7 @@ export const setores: Setor[] = [
         cargo: "Atendente",
         avatarSrc: "/assets/images/funcionarios/confeccao/JANAIRA.webp",
         profileHref: "/colaborador/confeccao/5",
-        whatsappHref: "https://wa.me/",
+        whatsappHref: "https://wa.me/+556899575870",
       },
       {
         id: 6,
@@ -104,7 +104,7 @@ export const setores: Setor[] = [
         cargo: "Atendente",
         avatarSrc: "/assets/images/funcionarios/confeccao/MONICA.webp",
         profileHref: "/colaborador/confeccao/6",
-        whatsappHref: "https://wa.me/",
+        whatsappHref: "https://wa.me/+556884035185",
       },
       {
         id: 7,
@@ -112,7 +112,7 @@ export const setores: Setor[] = [
         cargo: "Atendente",
         avatarSrc: "/assets/images/funcionarios/confeccao/ZENAIDE.webp",
         profileHref: "/colaborador/confeccao/7",
-        whatsappHref: "https://wa.me/",
+        whatsappHref: "https://wa.me/+556899974483",
       },
       {
         id: 8,

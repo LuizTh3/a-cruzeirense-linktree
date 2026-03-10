@@ -83,7 +83,7 @@ export default function HomePage() {
 
       <div className="relative z-10 -mt-20 text-center w-full px-5 mb-4">
         <h2 className="text-[2rem] xs:text-[1.75rem] xxs:text-[1.6rem] font-roboto font-bold text-white drop-shadow-[2px_2px_10px_rgba(0,0,0,0.8)] mb-1">
-          Tudo em um só lugar!
+          Tudo em um só lugar
         </h2>
         <p className="text-[1.3rem] xs:text-[1.1rem] xxs:text-[1rem] text-white drop-shadow-[1px_1px_5px_rgba(0,0,0,0.8)]">
           Móveis • Calçados • Confecção • Tecidos • Cama • Mesa • Banho
@@ -110,9 +110,9 @@ export default function HomePage() {
 
       {setoresComPromocoes.length > 0 && (
         <div className="w-full px-4 xs:px-3 xxs:px-3 mt-4">
-          <h3 className="text-white font-roboto font-bold text-lg mb-3">
+          <h3 className="text-white font-roboto font-bold text mb-3">
             <i className="fa-solid fa-layer-group mr-2"></i>
-            Promoções e Ofertas!
+            Produtos destaque da semana!
           </h3>
           <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-thin">
             {setoresComPromocoes.map((setor) => (
@@ -141,7 +141,7 @@ export default function HomePage() {
         <h2 className="font-roboto font-black text-[1.5rem] xs:text-[1.3rem] xxs:text-[1.2rem] tracking-[1px] text-white">
           Nossos Setores
         </h2>
-        <p className="font-medium text-[1.1rem] opacity-80 mb-2 text-white">
+        <p className="font-medium text-[1.1rem] xs:text-[0.85rem] xss:text-[0.95rem] opacity-80 mb-2 text-white">
           Acesse e fale com um de nossos colaboradores
         </p>
       </div>
