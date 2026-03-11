@@ -1,5 +1,5 @@
 export default function Footer() {
-  const endereco = "Travessa Desembargador Távora, N° 10 - Centro, Cruzeiro do Sul - AC";
+  const endereco = "Avenida Desembargador Távora, N° 10 - Centro, Cruzeiro do Sul - AC";
   const googleMapsUrl = `https://www.google.com/maps/place/A+Cruzeirense+Matriz+-+Roupas,Cama,Mesa,Banho,M%C3%B3veis,Eletrodom%C3%A9sticos,Tecidos/@-7.6376885,-72.6682093,19.04z/data=!4m6!3m5!1s0x9199cdcf3bc9fdc9:0x4f1cb71838f99841!8m2!3d-7.6375806!4d-72.6686198!16s%2Fg%2F11n7bbxqwh!5m1!1e4?entry=ttu&g_ep=EgoyMDI2MDMwOS4wIKXMDSoASAFQAw%3D%3D`;
 
   return (

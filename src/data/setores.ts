@@ -25,7 +25,7 @@ export const setores: Setor[] = [
       },
       {
         id: 2,
-        nome: "Jamisson",
+        nome: "Jamesson",
         cargo: "Atendente",
         avatarSrc: "/assets/images/funcionarios/moveis/JAMISSON.webp",
         profileHref: "/colaborador/moveis/2",
