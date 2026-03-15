@@ -293,7 +293,7 @@ export default function GerenciarPromocoesPage() {
             value={formData.imagem}
             onChange={handleInputChange}
             className="w-full px-4 py-3 rounded-lg bg-[#1a2d4a] text-white border border-white/10 focus:border-[#1a5fa8] outline-none"
-            placeholder="/assets/images/produtos/nome.webp"
+            placeholder="/assets/images/produtos/setor/nome.webp"
           />
         </div>
 

@@ -118,7 +118,7 @@ export const setores: Setor[] = [
         id: 8,
         nome: "Maria José",
         cargo: "Atendente",
-        avatarSrc: "/assets/images/funcionarios/agente.webp",
+        avatarSrc: "/assets/images/funcionarios/confeccao/MARIA.webp",
         profileHref: "/colaborador/confeccao/8",
         whatsappHref: "https://wa.me/+556899335255",
       },
