@@ -98,7 +98,7 @@ export default function HomePage() {
         <div className="w-full px-4 xs:px-3 xxs:px-3 mt-4">
           <h3 className="text-white font-roboto font-bold text-lg mb-3">
             <i className="fa-solid fa-star text-yellow-400 mr-2"></i>
-            Promoções em Destaque
+            Produtos Destaques
           </h3>
           <div className="grid grid-cols-2 gap-3.75 xs:gap-2.5 xxs:gap-2">
             {produtosDestaque.map((produto) => (
