@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import type { Colaborador } from '../types';
+import { useRastrearWhatsApp } from '../hooks/useRastrearWhatsApp';
 
 interface CollabCardProps {
   colaborador: Colaborador;
@@ -55,6 +56,7 @@ const baseClass = `
 
 export default function CollabCard({ colaborador, setorTitle, setorSlug }: CollabCardProps) {
   const { nome, avatarSrc, profileHref, whatsappHref } = colaborador;
+  const { rastrearClique } = useRastrearWhatsApp();
 
   const getWhatsAppMessage = () => {
     if (setorSlug === 'pagamento') {
@@ -86,8 +88,11 @@ export default function CollabCard({ colaborador, setorTitle, setorSlug }: Colla
 
   if (whatsappHref && whatsappHref !== '#') {
     const whatsappUrl = buildWhatsAppUrl(whatsappHref);
+    const handleWhatsAppClick = () => {
+      rastrearClique(setorSlug || 'contato', 'contato');
+    };
     return (
-      <a href={whatsappUrl} target="_blank" rel="noopener noreferrer" className={baseClass}>
+      <a href={whatsappUrl} target="_blank" rel="noopener noreferrer" className={baseClass} onClick={handleWhatsAppClick}>
         <CardContent nome={nome} avatarSrc={avatarSrc} setorTitle={setorTitle} />
       </a>
     );

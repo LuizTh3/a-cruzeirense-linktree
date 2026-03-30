@@ -6,6 +6,7 @@ import PromoCard from '../components/PromoCard';
 import SkeletonLoader from '../components/SkeletonLoader';
 import { getProdutoById, getProdutosRelacionados } from '../services/promocoesService';
 import { useRastrearAcesso } from '../hooks/useRastrearAcesso';
+import { useRastrearWhatsApp } from '../hooks/useRastrearWhatsApp';
 import { setores } from '../data/setores';
 import type { Produto, Colaborador } from '../types';
 
@@ -24,6 +25,7 @@ export default function ProdutoPage() {
   const [mostrarAtendentes, setMostrarAtendentes] = useState(false);
 
   useRastrearAcesso();
+  const { rastrearClique } = useRastrearWhatsApp();
 
   const colaboradores = useMemo(() => {
     if (!produto?.categoria) return [];
@@ -64,6 +66,10 @@ export default function ProdutoPage() {
     } else {
       whatsappUrl = `https://wa.me/${colaborador.whatsappHref}?text=${mensagem}`;
     }
+    
+    const setor = produto?.categoria ? categoriaParaSetor[produto.categoria] || 'promocoes' : 'promocoes';
+    const tipo = produto?.precoPromocional ? 'promocao' : 'oferta';
+    rastrearClique(setor, tipo);
     
     window.open(whatsappUrl, '_blank');
   };

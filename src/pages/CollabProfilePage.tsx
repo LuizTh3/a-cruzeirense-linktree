@@ -3,6 +3,7 @@ import { useParams, Navigate, Link } from 'react-router-dom';
 import { useColaborador } from '../hooks/useColaborador';
 import { enviarAvaliacao } from '../services/avaliacoesService';
 import { useRastrearAcesso } from '../hooks/useRastrearAcesso';
+import { useRastrearWhatsApp } from '../hooks/useRastrearWhatsApp';
 import Footer from '../components/Footer';
 
 export default function CollabProfilePage() {
@@ -10,6 +11,7 @@ export default function CollabProfilePage() {
   const { colaborador, setorSlug, setorTitle, loading, error } = useColaborador(slug, id);
 
   useRastrearAcesso();
+  const { rastrearClique } = useRastrearWhatsApp();
   const [rating, setRating] = useState(0);
   const [hoverRating, setHoverRating] = useState(0);
   const [feedback, setFeedback] = useState('');
@@ -139,6 +141,7 @@ export default function CollabProfilePage() {
                 href={whatsappUrl}
                 target="_blank"
                 rel="noopener noreferrer"
+                onClick={() => rastrearClique(setorSlug || 'contato', 'contato')}
                 className="
                   flex items-center justify-center gap-2 w-full py-3.5 mt-4
                   bg-whatsapp text-white no-underline rounded-xl
