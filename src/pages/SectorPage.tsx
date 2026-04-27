@@ -86,7 +86,7 @@ export default function SectorPage() {
         text-center font-roboto w-full
         pt-8 font-medium text-[1.1rem] opacity-80
       ">
-        Fale com um de nossos colaboradores
+        {slug === 'tecidos' ? 'Fale com uma de nossas colaboradoras' : 'Fale com um de nossos colaboradores'}
       </p>
 
       <div className="flex flex-col gap-3.75 xs:gap-2.5 xxs:gap-2 w-full px-8.5 xs:px-6 xxs:px-5 box-border mt-5">
