@@ -1,5 +1,6 @@
 import { Suspense, lazy } from 'react';
 import { Routes, Route } from 'react-router-dom';
+import { Analytics } from "@vercel/analytics/react";
 import './index.css';
 import RequireAuth from './components/RequireAuth';
 import SkeletonLoader from './components/SkeletonLoader';
@@ -18,21 +19,24 @@ const GerenciarCarrosselPage = lazy(() => import('./pages/GerenciarCarrosselPage
 
 function App() {
   return (
-    <Suspense fallback={<SkeletonLoader />}>
-      <Routes>
-        <Route path="/" element={<HomePage />} />
-        <Route path="/setor/promocoes" element={<PromoçõesSetorPage />} />
-        <Route path="/setor/:slug" element={<SectorPage />} />
-        <Route path="/colaborador/:slug/:id" element={<CollabProfilePage />} />
-        <Route path="/produto/:id" element={<ProdutoPage />} />
-        <Route path="/admin" element={<LoginPage />} />
-        <Route path="/admin/dashboard" element={<RequireAuth><AdminPage /></RequireAuth>} />
-        <Route path="/admin/avaliacoes" element={<RequireAuth><AvaliacoesPage /></RequireAuth>} />
-        <Route path="/admin/relatorios" element={<RequireAuth><RelatoriosPage /></RequireAuth>} />
-        <Route path="/admin/promocoes" element={<RequireAuth><GerenciarPromocoesPage /></RequireAuth>} />
-        <Route path="/admin/carrossel" element={<RequireAuth><GerenciarCarrosselPage /></RequireAuth>} />
-      </Routes>
-    </Suspense>
+    <>
+      <Suspense fallback={<SkeletonLoader />}>
+        <Routes>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/setor/promocoes" element={<PromoçõesSetorPage />} />
+          <Route path="/setor/:slug" element={<SectorPage />} />
+          <Route path="/colaborador/:slug/:id" element={<CollabProfilePage />} />
+          <Route path="/produto/:id" element={<ProdutoPage />} />
+          <Route path="/admin" element={<LoginPage />} />
+          <Route path="/admin/dashboard" element={<RequireAuth><AdminPage /></RequireAuth>} />
+          <Route path="/admin/avaliacoes" element={<RequireAuth><AvaliacoesPage /></RequireAuth>} />
+          <Route path="/admin/relatorios" element={<RequireAuth><RelatoriosPage /></RequireAuth>} />
+          <Route path="/admin/promocoes" element={<RequireAuth><GerenciarPromocoesPage /></RequireAuth>} />
+          <Route path="/admin/carrossel" element={<RequireAuth><GerenciarCarrosselPage /></RequireAuth>} />
+        </Routes>
+      </Suspense>
+      <Analytics />
+    </>
   );
 }
 
