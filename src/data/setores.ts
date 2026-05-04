@@ -126,7 +126,7 @@ export const setores: Setor[] = [
   },
   {
     slug: "tecidos",
-    title: "Tecidos, Cama, Mesa",
+    title: "Tecidos, Cama, Mesa e Banho",
     subtitle: "Detalhes que transformam sua casa em um verdadeiro refúgio",
     heroImage: "/assets/images/cards-setores/tecidos.webp",
     cardImage: "/assets/images/cards-setores/tecidos.webp",
