@@ -59,14 +59,6 @@ export const setores: Setor[] = [
     cardDesc: "Encontre as melhores peças para renovar o seu guarda-roupa.",
     colaboradores: [
       {
-        id: 1,
-        nome: "David",
-        cargo: "Atendente",
-        avatarSrc: "/assets/images/funcionarios/confeccao/DAVID.webp",
-        profileHref: "/colaborador/confeccao/1",
-        whatsappHref: "https://wa.me/+556896019780",
-      },
-      {
         id: 2,
         nome: "Denyse",
         cargo: "Atendente",
