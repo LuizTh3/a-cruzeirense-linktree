@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
+import { cloudinaryUrl } from '../services/cloudinaryService';
 
 export interface CarouselImage {
   id: number;
@@ -75,7 +76,7 @@ export default function PromoCarousel({ images, autoPlayInterval = 3000 }: Promo
           const content = (
             <img
               key={image.id}
-              src={image.src}
+              src={cloudinaryUrl(image.src, 1000)}
               alt={image.alt}
               className="min-w-full w-full h-auto block shrink-0"
               loading={index === 0 ? 'eager' : 'lazy'}

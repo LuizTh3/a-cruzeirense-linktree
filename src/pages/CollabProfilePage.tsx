@@ -5,6 +5,7 @@ import { enviarAvaliacao } from '../services/avaliacoesService';
 import { useRastrearAcesso } from '../hooks/useRastrearAcesso';
 import { useRastrearWhatsApp } from '../hooks/useRastrearWhatsApp';
 import Footer from '../components/Footer';
+import { cloudinaryUrl } from '../services/cloudinaryService';
 
 export default function CollabProfilePage() {
   const { slug, id } = useParams<{ slug: string; id: string }>();
@@ -101,7 +102,7 @@ export default function CollabProfilePage() {
 
       <div className="flex flex-col items-center mt-6 w-full">
         <img
-          src={colaborador.avatarSrc}
+          src={cloudinaryUrl(colaborador.avatarSrc, 280)}
           alt={`Foto ${colaborador.nome}`}
           className="w-28 h-28 rounded-full object-cover border-4 border-white/20 shadow-lg"
           loading="eager"

@@ -3,6 +3,9 @@ import { Link } from 'react-router-dom';
 import { buscarAvaliacoes } from '../services/avaliacoesService';
 import type { AvaliacaoFirestore } from '../services/avaliacoesService';
 import { getAllSetores } from '../services/setoresService';
+import { AVATAR_PADRAO, getTodosColaboradores } from '../services/colaboradoresService';
+import { nomesColaboradoresLegado } from '../data/colaboradoresLegado';
+import { cloudinaryUrl } from '../services/cloudinaryService';
 import Footer from '../components/Footer';
 
 interface AvaliacaoCompleta extends AvaliacaoFirestore {
@@ -23,19 +26,23 @@ export default function AvaliacoesPage() {
   useEffect(() => {
     const fetchAvaliacoes = async () => {
       try {
-        const data = await buscarAvaliacoes();
+        const [data, colaboradores] = await Promise.all([
+          buscarAvaliacoes(),
+          getTodosColaboradores(),
+        ]);
         const setores = getAllSetores();
+        const colaboradoresPorId = new Map(colaboradores.map((c) => [c.id, c]));
 
         const avaliacoesCompletas: AvaliacaoCompleta[] = data.map((avaliacao) => {
           const setor = setores.find((s) => s.slug === avaliacao.setorSlug);
-          const colaborador = setor?.colaboradores.find(
-            (c) => c.id === parseInt(avaliacao.colaboradorId)
-          );
+          const colaborador = colaboradoresPorId.get(avaliacao.colaboradorId);
+          const nomeLegado =
+            nomesColaboradoresLegado[`${avaliacao.setorSlug}-${avaliacao.colaboradorId}`];
 
           return {
             ...avaliacao,
-            nomeColaborador: colaborador?.nome || 'Desconhecido',
-            fotoColaborador: colaborador?.avatarSrc || '',
+            nomeColaborador: colaborador?.nome || nomeLegado || 'Desconhecido',
+            fotoColaborador: cloudinaryUrl(colaborador?.avatarSrc || AVATAR_PADRAO, 120),
             nomeSetor: setor?.title || avaliacao.setorSlug,
           };
         });

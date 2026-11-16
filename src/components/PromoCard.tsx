@@ -1,4 +1,5 @@
 import type { Produto } from '../types';
+import { cloudinaryUrl } from '../services/cloudinaryService';
 
 interface PromoCardProps {
   produto: Produto;
@@ -18,7 +19,7 @@ export default function PromoCard({ produto }: PromoCardProps) {
     >
       <div className="relative">
         <img 
-          src={produto.imagem} 
+          src={cloudinaryUrl(produto.imagem, 500)} 
           alt={produto.titulo} 
           className="w-full h-32 xs:h-28 xxs:h-26 object-cover block"
           loading="eager"

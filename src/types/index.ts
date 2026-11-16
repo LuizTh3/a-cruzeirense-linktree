@@ -1,8 +1,13 @@
 export interface Colaborador {
-  id: number;
+  id: string;
+  setorSlug: string;
   nome: string;
   cargo: string;
   avatarSrc: string;
+  /** Apenas dígitos, com código do país (ex.: 5568999999999). */
+  whatsapp: string;
+  ordem: number;
+  ativo: boolean;
   profileHref?: string;
   whatsappHref?: string;
 }
@@ -26,7 +31,6 @@ export interface Setor {
   cardImage: string;
   cardTags: string;
   cardDesc: string;
-  colaboradores: Colaborador[];
 }
 
 export interface CarouselImage {
@@ -39,6 +43,7 @@ export interface CarouselImage {
 export interface CarouselSlide {
   id: string;
   src: string;
+  srcPublicId?: string;
   href: string;
   alt?: string;
   ordem: number;
@@ -56,6 +61,7 @@ export interface Produto {
   preco: number;
   precoPromocional?: number;
   imagem: string;
+  imagemPublicId?: string;
   categoria?: string;
   destaque?: boolean;
   tipo?: 'promocao' | 'oferta';

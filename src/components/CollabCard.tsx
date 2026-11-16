@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import type { Colaborador } from '../types';
+import { cloudinaryUrl } from '../services/cloudinaryService';
 import { useRastrearWhatsApp } from '../hooks/useRastrearWhatsApp';
 
 interface CollabCardProps {
@@ -19,7 +20,7 @@ function CardContent({ nome, avatarSrc, setorTitle }: CardContentProps) {
     <>
       <div className="flex items-center gap-3.75">
         <img
-          src={avatarSrc}
+          src={cloudinaryUrl(avatarSrc, 240)}
           alt={`Foto ${nome}`}
           className="w-27 h-27 xs:w-24 xs:h-24 xxs:w-22 xxs:h-22 rounded-full object-cover border-2 border-white/20"
           loading="lazy"

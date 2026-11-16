@@ -35,6 +35,7 @@ export async function saveSlide(slide: CarouselSlide): Promise<void> {
   await setDoc(docRef, {
     id: slide.id,
     src: slide.src,
+    ...(slide.srcPublicId ? { srcPublicId: slide.srcPublicId } : {}),
     href: slide.href,
     alt: slide.alt || '',
     ordem: slide.ordem,

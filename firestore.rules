@@ -1,0 +1,53 @@
+// Regras do Firestore — aplicar no console do Firebase (Firestore > Regras).
+// Este arquivo é só a referência versionada; o projeto não usa `firebase deploy`.
+//
+// Em relação às regras anteriores (tudo `allow read, write: if true`):
+//  - adiciona a coleção `colaboradores`;
+//  - o conteúdo do site (promoções, carrossel, funcionários) continua com leitura
+//    pública, mas só o admin logado pode alterar;
+//  - avaliações, acessos e cliques continuam podendo ser CRIADOS por qualquer
+//    visitante, mas só o admin logado pode ler, alterar ou apagar.
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function isAdmin() {
+      return request.auth != null;
+    }
+
+    // Avaliações (contêm telefone e IP do cliente)
+    match /avaliacoes/{document} {
+      allow create: if true;
+      allow read, update, delete: if isAdmin();
+    }
+
+    // Acessos
+    match /acessos/{document} {
+      allow create: if true;
+      allow read, update, delete: if isAdmin();
+    }
+
+    // Cliques WhatsApp
+    match /cliques_whatsapp/{document} {
+      allow create: if true;
+      allow read, update, delete: if isAdmin();
+    }
+
+    // Promoções
+    match /promocoes/{document} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // Carrossel
+    match /carousel/{document} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // Funcionários
+    match /colaboradores/{document} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+  }
+}

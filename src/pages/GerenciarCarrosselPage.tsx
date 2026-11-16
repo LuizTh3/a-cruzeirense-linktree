@@ -4,18 +4,22 @@ import { getSlides, saveSlide, deleteSlide, reorderSlides } from '../services/ca
 import { setores } from '../data/setores';
 import type { CarouselSlide } from '../types';
 import Footer from '../components/Footer';
+import ImageUpload from '../components/ImageUpload';
+import { cloudinaryUrl } from '../services/cloudinaryService';
 
 const MAX_SLIDES = 5;
 
 interface SlideFormData {
   id: string;
   src: string;
+  srcPublicId: string;
   href: string;
 }
 
 const initialFormData: SlideFormData = {
   id: '',
   src: '',
+  srcPublicId: '',
   href: '',
 };
 
@@ -23,6 +27,7 @@ export default function GerenciarCarrosselPage() {
   const [slides, setSlides] = useState<CarouselSlide[]>([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [enviandoImagem, setEnviandoImagem] = useState(false);
   const [formData, setFormData] = useState<SlideFormData>(initialFormData);
   const [editando, setEditando] = useState(false);
   const [mensagem, setMensagem] = useState('');
@@ -53,6 +58,7 @@ export default function GerenciarCarrosselPage() {
     setFormData({
       id: slide.id,
       src: slide.src,
+      srcPublicId: '',
       href: slide.href,
     });
     setEditando(true);
@@ -63,7 +69,7 @@ export default function GerenciarCarrosselPage() {
     e.preventDefault();
     
     if (!formData.src) {
-      setMensagem('Preencha a URL da imagem');
+      setMensagem('Envie a imagem do slide');
       return;
     }
 
@@ -77,6 +83,7 @@ export default function GerenciarCarrosselPage() {
       const slide: CarouselSlide = {
         id: editando ? formData.id : Date.now().toString(),
         src: formData.src,
+        srcPublicId: formData.srcPublicId || undefined,
         href: formData.href,
         alt: '',
         ordem: editando ? slides.find(s => s.id === formData.id)?.ordem ?? slides.length : slides.length,
@@ -195,17 +202,15 @@ export default function GerenciarCarrosselPage() {
       )}
 
       <form onSubmit={handleSubmit} className="w-full max-w-md flex flex-col gap-4 mb-8">
-        <div>
-          <label className="block text-white text-sm mb-1">URL da Imagem *</label>
-          <input
-            type="text"
-            name="src"
-            value={formData.src}
-            onChange={handleInputChange}
-            className="w-full px-4 py-3 rounded-lg bg-[#1a2d4a] text-white border border-white/10 focus:border-[#1a5fa8] outline-none"
-            placeholder="/assets/images/promocoes/banner1.webp"
-          />
-        </div>
+        <ImageUpload
+          label="Imagem *"
+          pasta="carrossel"
+          value={formData.src}
+          onUploadingChange={setEnviandoImagem}
+          onChange={(imagem) =>
+            setFormData(prev => ({ ...prev, src: imagem.url, srcPublicId: imagem.publicId }))
+          }
+        />
 
         <div>
           <label className="block text-white text-sm mb-1">Setor de Destino</label>
@@ -227,7 +232,7 @@ export default function GerenciarCarrosselPage() {
         <div className="flex gap-3 mt-2">
           <button
             type="submit"
-            disabled={saving}
+            disabled={saving || enviandoImagem}
             className="flex-1 py-3 bg-[linear-gradient(135deg,#082d5e,#1a5fa8)] text-white rounded-lg font-bold transition-all duration-300 hover:brightness-110 disabled:opacity-50"
           >
             {saving ? 'Salvando...' : editando ? 'Atualizar Slide' : 'Adicionar Slide'}
@@ -274,7 +279,7 @@ export default function GerenciarCarrosselPage() {
               >
                 <span className="text-white/50 text-sm w-6">{index + 1}</span>
                 <img
-                  src={slide.src}
+                  src={cloudinaryUrl(slide.src, 240)}
                   alt={slide.alt}
                   className="w-24 h-14 object-cover rounded"
                 />

@@ -12,7 +12,7 @@ import { getProdutosPorSetor } from '../services/promocoesService';
 
 export default function SectorPage() {
   const { slug } = useParams<{ slug: string }>();
-  const { setor, loading: loadingSetor, error } = useSetor(slug);
+  const { setor, colaboradores, loading: loadingSetor, error } = useSetor(slug);
   const [temPromocoes, setTemPromocoes] = useState(false);
   const [loadingPromocoes, setLoadingPromocoes] = useState(true);
 
@@ -90,7 +90,7 @@ export default function SectorPage() {
       </p>
 
       <div className="flex flex-col gap-3.75 xs:gap-2.5 xxs:gap-2 w-full px-8.5 xs:px-6 xxs:px-5 box-border mt-5">
-        {setor.colaboradores.map((colab) => (
+        {colaboradores.map((colab) => (
           <CollabCard key={colab.id} colaborador={colab} setorTitle={setor.title} setorSlug={setor.slug} />
         ))}
       </div>

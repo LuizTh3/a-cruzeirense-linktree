@@ -90,6 +90,7 @@ export async function saveProduto(produto: Produto): Promise<void> {
     preco: produto.preco,
     precoPromocional: produto.precoPromocional ?? null,
     imagem: produto.imagem,
+    ...(produto.imagemPublicId ? { imagemPublicId: produto.imagemPublicId } : {}),
     categoria: produto.categoria ?? null,
     destaque: produto.destaque ?? false,
   }, { merge: true });

@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo } from 'react';
+import { useEffect, useState } from 'react';
 import { useParams, Navigate, Link } from 'react-router-dom';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
@@ -7,7 +7,8 @@ import SkeletonLoader from '../components/SkeletonLoader';
 import { getProdutoById, getProdutosRelacionados } from '../services/promocoesService';
 import { useRastrearAcesso } from '../hooks/useRastrearAcesso';
 import { useRastrearWhatsApp } from '../hooks/useRastrearWhatsApp';
-import { setores } from '../data/setores';
+import { getColaboradoresDoSetor } from '../services/colaboradoresService';
+import { cloudinaryUrl } from '../services/cloudinaryService';
 import type { Produto, Colaborador } from '../types';
 
 const categoriaParaSetor: Record<string, string> = {
@@ -27,11 +28,28 @@ export default function ProdutoPage() {
   useRastrearAcesso();
   const { rastrearClique } = useRastrearWhatsApp();
 
-  const colaboradores = useMemo(() => {
-    if (!produto?.categoria) return [];
-    const setorSlug = categoriaParaSetor[produto.categoria];
-    const setor = setores.find(s => s.slug === setorSlug);
-    return setor?.colaboradores || [];
+  const [colaboradores, setColaboradores] = useState<Colaborador[]>([]);
+
+  useEffect(() => {
+    const setorSlug = produto?.categoria ? categoriaParaSetor[produto.categoria] : undefined;
+    if (!setorSlug) {
+      setColaboradores([]);
+      return;
+    }
+
+    let cancelado = false;
+    getColaboradoresDoSetor(setorSlug)
+      .then((lista) => {
+        if (!cancelado) setColaboradores(lista);
+      })
+      .catch((error) => {
+        console.error('Erro ao buscar atendentes:', error);
+        if (!cancelado) setColaboradores([]);
+      });
+
+    return () => {
+      cancelado = true;
+    };
   }, [produto?.categoria]);
 
   useEffect(() => {
@@ -110,7 +128,7 @@ export default function ProdutoPage() {
       <div className="w-full px-4 xs:px-3 xxs:px-3">
         <div className="bg-surface-card rounded-xl overflow-hidden shadow-[0_4px_10px_rgba(0,0,0,0.25)] border border-white/5">
           <img 
-            src={produto.imagem} 
+            src={cloudinaryUrl(produto.imagem, 900)} 
             alt={produto.titulo} 
             className="w-full h-64 xs:h-56 xxs:h-48 object-contain bg-[#0a1628]"
             fetchPriority="high"
@@ -167,7 +185,7 @@ export default function ProdutoPage() {
                         className="flex items-center gap-2 xs:gap-1.5 p-3 xs:p-2 xxs:p-2 bg-[#1a2d4a] rounded-lg hover:bg-[#2a3d5a] transition-colors text-left"
                       >
                         <img
-                          src={colaborador.avatarSrc}
+                          src={cloudinaryUrl(colaborador.avatarSrc, 120)}
                           alt={colaborador.nome}
                           className="w-12 h-12 xs:w-10 xs:h-10 xxs:w-9 xxs:h-9 rounded-full object-cover"
                         />

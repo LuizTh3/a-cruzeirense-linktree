@@ -3,6 +3,8 @@ import { Link } from 'react-router-dom';
 import { getProdutos, saveProduto, deleteProduto } from '../services/promocoesService';
 import type { Produto } from '../types';
 import Footer from '../components/Footer';
+import ImageUpload from '../components/ImageUpload';
+import { cloudinaryUrl } from '../services/cloudinaryService';
 
 const ITENS_POR_PAGINA = 10;
 const MAX_PROMOCOES = 30;
@@ -13,6 +15,7 @@ interface ProdutoFormData {
   preco: string;
   precoPromocional: string;
   imagem: string;
+  imagemPublicId: string;
   categoria: string;
   destaque: boolean;
   tipo: 'promocao' | 'oferta';
@@ -24,6 +27,7 @@ const initialFormData: ProdutoFormData = {
   preco: '',
   precoPromocional: '',
   imagem: '',
+  imagemPublicId: '',
   categoria: '',
   destaque: false,
   tipo: 'promocao',
@@ -33,6 +37,7 @@ export default function GerenciarPromocoesPage() {
   const [produtos, setProdutos] = useState<Produto[]>([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [enviandoImagem, setEnviandoImagem] = useState(false);
   const [formData, setFormData] = useState<ProdutoFormData>(initialFormData);
   const [editando, setEditando] = useState(false);
   const [mensagem, setMensagem] = useState('');
@@ -71,6 +76,7 @@ export default function GerenciarPromocoesPage() {
       preco: produto.preco.toString(),
       precoPromocional: produto.precoPromocional?.toString() || '',
       imagem: produto.imagem,
+      imagemPublicId: '',
       categoria: produto.categoria || 'moveis',
       destaque: produto.destaque || false,
       tipo: produto.tipo || 'promocao',
@@ -108,6 +114,7 @@ export default function GerenciarPromocoesPage() {
         preco,
         precoPromocional,
         imagem: formData.imagem,
+        imagemPublicId: formData.imagemPublicId || undefined,
         categoria: formData.categoria,
         destaque: formData.destaque,
         tipo: formData.tipo,
@@ -285,17 +292,15 @@ export default function GerenciarPromocoesPage() {
           )}
         </div>
 
-        <div>
-          <label className="block text-white text-sm mb-1">URL da Imagem *</label>
-          <input
-            type="text"
-            name="imagem"
-            value={formData.imagem}
-            onChange={handleInputChange}
-            className="w-full px-4 py-3 rounded-lg bg-[#1a2d4a] text-white border border-white/10 focus:border-[#1a5fa8] outline-none"
-            placeholder="/assets/images/produtos/setor/nome.webp"
-          />
-        </div>
+        <ImageUpload
+          label="Imagem *"
+          pasta="promocoes"
+          value={formData.imagem}
+          onUploadingChange={setEnviandoImagem}
+          onChange={(imagem) =>
+            setFormData(prev => ({ ...prev, imagem: imagem.url, imagemPublicId: imagem.publicId }))
+          }
+        />
 
         <div>
           <label className="block text-white text-sm mb-1">Categoria</label>
@@ -331,7 +336,7 @@ export default function GerenciarPromocoesPage() {
         <div className="flex gap-3 mt-2">
           <button
             type="submit"
-            disabled={saving}
+            disabled={saving || enviandoImagem}
             className="flex-1 py-3 bg-[linear-gradient(135deg,#082d5e,#1a5fa8)] text-white rounded-lg font-bold transition-all duration-300 hover:brightness-110 disabled:opacity-50"
           >
             {saving ? 'Salvando...' : editando 
@@ -390,7 +395,7 @@ export default function GerenciarPromocoesPage() {
                 className="flex items-center gap-3 p-3 bg-[#1a2d4a] rounded-lg border border-white/10"
               >
                 <img
-                  src={produto.imagem}
+                  src={cloudinaryUrl(produto.imagem, 160)}
                   alt={produto.titulo}
                   className="w-16 h-16 object-cover rounded"
                 />
