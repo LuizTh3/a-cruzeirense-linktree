@@ -17,6 +17,7 @@ const ProdutoPage = lazy(() => import('./pages/ProdutoPage'));
 const GerenciarPromocoesPage = lazy(() => import('./pages/GerenciarPromocoesPage'));
 const GerenciarCarrosselPage = lazy(() => import('./pages/GerenciarCarrosselPage'));
 const GerenciarFuncionariosPage = lazy(() => import('./pages/GerenciarFuncionariosPage'));
+const SuportePage = lazy(() => import('./pages/SuportePage'));
 
 function App() {
   return (
@@ -35,6 +36,7 @@ function App() {
           <Route path="/admin/promocoes" element={<RequireAuth><GerenciarPromocoesPage /></RequireAuth>} />
           <Route path="/admin/carrossel" element={<RequireAuth><GerenciarCarrosselPage /></RequireAuth>} />
           <Route path="/admin/funcionarios" element={<RequireAuth><GerenciarFuncionariosPage /></RequireAuth>} />
+          <Route path="/admin/suporte" element={<RequireAuth><SuportePage /></RequireAuth>} />
         </Routes>
       </Suspense>
       <Analytics />
