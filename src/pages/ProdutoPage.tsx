@@ -1,8 +1,12 @@
 import { useEffect, useState } from 'react';
-import { useParams, Navigate, Link } from 'react-router-dom';
-import Header from '../components/Header';
-import Footer from '../components/Footer';
+import { useParams, Navigate } from 'react-router-dom';
+import PageShell from '../components/layout/PageShell';
+import SiteHeader from '../components/layout/SiteHeader';
+import Container from '../components/layout/Container';
+import SectionHeading from '../components/layout/SectionHeading';
 import PromoCard from '../components/PromoCard';
+import { formatarPreco } from '@/lib/format';
+import { Button } from '@/components/ui/button';
 import SkeletonLoader from '../components/SkeletonLoader';
 import { getProdutoById, getProdutosRelacionados } from '../services/promocoesService';
 import { useRastrearAcesso } from '../hooks/useRastrearAcesso';
@@ -93,137 +97,116 @@ export default function ProdutoPage() {
   };
 
   if (loading) {
-    return (
-      <main className="relative max-w-120 mx-auto min-h-screen bg-container-radial border-x border-white/5 shadow-lateral flex flex-col items-center justify-center overflow-x-hidden pb-10">
-        <SkeletonLoader />
-      </main>
-    );
+    return <SkeletonLoader />;
   }
 
   if (!produto) {
     return <Navigate to="/" replace />;
   }
 
-  const temDesconto = produto.precoPromocional && produto.precoPromocional < produto.preco;
-  const desconto = temDesconto 
+  const temDesconto = !!produto.precoPromocional && produto.precoPromocional < produto.preco;
+  const desconto = temDesconto
     ? Math.round(((produto.preco - produto.precoPromocional!) / produto.preco) * 100)
     : 0;
+  const atendentes = colaboradores.filter((colab) => colab.whatsappHref && colab.whatsappHref !== '#');
 
   return (
-    <main className="relative max-w-120 mx-auto min-h-screen bg-container-radial border-x border-white/5 shadow-lateral flex flex-col overflow-x-hidden">
-      <Header variant="minimal" />
+    <PageShell>
+      <SiteHeader back={{ to: '/', label: 'Voltar para início' }} />
 
-      <div className="flex-1 px-4 xs:px-3 xxs:px-3 pb-10">
+      <Container className="mt-6 lg:mt-10">
+        <div className="grid gap-6 overflow-hidden rounded-xl border border-white/10 bg-surface-card md:grid-cols-2 md:gap-0">
+          <div className="flex items-center justify-center bg-surface-deep">
+            <img
+              src={cloudinaryUrl(produto.imagem, 900)}
+              alt={produto.titulo}
+              className="max-h-80 w-full object-contain md:max-h-[32rem]"
+              fetchPriority="high"
+            />
+          </div>
 
-      <div className="w-full px-4 xs:px-3 xxs:px-3 mt-4">
-        <Link
-          to="/"
-          className="inline-flex items-center gap-2 text-white/80 hover:text-white transition-colors text-sm mb-4"
-        >
-          <i className="fa-solid fa-arrow-left"></i>
-          Voltar para início
-        </Link>
-      </div>
-
-      <div className="w-full px-4 xs:px-3 xxs:px-3">
-        <div className="bg-surface-card rounded-xl overflow-hidden shadow-[0_4px_10px_rgba(0,0,0,0.25)] border border-white/5">
-          <img 
-            src={cloudinaryUrl(produto.imagem, 900)} 
-            alt={produto.titulo} 
-            className="w-full h-64 xs:h-56 xxs:h-48 object-contain bg-[#0a1628]"
-            fetchPriority="high"
-          />
-          
-          <div className="p-5">
+          <div className="flex flex-col p-5 md:p-8">
             {temDesconto && (
-              <div className="inline-block bg-[#e53935] text-white text-xs font-bold px-3 py-1 rounded-lg mb-3">
-                {desconto}% DE DESCONTO
-              </div>
+              <span className="mb-3 w-fit rounded-md bg-discount px-2.5 py-1 text-xs font-semibold text-white">
+                {desconto}% de desconto
+              </span>
             )}
-            
-            <h1 className="text-white font-roboto text-[1.5rem] xs:text-[1.3rem] xxs:text-[1.2rem] font-bold mb-3">
+
+            <h1 className="text-balance text-2xl font-semibold tracking-tight text-white md:text-3xl">
               {produto.titulo}
             </h1>
-            
-            <div className="flex flex-col gap-1 mb-4">
+
+            <div className="mt-4 flex flex-col">
               {temDesconto ? (
                 <>
-                  <span className="text-[#6b7c93] text-[1rem] xs:text-[0.9rem] xxs:text-[0.85rem] line-through">
-                    R$ {produto.preco.toFixed(2).replace('.', ',')}
-                  </span>
-                  <span className="text-[#4caf50] font-bold text-[1.8rem] xs:text-[1.6rem] xxs:text-[1.4rem]">
-                    R$ {produto.precoPromocional?.toFixed(2).replace('.', ',')}
+                  <span className="text-base text-white/50 line-through">{formatarPreco(produto.preco)}</span>
+                  <span className="text-3xl font-semibold text-price md:text-4xl">
+                    {formatarPreco(produto.precoPromocional!)}
                   </span>
                 </>
               ) : (
-                <span className="text-white font-bold text-[1.8rem] xs:text-[1.6rem] xxs:text-[1.4rem]">
-                  R$ {produto.preco.toFixed(2).replace('.', ',')}
-                </span>
+                <span className="text-3xl font-semibold text-white md:text-4xl">{formatarPreco(produto.preco)}</span>
               )}
             </div>
-            
-            {!mostrarAtendentes ? (
-              <button
-                onClick={() => setMostrarAtendentes(true)}
-                className="flex items-center justify-center gap-2 w-full py-4 bg-[linear-gradient(135deg,#082d5e,#1a5fa8)] text-white no-underline rounded-xl font-roboto font-bold text-[1rem] xs:text-[0.9rem] xxs:text-[0.85rem] transition-all duration-300 hover:brightness-110 hover:-translate-y-1 hover:shadow-[0_8px_25px_rgba(0,86,179,0.4)]"
-              >
-                <i className="fa-brands fa-whatsapp text-xl"></i>
-                Comprar pelo WhatsApp
-              </button>
-            ) : (
-              <div className="mt-2">
-                <p className="text-white text-sm mb-3 font-medium">
-                  Selecione um atendente:
-                </p>
-                <div className="grid grid-cols-2 gap-3 xs:gap-2 xxs:gap-2 max-h-48 xs:max-h-40 xxs:max-h-36 overflow-y-auto">
-                  {colaboradores
-                    .filter(colab => colab.whatsappHref && colab.whatsappHref !== '#')
-                    .map((colaborador) => (
-                      <button
-                        key={colaborador.id}
-                        onClick={() => handleWhatsAppClick(colaborador)}
-                        className="flex items-center gap-2 xs:gap-1.5 p-3 xs:p-2 xxs:p-2 bg-[#1a2d4a] rounded-lg hover:bg-[#2a3d5a] transition-colors text-left"
-                      >
-                        <img
-                          src={cloudinaryUrl(colaborador.avatarSrc, 120)}
-                          alt={colaborador.nome}
-                          className="w-12 h-12 xs:w-10 xs:h-10 xxs:w-9 xxs:h-9 rounded-full object-cover"
-                        />
-                        <div>
-                          <p className="text-white font-medium text-sm xs:text-xs xxs:text-xs">{colaborador.nome}</p>
-                          <p className="text-white/60 text-xs">{colaborador.cargo}</p>
-                        </div>
-                      </button>
-                    ))}
-                </div>
-                <button
-                  onClick={() => setMostrarAtendentes(false)}
-                  className="mt-3 text-white/60 text-sm hover:text-white transition-colors"
+
+            <div className="mt-6 md:mt-auto md:pt-8">
+              {!mostrarAtendentes ? (
+                <Button
+                  size="xl"
+                  className="w-full bg-whatsapp text-white hover:bg-whatsapp-hover"
+                  onClick={() => setMostrarAtendentes(true)}
                 >
-                  Cancelar
-                </button>
-              </div>
-            )}
+                  <i className="fa-brands fa-whatsapp text-xl" aria-hidden="true"></i>
+                  Comprar pelo WhatsApp
+                </Button>
+              ) : (
+                <div>
+                  <p className="mb-3 text-sm font-medium text-white">Selecione um atendente:</p>
+                  {atendentes.length === 0 ? (
+                    <p className="rounded-lg bg-surface-raised p-3 text-sm text-white/70">
+                      Nenhum atendente disponível no momento.
+                    </p>
+                  ) : (
+                    <div className="grid max-h-56 grid-cols-1 gap-2 overflow-y-auto sm:grid-cols-2">
+                      {atendentes.map((colaborador) => (
+                        <button
+                          key={colaborador.id}
+                          onClick={() => handleWhatsAppClick(colaborador)}
+                          className="flex items-center gap-3 rounded-lg bg-surface-raised p-2.5 text-left transition-colors hover:bg-white/15"
+                        >
+                          <img
+                            src={cloudinaryUrl(colaborador.avatarSrc, 120)}
+                            alt=""
+                            className="size-11 shrink-0 rounded-full object-cover"
+                          />
+                          <span className="min-w-0">
+                            <span className="block truncate text-sm font-medium text-white">{colaborador.nome}</span>
+                            <span className="block truncate text-xs text-white/60">{colaborador.cargo}</span>
+                          </span>
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                  <Button variant="ghost" size="lg" className="mt-3" onClick={() => setMostrarAtendentes(false)}>
+                    Cancelar
+                  </Button>
+                </div>
+              )}
+            </div>
           </div>
         </div>
-      </div>
 
-      {relacionados.length > 0 && (
-        <div className="w-full px-4 xs:px-3 xxs:px-3 mt-8">
-          <h2 className="text-white font-roboto text-[1.3rem] xs:text-[1.2rem] xxs:text-[1.1rem] font-bold mb-4">
-            Produtos Relacionados
-          </h2>
-          
-          <div className="grid grid-cols-2 gap-3.75 xs:gap-2.5 xxs:gap-2">
-            {relacionados.map((prod) => (
-              <PromoCard key={prod.id} produto={prod} />
-            ))}
-          </div>
-        </div>
+        {relacionados.length > 0 && (
+          <section className="mt-10 lg:mt-14">
+            <SectionHeading title="Produtos relacionados" />
+            <div className="grid grid-cols-2 gap-3 md:grid-cols-4 lg:gap-4">
+              {relacionados.map((prod) => (
+                <PromoCard key={prod.id} produto={prod} />
+              ))}
+            </div>
+          </section>
         )}
-      </div>
-
-      <Footer />
-    </main>
+      </Container>
+    </PageShell>
   );
 }

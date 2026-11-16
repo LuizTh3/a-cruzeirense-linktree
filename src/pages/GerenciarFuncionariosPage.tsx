@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Eye, EyeOff } from 'lucide-react';
 import {
   deleteColaborador,
   getTodosColaboradores,
@@ -10,7 +10,15 @@ import { cloudinaryUrl } from '../services/cloudinaryService';
 import { setores } from '../data/setores';
 import type { Colaborador } from '../types';
 import ImageUpload from '../components/ImageUpload';
-import Footer from '../components/Footer';
+import AdminShell from '../components/layout/AdminShell';
+import { PageLoading } from '../components/layout/PageShell';
+import Notice from '../components/admin/Notice';
+import { AdminEmpty, AdminField, AdminRow, AdminSplit } from '../components/admin/AdminList';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { NativeSelect, NativeSelectOption } from '@/components/ui/native-select';
 
 interface FuncionarioFormData {
   id: string;
@@ -33,9 +41,6 @@ const initialFormData: FuncionarioFormData = {
   avatarPublicId: '',
   ordem: '',
 };
-
-const inputClass =
-  'w-full px-4 py-3 rounded-lg bg-[#1a2d4a] text-white border border-white/10 focus:border-[#1a5fa8] outline-none';
 
 export default function GerenciarFuncionariosPage() {
   const [funcionarios, setFuncionarios] = useState<Colaborador[]>([]);
@@ -170,224 +175,170 @@ export default function GerenciarFuncionariosPage() {
   }
 
   if (loading) {
-    return (
-      <main className="relative max-w-120 mx-auto min-h-screen bg-container-radial border-x border-white/5 shadow-lateral flex flex-col overflow-x-hidden pb-10 px-6">
-        <div className="flex-1 flex items-center justify-center">
-          <div className="text-white">Carregando...</div>
-        </div>
-      </main>
-    );
+    return <PageLoading />;
   }
 
-  return (
-    <main className="relative max-w-120 mx-auto min-h-screen bg-container-radial border-x border-white/5 shadow-lateral flex flex-col overflow-x-hidden">
-      <div className="flex-1 px-6 pb-10">
-        <h1 className="text-[1.8rem] font-roboto font-bold text-white mt-8 mb-4">
-          Gerenciar Funcionários
-        </h1>
+  const form = (
+    <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+      <h2 className="font-semibold text-white">{editando ? 'Editar funcionário' : 'Novo funcionário'}</h2>
 
-        <p className="text-white/70 text-sm mb-6">
-          {funcionarios.length} {funcionarios.length === 1 ? 'funcionário cadastrado' : 'funcionários cadastrados'}
-        </p>
+      <AdminField>
+        <Label htmlFor="nome">Nome *</Label>
+        <Input
+          id="nome"
+          name="nome"
+          value={formData.nome}
+          onChange={handleInputChange}
+          placeholder="Nome do funcionário"
+        />
+      </AdminField>
 
-        {mensagem && (
-          <div
-            className={`w-full max-w-md p-3 rounded-lg mb-4 text-center text-sm ${
-              mensagem.includes('sucesso')
-                ? 'bg-green-600/20 text-green-400 border border-green-600/30'
-                : 'bg-red-600/20 text-red-400 border border-red-600/30'
-            }`}
-          >
-            {mensagem}
-          </div>
-        )}
-
-        <form onSubmit={handleSubmit} className="w-full max-w-md flex flex-col gap-4 mb-8">
-          <div>
-            <label className="block text-white text-sm mb-1">Nome *</label>
-            <input
-              type="text"
-              name="nome"
-              value={formData.nome}
-              onChange={handleInputChange}
-              className={inputClass}
-              placeholder="Nome do funcionário"
-            />
-          </div>
-
-          <div>
-            <label className="block text-white text-sm mb-1">Setor *</label>
-            <select name="setorSlug" value={formData.setorSlug} onChange={handleInputChange} className={inputClass}>
-              <option value="" disabled style={{ color: '#94a3b8' }}>
-                Selecione um setor
-              </option>
-              {setores.map((setor) => (
-                <option key={setor.slug} value={setor.slug} style={{ color: 'white' }}>
-                  {setor.title}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          <div className="grid grid-cols-[1fr_6rem] gap-4">
-            <div>
-              <label className="block text-white text-sm mb-1">Cargo</label>
-              <input
-                type="text"
-                name="cargo"
-                value={formData.cargo}
-                onChange={handleInputChange}
-                className={inputClass}
-                placeholder="Atendente"
-              />
-            </div>
-            <div>
-              <label className="block text-white text-sm mb-1">Posição</label>
-              <input
-                type="number"
-                name="ordem"
-                min="1"
-                value={formData.ordem}
-                onChange={handleInputChange}
-                className={inputClass}
-                placeholder="Auto"
-              />
-            </div>
-          </div>
-
-          <div>
-            <label className="block text-white text-sm mb-1">WhatsApp (DDD + número)</label>
-            <input
-              type="tel"
-              name="whatsapp"
-              value={formData.whatsapp}
-              onChange={handleInputChange}
-              className={inputClass}
-              placeholder="68999999999"
-            />
-          </div>
-
-          <ImageUpload
-            label="Foto"
-            formato="circular"
-            pasta="funcionarios"
-            value={formData.avatarSrc}
-            onUploadingChange={setEnviandoImagem}
-            onChange={(imagem) =>
-              setFormData((prev) => ({ ...prev, avatarSrc: imagem.url, avatarPublicId: imagem.publicId }))
-            }
-          />
-
-          <div className="flex gap-3 mt-2">
-            <button
-              type="submit"
-              disabled={saving || enviandoImagem}
-              className="flex-1 py-3 bg-[linear-gradient(135deg,#082d5e,#1a5fa8)] text-white rounded-lg font-bold transition-all duration-300 hover:brightness-110 disabled:opacity-50"
-            >
-              {saving ? 'Salvando...' : editando ? 'Atualizar Funcionário' : 'Adicionar Funcionário'}
-            </button>
-
-            {editando && (
-              <button
-                type="button"
-                onClick={handleCancel}
-                className="px-6 py-3 bg-gray-600 text-white rounded-lg font-bold transition-all duration-300 hover:bg-gray-500"
-              >
-                Cancelar
-              </button>
-            )}
-          </div>
-        </form>
-
-        <div className="w-full max-w-md">
-          <select
-            value={filtroSetor}
-            onChange={(e) => setFiltroSetor(e.target.value)}
-            className="w-full px-4 py-2.5 mb-4 rounded-lg bg-[#1a2d4a] text-white border border-white/10 focus:border-[#1a5fa8] outline-none text-sm"
-          >
-            <option value="" style={{ color: '#94a3b8' }}>Todos os setores</option>
-            {setores.map((setor) => (
-              <option key={setor.slug} value={setor.slug} style={{ color: 'white' }}>
-                {setor.title}
-              </option>
-            ))}
-          </select>
-
-          <h2 className="text-white font-bold text-lg mb-4">Funcionários Cadastrados</h2>
-
-          {funcionariosFiltrados.length === 0 ? (
-            <p className="text-white/50 text-center py-4">
-              {filtroSetor ? 'Nenhum funcionário neste setor' : 'Nenhum funcionário cadastrado'}
-            </p>
-          ) : (
-            <div className="flex flex-col gap-3">
-              {funcionariosFiltrados.map((funcionario) => (
-                <div
-                  key={funcionario.id}
-                  className={`flex items-center gap-3 p-3 bg-[#1a2d4a] rounded-lg border border-white/10 ${
-                    funcionario.ativo ? '' : 'opacity-50'
-                  }`}
-                >
-                  <img
-                    src={cloudinaryUrl(funcionario.avatarSrc, 120)}
-                    alt={funcionario.nome}
-                    className="w-14 h-14 rounded-full object-cover border-2 border-white/20 shrink-0"
-                  />
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2">
-                      <h3 className="text-white font-medium text-sm truncate">{funcionario.nome}</h3>
-                      {!funcionario.ativo && (
-                        <span className="bg-gray-500/30 text-gray-300 text-[0.65rem] px-1.5 py-0.5 rounded">
-                          OCULTO
-                        </span>
-                      )}
-                    </div>
-                    <p className="text-white/50 text-xs truncate">
-                      {funcionario.cargo} · {getSetorTitle(funcionario.setorSlug)}
-                    </p>
-                    <p className="text-white/40 text-xs truncate">
-                      {funcionario.whatsapp ? `+${funcionario.whatsapp}` : 'Sem WhatsApp'}
-                    </p>
-                  </div>
-                  <div className="flex gap-2">
-                    <button
-                      onClick={() => handleEdit(funcionario)}
-                      aria-label={`Editar ${funcionario.nome}`}
-                      className="p-2 bg-bg-container-top text-white rounded hover:bg-[#2a7fc8] transition-colors"
-                    >
-                      <i className="fa-solid fa-pen"></i>
-                    </button>
-                    <button
-                      onClick={() => handleToggleAtivo(funcionario)}
-                      aria-label={funcionario.ativo ? `Ocultar ${funcionario.nome}` : `Reativar ${funcionario.nome}`}
-                      title={funcionario.ativo ? 'Ocultar do site' : 'Mostrar no site'}
-                      className="p-2 bg-gray-600 text-white rounded hover:bg-gray-500 transition-colors"
-                    >
-                      <i className={`fa-solid ${funcionario.ativo ? 'fa-eye-slash' : 'fa-eye'}`}></i>
-                    </button>
-                    <button
-                      onClick={() => handleDelete(funcionario)}
-                      aria-label={`Excluir ${funcionario.nome}`}
-                      className="p-2 bg-red-600 text-white rounded hover:bg-red-500 transition-colors"
-                    >
-                      <i className="fa-solid fa-trash"></i>
-                    </button>
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
-
-        <Link
-          to="/admin/dashboard"
-          className="inline-block mt-8 px-6 py-3 bg-[linear-gradient(135deg,#082d5e,#1a5fa8)] text-white rounded-lg font-bold transition-all duration-300 hover:brightness-110"
+      <AdminField>
+        <Label htmlFor="setorSlug">Setor *</Label>
+        <NativeSelect
+          id="setorSlug"
+          name="setorSlug"
+          value={formData.setorSlug}
+          onChange={handleInputChange}
+          className="w-full"
         >
-          Voltar ao Painel
-        </Link>
+          <NativeSelectOption value="" disabled>
+            Selecione um setor
+          </NativeSelectOption>
+          {setores.map((setor) => (
+            <NativeSelectOption key={setor.slug} value={setor.slug}>
+              {setor.title}
+            </NativeSelectOption>
+          ))}
+        </NativeSelect>
+      </AdminField>
+
+      <div className="grid grid-cols-[1fr_6rem] gap-3">
+        <AdminField>
+          <Label htmlFor="cargo">Cargo</Label>
+          <Input id="cargo" name="cargo" value={formData.cargo} onChange={handleInputChange} placeholder="Atendente" />
+        </AdminField>
+        <AdminField>
+          <Label htmlFor="ordem">Posição</Label>
+          <Input
+            id="ordem"
+            name="ordem"
+            type="number"
+            min="1"
+            value={formData.ordem}
+            onChange={handleInputChange}
+            placeholder="Auto"
+          />
+        </AdminField>
       </div>
 
-      <Footer />
-    </main>
+      <AdminField>
+        <Label htmlFor="whatsapp">WhatsApp (DDD + número)</Label>
+        <Input
+          id="whatsapp"
+          name="whatsapp"
+          type="tel"
+          value={formData.whatsapp}
+          onChange={handleInputChange}
+          placeholder="68999999999"
+        />
+      </AdminField>
+
+      <ImageUpload
+        label="Foto"
+        formato="circular"
+        pasta="funcionarios"
+        value={formData.avatarSrc}
+        onUploadingChange={setEnviandoImagem}
+        onChange={(imagem) =>
+          setFormData((prev) => ({ ...prev, avatarSrc: imagem.url, avatarPublicId: imagem.publicId }))
+        }
+      />
+
+      <div className="mt-1 flex gap-2">
+        <Button type="submit" variant="secondary" size="xl" disabled={saving || enviandoImagem} className="flex-1">
+          {saving ? 'Salvando...' : editando ? 'Atualizar' : 'Adicionar'}
+        </Button>
+        {editando && (
+          <Button type="button" variant="outline" size="xl" onClick={handleCancel}>
+            Cancelar
+          </Button>
+        )}
+      </div>
+    </form>
+  );
+
+  return (
+    <AdminShell
+      title="Funcionários"
+      description={`${funcionarios.length} ${
+        funcionarios.length === 1 ? 'funcionário cadastrado' : 'funcionários cadastrados'
+      }`}
+    >
+      <Notice mensagem={mensagem} />
+
+      <AdminSplit form={form}>
+        <NativeSelect
+          aria-label="Filtrar por setor"
+          value={filtroSetor}
+          onChange={(e) => setFiltroSetor(e.target.value)}
+          className="mb-4 w-full sm:w-72"
+        >
+          <NativeSelectOption value="">Todos os setores</NativeSelectOption>
+          {setores.map((setor) => (
+            <NativeSelectOption key={setor.slug} value={setor.slug}>
+              {setor.title}
+            </NativeSelectOption>
+          ))}
+        </NativeSelect>
+
+        {funcionariosFiltrados.length === 0 ? (
+          <AdminEmpty>
+            {filtroSetor ? 'Nenhum funcionário neste setor' : 'Nenhum funcionário cadastrado'}
+          </AdminEmpty>
+        ) : (
+          <div className="grid gap-3 xl:grid-cols-2">
+            {funcionariosFiltrados.map((funcionario) => (
+              <AdminRow
+                key={funcionario.id}
+                nome={funcionario.nome}
+                className={funcionario.ativo ? '' : 'opacity-60'}
+                media={
+                  <img
+                    src={cloudinaryUrl(funcionario.avatarSrc, 120)}
+                    alt=""
+                    className="size-14 shrink-0 rounded-full border border-white/15 object-cover"
+                  />
+                }
+                onEdit={() => handleEdit(funcionario)}
+                onDelete={() => handleDelete(funcionario)}
+                actions={
+                  <Button
+                    variant="outline"
+                    size="icon-lg"
+                    onClick={() => handleToggleAtivo(funcionario)}
+                    aria-label={funcionario.ativo ? `Ocultar ${funcionario.nome}` : `Reativar ${funcionario.nome}`}
+                    title={funcionario.ativo ? 'Ocultar do site' : 'Mostrar no site'}
+                  >
+                    {funcionario.ativo ? <EyeOff /> : <Eye />}
+                  </Button>
+                }
+              >
+                <div className="flex items-center gap-2">
+                  <h3 className="truncate text-sm font-medium text-white">{funcionario.nome}</h3>
+                  {!funcionario.ativo && <Badge variant="outline">Oculto</Badge>}
+                </div>
+                <p className="truncate text-xs text-white/60">
+                  {funcionario.cargo} · {getSetorTitle(funcionario.setorSlug)}
+                </p>
+                <p className="truncate text-xs text-white/45">
+                  {funcionario.whatsapp ? `+${funcionario.whatsapp}` : 'Sem WhatsApp'}
+                </p>
+              </AdminRow>
+            ))}
+          </div>
+        )}
+      </AdminSplit>
+    </AdminShell>
   );
 }

@@ -1,22 +1,24 @@
+import { Link } from 'react-router-dom';
+import { ChevronRight, Tags } from 'lucide-react';
+
 interface SetorPromoCardProps {
   setorSlug: string;
 }
 
 export default function SetorPromoCard({ setorSlug }: SetorPromoCardProps) {
   return (
-    <a 
-      href={`/setor/promocoes?setor=${setorSlug}`}
-      className="flex items-center justify-between gap-3 bg-[#0d213d] rounded-lg overflow-hidden no-underline transition-all duration-300 hover:bg-[#132d4d] border border-white/5 px-4 py-3"
+    <Link
+      to={`/setor/promocoes?setor=${setorSlug}`}
+      className="flex items-center gap-3 rounded-xl border border-white/10 bg-surface-card px-4 py-3.5 transition-colors hover:border-white/25 hover:bg-surface-raised focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-action"
     >
-      <div className="flex items-center gap-3">
-        <div className="bg-action w-10 h-10 xs:w-8 xs:h-8 xxs:w-8 xxs:h-8 rounded-full flex items-center justify-center">
-          <i className="fa-solid fa-tags text-white text-sm"></i>
-        </div>
-        <span className="text-white font-roboto text-[0.9rem] xs:text-[0.8rem] xxs:text-[0.75rem] font-medium">
-          Promoções e Ofertas
-        </span>
-      </div>
-      <i className="fa-solid fa-chevron-right text-white/50 text-sm"></i>
-    </a>
+      <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-action text-surface-card">
+        <Tags className="size-5" />
+      </span>
+      <span className="grow">
+        <span className="block font-semibold text-white">Promoções e ofertas</span>
+        <span className="block text-sm text-white/65">Veja os produtos em destaque deste setor</span>
+      </span>
+      <ChevronRight className="size-5 shrink-0 text-white/40" />
+    </Link>
   );
 }

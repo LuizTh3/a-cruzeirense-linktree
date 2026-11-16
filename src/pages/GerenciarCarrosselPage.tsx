@@ -1,11 +1,17 @@
 import { useEffect, useState, useRef } from 'react';
-import { Link } from 'react-router-dom';
+import { GripVertical } from 'lucide-react';
 import { getSlides, saveSlide, deleteSlide, reorderSlides } from '../services/carouselService';
 import { setores } from '../data/setores';
 import type { CarouselSlide } from '../types';
-import Footer from '../components/Footer';
 import ImageUpload from '../components/ImageUpload';
 import { cloudinaryUrl } from '../services/cloudinaryService';
+import AdminShell from '../components/layout/AdminShell';
+import { PageLoading } from '../components/layout/PageShell';
+import Notice from '../components/admin/Notice';
+import { AdminEmpty, AdminField, AdminRow, AdminSplit } from '../components/admin/AdminList';
+import { Button } from '@/components/ui/button';
+import { Label } from '@/components/ui/label';
+import { NativeSelect, NativeSelectOption } from '@/components/ui/native-select';
 
 const MAX_SLIDES = 5;
 
@@ -32,6 +38,7 @@ export default function GerenciarCarrosselPage() {
   const [editando, setEditando] = useState(false);
   const [mensagem, setMensagem] = useState('');
   const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
+  const [ordemAlterada, setOrdemAlterada] = useState(false);
   const dragOverIndex = useRef<number | null>(null);
 
   useEffect(() => {
@@ -42,16 +49,12 @@ export default function GerenciarCarrosselPage() {
     try {
       const data = await getSlides();
       setSlides(data);
+      setOrdemAlterada(false);
     } catch (error) {
       console.error('Erro ao buscar slides:', error);
     } finally {
       setLoading(false);
     }
-  }
-
-  function handleInputChange(e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) {
-    const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
   }
 
   function handleEdit(slide: CarouselSlide) {
@@ -63,11 +66,12 @@ export default function GerenciarCarrosselPage() {
     });
     setEditando(true);
     setMensagem('');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    
+
     if (!formData.src) {
       setMensagem('Envie a imagem do slide');
       return;
@@ -104,7 +108,7 @@ export default function GerenciarCarrosselPage() {
 
   async function handleDelete(id: string) {
     if (!confirm('Tem certeza que deseja excluir este slide?')) return;
-    
+
     try {
       await deleteSlide(id);
       setMensagem('Slide excluído com sucesso!');
@@ -121,27 +125,24 @@ export default function GerenciarCarrosselPage() {
     setMensagem('');
   }
 
-  function handleDragStart(index: number) {
-    setDraggedIndex(index);
-  }
-
   function handleDragOver(e: React.DragEvent, index: number) {
     e.preventDefault();
     dragOverIndex.current = index;
   }
 
   function handleDragEnd() {
-    if (draggedIndex === null || dragOverIndex.current === null) return;
-    if (draggedIndex === dragOverIndex.current) return;
-
-    const newSlides = [...slides];
-    const draggedSlide = newSlides[draggedIndex];
-    newSlides.splice(draggedIndex, 1);
-    newSlides.splice(dragOverIndex.current, 0, draggedSlide);
-
-    setSlides(newSlides);
+    const origem = draggedIndex;
+    const destino = dragOverIndex.current;
     setDraggedIndex(null);
     dragOverIndex.current = null;
+    if (origem === null || destino === null || origem === destino) return;
+
+    const newSlides = [...slides];
+    const [draggedSlide] = newSlides.splice(origem, 1);
+    newSlides.splice(destino, 0, draggedSlide);
+
+    setSlides(newSlides);
+    setOrdemAlterada(true);
   }
 
   async function handleSaveOrder() {
@@ -167,155 +168,102 @@ export default function GerenciarCarrosselPage() {
   }
 
   if (loading) {
-    return (
-      <main className="relative max-w-120 mx-auto min-h-screen bg-container-radial border-x border-white/5 shadow-lateral flex flex-col overflow-x-hidden pb-10 px-6">
-        <div className="flex-1 flex items-center justify-center">
-          <div className="text-white">Carregando...</div>
-        </div>
-      </main>
-    );
+    return <PageLoading />;
   }
 
+  const form = (
+    <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+      <h2 className="font-semibold text-white">{editando ? 'Editar slide' : 'Novo slide'}</h2>
+
+      <ImageUpload
+        label="Imagem *"
+        pasta="carrossel"
+        value={formData.src}
+        onUploadingChange={setEnviandoImagem}
+        onChange={(imagem) =>
+          setFormData(prev => ({ ...prev, src: imagem.url, srcPublicId: imagem.publicId }))
+        }
+      />
+
+      <AdminField>
+        <Label htmlFor="href">Setor de destino</Label>
+        <NativeSelect
+          id="href"
+          name="href"
+          value={formData.href}
+          onChange={(e) => setFormData(prev => ({ ...prev, href: e.target.value }))}
+          className="w-full"
+        >
+          <NativeSelectOption value="">Sem redirecionamento</NativeSelectOption>
+          {setores.map((setor) => (
+            <NativeSelectOption key={setor.slug} value={`/setor/${setor.slug}`}>
+              {setor.title}
+            </NativeSelectOption>
+          ))}
+        </NativeSelect>
+      </AdminField>
+
+      <div className="mt-1 flex gap-2">
+        <Button type="submit" variant="secondary" size="xl" disabled={saving || enviandoImagem} className="flex-1">
+          {saving ? 'Salvando...' : editando ? 'Atualizar slide' : 'Adicionar slide'}
+        </Button>
+        {editando && (
+          <Button type="button" variant="outline" size="xl" onClick={handleCancel}>
+            Cancelar
+          </Button>
+        )}
+      </div>
+    </form>
+  );
+
   return (
-    <main className="relative max-w-120 mx-auto min-h-screen bg-container-radial border-x border-white/5 shadow-lateral flex flex-col overflow-x-hidden">
-      <div className="flex-1 px-6 pb-10">
-      <h1 className="text-[1.8rem] font-roboto font-bold text-white mt-8 mb-4">
-        Gerenciar Carrossel
-      </h1>
+    <AdminShell title="Carrossel" description={`${slides.length}/${MAX_SLIDES} slides cadastrados`}>
+      <Notice mensagem={mensagem} />
 
-      <p className="text-white/70 text-sm mb-6">
-        {slides.length}/{MAX_SLIDES} slides cadastrados
-      </p>
-
-      <p className="text-white/50 text-xs mb-4 text-center max-w-md">
-        Arraste os cards para reordenar. Clique em "Salvar Ordem" após reordenar.
-      </p>
-
-      {mensagem && (
-        <div className={`w-full max-w-md p-3 rounded-lg mb-4 text-center text-sm ${
-          mensagem.includes('sucesso') 
-            ? 'bg-green-600/20 text-green-400 border border-green-600/30' 
-            : 'bg-red-600/20 text-red-400 border border-red-600/30'
-        }`}>
-          {mensagem}
-        </div>
-      )}
-
-      <form onSubmit={handleSubmit} className="w-full max-w-md flex flex-col gap-4 mb-8">
-        <ImageUpload
-          label="Imagem *"
-          pasta="carrossel"
-          value={formData.src}
-          onUploadingChange={setEnviandoImagem}
-          onChange={(imagem) =>
-            setFormData(prev => ({ ...prev, src: imagem.url, srcPublicId: imagem.publicId }))
-          }
-        />
-
-        <div>
-          <label className="block text-white text-sm mb-1">Setor de Destino</label>
-          <select
-            name="href"
-            value={formData.href}
-            onChange={handleInputChange}
-            className="w-full px-4 py-3 rounded-lg bg-[#1a2d4a] text-white border border-white/10 focus:border-[#1a5fa8] outline-none"
-          >
-            <option value="" style={{ color: 'White' }}>Sem redirecionamento</option>
-            {setores.map((setor) => (
-              <option key={setor.slug} value={`/setor/${setor.slug}`} style={{ color: 'White' }}>
-                {setor.title}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        <div className="flex gap-3 mt-2">
-          <button
-            type="submit"
-            disabled={saving || enviandoImagem}
-            className="flex-1 py-3 bg-[linear-gradient(135deg,#082d5e,#1a5fa8)] text-white rounded-lg font-bold transition-all duration-300 hover:brightness-110 disabled:opacity-50"
-          >
-            {saving ? 'Salvando...' : editando ? 'Atualizar Slide' : 'Adicionar Slide'}
-          </button>
-          
-          {editando && (
-            <button
-              type="button"
-              onClick={handleCancel}
-              className="px-6 py-3 bg-gray-600 text-white rounded-lg font-bold transition-all duration-300 hover:bg-gray-500"
-            >
-              Cancelar
-            </button>
+      <AdminSplit form={form}>
+        <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
+          <p className="text-sm text-white/60">Arraste os slides para reordenar e depois salve a ordem.</p>
+          {slides.length > 1 && (
+            <Button size="lg" onClick={handleSaveOrder} disabled={!ordemAlterada}>
+              Salvar ordem
+            </Button>
           )}
         </div>
-      </form>
 
-      {slides.length > 1 && (
-        <button
-          onClick={handleSaveOrder}
-          className="mb-4 px-6 py-2 bg-green-600 text-white rounded-lg font-bold transition-all duration-300 hover:bg-green-500"
-        >
-          Salvar Ordem
-        </button>
-      )}
-
-      <div className="w-full max-w-md">
-        <h2 className="text-white font-bold text-lg mb-4">Slides Cadastrados</h2>
-        
         {slides.length === 0 ? (
-          <p className="text-white/50 text-center py-4">Nenhum slide cadastrado</p>
+          <AdminEmpty>Nenhum slide cadastrado</AdminEmpty>
         ) : (
           <div className="flex flex-col gap-3">
             {slides.map((slide, index) => (
-              <div
+              <AdminRow
                 key={slide.id}
+                nome={`slide ${index + 1}`}
                 draggable
-                onDragStart={() => handleDragStart(index)}
+                onDragStart={() => setDraggedIndex(index)}
                 onDragOver={(e) => handleDragOver(e, index)}
                 onDragEnd={handleDragEnd}
-                className={`flex items-center gap-3 p-3 bg-[#1a2d4a] rounded-lg border border-white/10 cursor-move ${
-                  draggedIndex === index ? 'opacity-50' : ''
-                }`}
+                className={`cursor-move ${draggedIndex === index ? 'opacity-50' : ''}`}
+                media={
+                  <>
+                    <GripVertical className="size-4 shrink-0 text-white/35" />
+                    <span className="w-4 shrink-0 text-center text-sm tabular-nums text-white/50">{index + 1}</span>
+                    <img
+                      src={cloudinaryUrl(slide.src, 240)}
+                      alt=""
+                      className="h-14 w-24 shrink-0 rounded-md object-cover sm:h-16 sm:w-28"
+                    />
+                  </>
+                }
+                onEdit={() => handleEdit(slide)}
+                onDelete={() => handleDelete(slide.id)}
               >
-                <span className="text-white/50 text-sm w-6">{index + 1}</span>
-                <img
-                  src={cloudinaryUrl(slide.src, 240)}
-                  alt={slide.alt}
-                  className="w-24 h-14 object-cover rounded"
-                />
-                <div className="flex-1 min-w-0">
-                  <p className="text-white text-sm truncate">{getSetorTitle(slide.href)}</p>
-                  <p className="text-white/50 text-xs truncate">{slide.href}</p>
-                </div>
-                <div className="flex gap-2">
-                  <button
-                    onClick={() => handleEdit(slide)}
-                    className="p-2 bg-bg-container-top text-white rounded hover:bg-[#2a7fc8] transition-colors"
-                  >
-                    <i className="fa-solid fa-pen"></i>
-                  </button>
-                  <button
-                    onClick={() => handleDelete(slide.id)}
-                    className="p-2 bg-red-600 text-white rounded hover:bg-red-500 transition-colors"
-                  >
-                    <i className="fa-solid fa-trash"></i>
-                  </button>
-                </div>
-              </div>
+                <p className="truncate text-sm font-medium text-white">{getSetorTitle(slide.href)}</p>
+                {slide.href && <p className="truncate text-xs text-white/50">{slide.href}</p>}
+              </AdminRow>
             ))}
           </div>
         )}
-      </div>
-
-      <Link
-        to="/admin/dashboard"
-        className="mt-8 px-6 py-3 bg-[linear-gradient(135deg,#082d5e,#1a5fa8)] text-white rounded-lg font-bold transition-all duration-300 hover:brightness-110"
-      >
-        Voltar ao Painel
-      </Link>
-      </div>
-
-      <Footer />
-    </main>
+      </AdminSplit>
+    </AdminShell>
   );
 }

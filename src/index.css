@@ -1,61 +1,158 @@
 @import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+@import "@fontsource-variable/geist";
 
-/* Breakpoints customizados para telas pequenas */
+@custom-variant dark (&:is(.dark *));
+
+/* Breakpoints extras para telas muito pequenas */
 @custom-variant xs (@media (max-width: 400px));
 @custom-variant xxs (@media (max-width: 360px));
 
-/* 1. Injetando suas variáveis no Tema do Tailwind v4 */
+/* 1. Paleta da marca (inalterada) */
 @theme {
-  /* Cores de Fundo (Body) */
+  /* Fundo */
   --color-bg-body-center: #0f4c8a;
   --color-bg-body-mid: #0c3f73;
   --color-bg-body-edge: #00103c;
 
-  /* Cores de Fundo (Container Mobile) */
   --color-bg-container-top: #1a5fa8;
   --color-bg-container-mid: #0e4480;
   --color-bg-container-bottom: #030f1f;
 
-  /* Superfícies e Botões */
+  /* Superfícies e ações */
   --color-surface-card: #122036;
+  --color-surface-raised: #1a2d4a;
+  --color-surface-deep: #0a1929;
+  --color-brand: #1a5fa8;
+  --color-brand-dark: #082d5e;
   --color-action: #fbbc04;
   --color-action-hover: #e5a900;
-  --color-whatsapp: #25D366;
+  --color-whatsapp: #25d366;
+  --color-whatsapp-hover: #1da851;
+  --color-price: #4caf50;
+  --color-discount: #e53935;
 
-  /* Fontes */
-  --font-roboto: "Roboto", sans-serif;
-  --font-segoe: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  /* Tipografia: uma única família em todo o site */
+  --font-roboto: var(--font-sans);
+  --font-segoe: var(--font-sans);
 }
 
-/* 2. Reset Base e Estilo do Body (Global) */
+/* 2. Tokens do shadcn apontando para a paleta acima (o site é sempre escuro) */
+:root,
+.dark {
+  --background: #030f1f;
+  --foreground: #ffffff;
+  --card: #122036;
+  --card-foreground: #ffffff;
+  --popover: #122036;
+  --popover-foreground: #ffffff;
+  --primary: #fbbc04;
+  --primary-foreground: #122036;
+  --secondary: #1a5fa8;
+  --secondary-foreground: #ffffff;
+  --muted: #1a2d4a;
+  --muted-foreground: rgb(255 255 255 / 0.65);
+  --accent: #1a2d4a;
+  --accent-foreground: #ffffff;
+  --destructive: #e53935;
+  --border: rgb(255 255 255 / 0.1);
+  --input: rgb(255 255 255 / 0.16);
+  --ring: #1a5fa8;
+  --chart-1: #1a5fa8;
+  --chart-2: #25d366;
+  --chart-3: #fbbc04;
+  --chart-4: #0e4480;
+  --chart-5: #e53935;
+  --radius: 0.75rem;
+  --sidebar: #0a1929;
+  --sidebar-foreground: #ffffff;
+  --sidebar-primary: #fbbc04;
+  --sidebar-primary-foreground: #122036;
+  --sidebar-accent: #1a2d4a;
+  --sidebar-accent-foreground: #ffffff;
+  --sidebar-border: rgb(255 255 255 / 0.1);
+  --sidebar-ring: #1a5fa8;
+}
+
+@theme inline {
+  --font-heading: var(--font-sans);
+  --font-sans: 'Geist Variable', "Segoe UI", system-ui, sans-serif;
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar: var(--sidebar);
+  --color-chart-5: var(--chart-5);
+  --color-chart-4: var(--chart-4);
+  --color-chart-3: var(--chart-3);
+  --color-chart-2: var(--chart-2);
+  --color-chart-1: var(--chart-1);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --color-foreground: var(--foreground);
+  --color-background: var(--background);
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-2xl: calc(var(--radius) * 1.8);
+  --radius-3xl: calc(var(--radius) * 2.2);
+  --radius-4xl: calc(var(--radius) * 2.6);
+}
+
+/* 3. Base */
 @layer base {
-  body {
-    font-family: var(--font-segoe);
-    color: white;
-    /* Gradiente radial do fundo da tela (fora do container mobile) */
-    background: radial-gradient(
-      ellipse at center,
-      var(--color-bg-body-center) 0%,
-      var(--color-bg-body-mid) 45%,
-      var(--color-bg-body-edge) 100%
-    );
-    background-attachment: fixed;
-    min-height: 100vh;
+  * {
+    @apply border-border outline-ring/50;
   }
-}
 
-/* 3. Utilitários Customizados para os Gradientes e Sombras Complexas */
-@layer utilities {
-  .bg-container-radial {
-    background: radial-gradient(
-      ellipse at 50% 25%,
+  html {
+    @apply font-sans;
+    color-scheme: dark;
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply text-foreground antialiased;
+    min-height: 100vh;
+    background-color: var(--color-bg-container-bottom);
+    /* Mesmo gradiente azul de sempre, agora ocupando a largura toda */
+    background-image: radial-gradient(
+      ellipse 120% 70% at 50% 0%,
       var(--color-bg-container-top) 0%,
       var(--color-bg-container-mid) 40%,
       var(--color-bg-container-bottom) 100%
     );
+    background-repeat: no-repeat;
+    background-attachment: fixed;
   }
-  
-  .shadow-lateral {
-    box-shadow: -10px 0 50px rgba(0, 0, 0, 0.5), 10px 0 50px rgba(0, 0, 0, 0.5);
+
+  button:not(:disabled),
+  [role="button"]:not(:disabled) {
+    cursor: pointer;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
   }
 }

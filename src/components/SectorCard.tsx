@@ -1,50 +1,38 @@
-// src/components/SectorCard.tsx
+import { Link } from 'react-router-dom';
 
-// 1. Criamos o "contrato" das propriedades (Props)
 interface SectorCardProps {
   href: string;
   imgSrc: string;
   imgAlt: string;
   title: string;
-  tags: string;
   desc: string;
 }
 
-// 2. Aplicamos a interface ao componente
-export default function SectorCard({ href, imgSrc, imgAlt, title, tags, desc }: SectorCardProps) {
+export default function SectorCard({ href, imgSrc, imgAlt, title, desc }: SectorCardProps) {
   return (
-    <a 
-      href={href} 
-      className="flex flex-col bg-surface-card rounded-xl overflow-hidden no-underline transition-all duration-300 shadow-[0_4px_10px_rgba(0,0,0,0.25)] hover:-translate-y-1.25 hover:shadow-[0_8px_20px_rgba(0,0,0,0.4)] border border-white/5"
+    <Link
+      to={href}
+      className="group flex flex-col overflow-hidden rounded-xl border border-white/10 bg-surface-card transition-colors hover:border-white/25 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-action"
     >
-      <img 
-        src={imgSrc} 
-        alt={imgAlt} 
-        className="w-full h-27.5 xs:h-24 xxs:h-22 object-cover block"
-        loading="eager"
-        fetchPriority="high"
-        decoding="async"
-        width={300}
-        height={180}
-      />
-      
-      <div className="p-3 flex flex-col grow">
-        <h3 className="text-white font-roboto text-[1.1rem] xs:text-[1rem] xxs:text-[0.9rem] font-semibold mb-0.5 text-left">
-          {title}
-        </h3>
-        
-        <span className="text-[#6b7c93] text-[0.65rem] xs:text-[0.6rem] xxs:text-[0.55rem] mb-2 text-left tracking-[0.5px]">
-          {tags}
-        </span>
-        
-        <p className="text-[#d1d9e2] text-[0.75rem] xs:text-[0.7rem] xxs:text-[0.65rem] leading-[1.3] mb-3.75 text-left grow">
-          {desc}
-        </p>
-        
-        <div className="bg-action text-surface-card text-center py-2 rounded-lg font-bold text-[0.9rem] xs:text-[0.8rem] xxs:text-[0.75rem] mt-auto transition-colors duration-200 hover:bg-action-hover">
-          Acesse agora
-        </div>
+      <div className="aspect-[16/10] overflow-hidden">
+        <img
+          src={imgSrc}
+          alt={imgAlt}
+          className="size-full object-cover transition-transform duration-500 group-hover:scale-105"
+          loading="lazy"
+          decoding="async"
+          width={300}
+          height={188}
+        />
       </div>
-    </a>
+
+      <div className="flex grow flex-col p-3 md:p-4">
+        <h3 className="text-[0.95rem] font-semibold leading-snug text-white md:text-base">{title}</h3>
+        <p className="mt-1 grow text-xs leading-relaxed text-white/70 md:text-sm">{desc}</p>
+        <span className="mt-3 inline-flex h-9 items-center justify-center rounded-lg bg-action text-sm font-semibold text-surface-card transition-colors group-hover:bg-action-hover">
+          Acesse agora
+        </span>
+      </div>
+    </Link>
   );
 }

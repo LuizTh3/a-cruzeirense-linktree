@@ -1,11 +1,12 @@
-import { useParams, Navigate, Link } from 'react-router-dom';
+import { useParams, Navigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { useSetor } from '../hooks/useSetor';
+import PageShell, { PageLoading } from '../components/layout/PageShell';
+import Hero from '../components/layout/Hero';
+import Container from '../components/layout/Container';
+import SectionHeading from '../components/layout/SectionHeading';
 import CollabCard from '../components/CollabCard';
-import SocialLinks from '../components/SocialLinks';
-import Header from '../components/Header';
-import Footer from '../components/Footer';
-import { promoWhatsAppGroup } from '../constants/socialLinks';
+import SocialSection from '../components/SocialLinks';
 import SetorPromoCard from '../components/SetorPromoCard';
 import { useRastrearAcesso } from '../hooks/useRastrearAcesso';
 import { getProdutosPorSetor } from '../services/promocoesService';
@@ -33,94 +34,55 @@ export default function SectorPage() {
     verificarPromocoes();
   }, [slug]);
 
-  if (loadingSetor || loadingPromocoes) {
-    return (
-      <main className="relative max-w-120 mx-auto min-h-screen bg-container-radial border-x border-white/5 shadow-lateral flex flex-col items-center justify-center overflow-x-hidden pb-10">
-        <div className="w-8 h-8 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
-      </main>
-    );
-  }
-
   if (error || !setor) {
     return <Navigate to="/" replace />;
   }
 
+  if (loadingSetor || loadingPromocoes) {
+    return <PageLoading />;
+  }
+
   return (
-    <main className="
-      relative max-w-120 mx-auto min-h-screen
-      bg-container-radial border-x border-white/5
-      shadow-lateral flex flex-col
-      overflow-x-hidden
-    ">
-      <Header backgroundImage={setor.heroImage} variant="minimal" />
+    <PageShell>
+      <Hero
+        image={setor.heroImage}
+        title={setor.title}
+        subtitle={setor.subtitle}
+        back={{ to: '/', label: 'Voltar para início' }}
+      />
 
-      <div className="flex-1 px-4 xs:px-3 xxs:px-3 pb-10">
+      <Container>
+        {temPromocoes && (
+          <div className="mb-10 max-w-xl">
+            <SetorPromoCard setorSlug={slug!} />
+          </div>
+        )}
 
-      <div className="relative z-10 -mt-20 text-center w-full px-5 mb-4">
-        <Link
-          to="/"
-          className="inline-flex items-center gap-2 text-white/80 hover:text-white transition-colors text-sm mb-2"
-        >
-          <i className="fa-solid fa-arrow-left"></i>
-          Voltar para início
-        </Link>
-        <h2 className="
-          text-[2rem] xs:text-[1.75rem] xxs:text-[1.6rem] font-roboto font-bold text-white
-          drop-shadow-[2px_2px_10px_rgba(0,0,0,0.8)]
-          mb-1
-        ">
-          {setor.title}
-        </h2>
-        <p className="text-[1.3rem] xs:text-[1.1rem] xxs:text-[1rem] text-white drop-shadow-[1px_1px_5px_rgba(0,0,0,0.8)]">
-          {setor.subtitle}
-        </p>
-      </div>
+        <section>
+          <SectionHeading
+            title="Nossa equipe"
+            subtitle={
+              slug === 'tecidos'
+                ? 'Fale com uma de nossas colaboradoras'
+                : 'Fale com um de nossos colaboradores'
+            }
+          />
 
-      {temPromocoes && (
-        <div className="w-full px-4 xs:px-3 xxs:px-3 mt-4">
-          <SetorPromoCard setorSlug={slug!} />
-        </div>
-      )}
+          {colaboradores.length === 0 ? (
+            <p className="rounded-xl border border-white/10 bg-surface-card p-6 text-center text-white/70">
+              Nenhum atendente disponível neste setor no momento.
+            </p>
+          ) : (
+            <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
+              {colaboradores.map((colab) => (
+                <CollabCard key={colab.id} colaborador={colab} setorTitle={setor.title} setorSlug={setor.slug} />
+              ))}
+            </div>
+          )}
+        </section>
+      </Container>
 
-      <p className="
-        text-center font-roboto w-full
-        pt-8 font-medium text-[1.1rem] opacity-80
-      ">
-        {slug === 'tecidos' ? 'Fale com uma de nossas colaboradoras' : 'Fale com um de nossos colaboradores'}
-      </p>
-
-      <div className="flex flex-col gap-3.75 xs:gap-2.5 xxs:gap-2 w-full px-8.5 xs:px-6 xxs:px-5 box-border mt-5">
-        {colaboradores.map((colab) => (
-          <CollabCard key={colab.id} colaborador={colab} setorTitle={setor.title} setorSlug={setor.slug} />
-        ))}
-      </div>
-
-      <div className="flex flex-col items-center mt-8 mb-2 font-roboto px-4 xs:px-3 xxs:px-3 w-full">
-        <h2 className="text-center font-bold uppercase text-[1.1rem] xs:text-[1rem] xxs:text-[0.9rem] tracking-wider">
-          Acesse nossas Redes sociais
-        </h2>
-        <p className="text-center font-medium text-[0.95rem] opacity-80 mt-1">
-          Confira as melhores promoções da cidade
-        </p>
-      </div>
-
-      <div className="flex flex-col gap-3.75 xs:gap-2.5 xxs:gap-2 w-full px-4 xs:px-3 xxs:px-3 my-5">
-        <SocialLinks />
-      </div>
-
-      <div className="w-full mt-4 mb-10 px-4 xs:px-3 xxs:px-3">
-        <a
-          href={promoWhatsAppGroup}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="flex items-center justify-center w-full py-4.5 bg-[linear-gradient(135deg,#082d5e,#1a5fa8)] text-white no-underline rounded-2xl font-roboto font-bold uppercase text-[0.85rem] tracking-[1px] border-none transition-all duration-300 ease-[cubic-bezier(0.25,0.8,0.25,1)] hover:brightness-110 hover:-translate-y-0.75 hover:shadow-[0_8px_25px_rgba(0,86,179,0.4)]"
-        >
-          Grupo de Clientes (Promoções)
-        </a>
-      </div>
-      </div>
-
-      <Footer />
-    </main>
+      <SocialSection />
+    </PageShell>
   );
 }

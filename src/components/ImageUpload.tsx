@@ -1,4 +1,7 @@
 import { useRef, useState } from 'react';
+import { ImageIcon, Upload } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Label } from '@/components/ui/label';
 import {
   ACCEPT_IMAGENS,
   cloudinaryUrl,
@@ -57,57 +60,49 @@ export default function ImageUpload({
 
   const previewClass =
     formato === 'circular'
-      ? 'w-24 h-24 rounded-full object-cover border-2 border-white/20'
-      : 'max-h-40 max-w-full rounded-lg object-contain border border-white/10';
+      ? 'size-24 rounded-full border border-white/15 object-cover'
+      : 'max-h-40 max-w-full rounded-lg border border-white/10 object-contain';
 
   return (
-    <div>
-      <label className="block text-white text-sm mb-1">{label}</label>
+    <div className="grid gap-1.5">
+      <Label>{label}</Label>
 
-      <div className="flex flex-col items-center gap-3 p-4 rounded-lg bg-[#1a2d4a] border border-dashed border-white/20">
+      <div className="flex flex-col items-center gap-3 rounded-lg border border-dashed border-white/20 bg-input/30 p-4">
         {value ? (
           <img src={cloudinaryUrl(value, 600)} alt="Pré-visualização" className={previewClass} />
         ) : (
-          <div className="flex flex-col items-center text-white/40 py-2">
-            <i className="fa-solid fa-image text-3xl mb-1"></i>
+          <div className="flex flex-col items-center py-2 text-white/40">
+            <ImageIcon className="mb-1 size-8" />
             <span className="text-xs">Nenhuma imagem selecionada</span>
           </div>
         )}
 
         {enviando && (
           <div className="w-full">
-            <div className="w-full h-2 bg-white/10 rounded-full overflow-hidden">
-              <div
-                className="h-full bg-[#1a5fa8] transition-all duration-200"
-                style={{ width: `${progresso}%` }}
-              />
+            <div className="h-1.5 w-full overflow-hidden rounded-full bg-white/10">
+              <div className="h-full bg-brand transition-all duration-200" style={{ width: `${progresso}%` }} />
             </div>
-            <p className="text-white/60 text-xs text-center mt-1">Enviando... {progresso}%</p>
+            <p className="mt-1 text-center text-xs text-white/60">Enviando... {progresso}%</p>
           </div>
         )}
 
-        <button
+        <Button
           type="button"
+          variant="secondary"
+          size="lg"
           disabled={enviando}
           onClick={() => inputRef.current?.click()}
-          className="px-4 py-2 bg-[#1a5fa8] text-white rounded-lg text-sm font-bold transition-all duration-300 hover:brightness-110 disabled:opacity-50"
         >
-          <i className="fa-solid fa-upload mr-2"></i>
+          <Upload />
           {value ? 'Trocar imagem' : 'Escolher imagem'}
-        </button>
+        </Button>
 
-        <input
-          ref={inputRef}
-          type="file"
-          accept={ACCEPT_IMAGENS}
-          onChange={handleFile}
-          className="hidden"
-        />
+        <input ref={inputRef} type="file" accept={ACCEPT_IMAGENS} onChange={handleFile} className="hidden" />
 
-        <p className="text-white/40 text-xs">JPG, PNG ou WEBP, até 5 MB</p>
+        <p className="text-xs text-white/40">JPG, PNG ou WEBP, até 5 MB</p>
       </div>
 
-      {erro && <p className="text-red-400 text-xs mt-1">{erro}</p>}
+      {erro && <p className="text-xs text-red-400">{erro}</p>}
     </div>
   );
 }

@@ -2,6 +2,7 @@ import { onAuthStateChanged } from 'firebase/auth';
 import { auth } from '../lib/firebase';
 import { useEffect, useState } from 'react';
 import { Navigate } from 'react-router-dom';
+import { PageLoading } from './layout/PageShell';
 
 interface RequireAuthProps {
   children: React.ReactNode;
@@ -21,11 +22,7 @@ export default function RequireAuth({ children }: RequireAuthProps) {
   }, []);
 
   if (loading) {
-    return (
-      <div className="min-h-screen bg-container-radial flex items-center justify-center">
-        <div className="w-8 h-8 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
-      </div>
-    );
+    return <PageLoading />;
   }
 
   return isAuthenticated ? <>{children}</> : <Navigate to="/admin" replace />;

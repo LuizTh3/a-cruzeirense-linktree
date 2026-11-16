@@ -1,12 +1,16 @@
 import { useEffect, useState, useMemo } from 'react';
-import { Link } from 'react-router-dom';
+import { Star } from 'lucide-react';
 import { buscarAvaliacoes } from '../services/avaliacoesService';
 import type { AvaliacaoFirestore } from '../services/avaliacoesService';
 import { getAllSetores } from '../services/setoresService';
 import { AVATAR_PADRAO, getTodosColaboradores } from '../services/colaboradoresService';
 import { nomesColaboradoresLegado } from '../data/colaboradoresLegado';
 import { cloudinaryUrl } from '../services/cloudinaryService';
-import Footer from '../components/Footer';
+import AdminShell from '../components/layout/AdminShell';
+import { PageLoading } from '../components/layout/PageShell';
+import Pagination from '../components/admin/Pagination';
+import { AdminEmpty } from '../components/admin/AdminList';
+import { NativeSelect, NativeSelectOption } from '@/components/ui/native-select';
 
 interface AvaliacaoCompleta extends AvaliacaoFirestore {
   nomeColaborador: string;
@@ -124,209 +128,99 @@ export default function AvaliacoesPage() {
     return avaliacoesFiltradas.slice(inicio, fim);
   }, [avaliacoesFiltradas, paginaAtual]);
 
-  const irParaPagina = (pagina: number) => {
-    if (pagina >= 1 && pagina <= totalPaginas) {
-      setPaginaAtual(pagina);
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
-  };
-
-  const getIntervaloPaginas = () => {
-    const paginas: (number | string)[] = [];
-    const maxVisiveis = 5;
-
-    if (totalPaginas <= maxVisiveis) {
-      for (let i = 1; i <= totalPaginas; i++) {
-        paginas.push(i);
-      }
-    } else {
-      if (paginaAtual <= 3) {
-        for (let i = 1; i <= 4; i++) paginas.push(i);
-        paginas.push('...');
-        paginas.push(totalPaginas);
-      } else if (paginaAtual >= totalPaginas - 2) {
-        paginas.push(1);
-        paginas.push('...');
-        for (let i = totalPaginas - 3; i <= totalPaginas; i++) paginas.push(i);
-      } else {
-        paginas.push(1);
-        paginas.push('...');
-        for (let i = paginaAtual - 1; i <= paginaAtual + 1; i++) paginas.push(i);
-        paginas.push('...');
-        paginas.push(totalPaginas);
-      }
-    }
-
-    return paginas;
-  };
-
   if (loading) {
-    return (
-      <main className="relative max-w-120 mx-auto min-h-screen bg-container-radial border-x border-white/5 shadow-lateral flex flex-col items-center justify-center overflow-x-hidden pb-10">
-        <div className="w-8 h-8 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
-      </main>
-    );
+    return <PageLoading />;
   }
 
   return (
-    <main className="
-      relative max-w-120 mx-auto min-h-screen
-      bg-container-radial border-x border-white/5
-      shadow-lateral flex flex-col
-      overflow-x-hidden
-    ">
-      <div className="flex-1 px-6 pb-10">
-        <Link
-          to="/admin/dashboard"
-          className="self-start mt-6 text-white/70 hover:text-white transition-colors flex items-center gap-2"
+    <AdminShell
+      title="Avaliações"
+      description={`${avaliacoesFiltradas.length} ${
+        avaliacoesFiltradas.length === 1 ? 'avaliação encontrada' : 'avaliações encontradas'
+      }`}
+    >
+      <div className="mb-5 flex flex-col gap-3 sm:flex-row">
+        <NativeSelect
+          aria-label="Filtrar por funcionário"
+          value={filtroColaborador}
+          onChange={(e) => {
+            setFiltroColaborador(e.target.value);
+            setPaginaAtual(1);
+          }}
+          className="w-full sm:w-64"
         >
-          <i className="fa-solid fa-arrow-left"></i>
-          Voltar
-        </Link>
+          <NativeSelectOption value="">Todos os funcionários</NativeSelectOption>
+          {colaboradoresUnicos.map((nome) => (
+            <NativeSelectOption key={nome} value={nome}>
+              {nome}
+            </NativeSelectOption>
+          ))}
+        </NativeSelect>
 
-        <h1 className="text-[1.8rem] font-roboto font-bold text-white mt-6 mb-4 text-center">
-          Avaliações
-        </h1>
-
-        <div className="flex flex-col sm:flex-row gap-3 w-full mb-6">
-          <select
-            value={filtroColaborador}
-            onChange={(e) => {
-              setFiltroColaborador(e.target.value);
-              setPaginaAtual(1);
-            }}
-            className="flex-1 px-4 py-2.5 rounded-lg bg-[#1a2d4a] text-white border border-white/10 focus:border-[#1a5fa8] outline-none text-sm"
-          >
-            <option value="" style={{ color: '#94a3b8' }}>Todos os funcionários</option>
-            {colaboradoresUnicos.map((nome) => (
-              <option key={nome} value={nome} style={{ color: 'white' }}>
-                {nome}
-              </option>
-            ))}
-          </select>
-
-          <select
-            value={filtroData}
-            onChange={(e) => {
-              setFiltroData(e.target.value);
-              setPaginaAtual(1);
-            }}
-            className="flex-1 px-4 py-2.5 rounded-lg bg-[#1a2d4a] text-white border border-white/10 focus:border-[#1a5fa8] outline-none text-sm"
-          >
-            <option value="" style={{ color: '#94a3b8' }}>Todas as datas</option>
-            <option value="7" style={{ color: 'white' }}>Últimos 7 dias</option>
-            <option value="30" style={{ color: 'white' }}>Últimos 30 dias</option>
-            <option value="90" style={{ color: 'white' }}>Últimos 90 dias</option>
-            <option value="ano" style={{ color: 'white' }}>Este ano</option>
-          </select>
-        </div>
-
-        {avaliacoesFiltradas.length === 0 ? (
-          <div className="bg-[#0d2137] rounded-2xl p-8 text-center w-full">
-            <p className="text-white/60 font-roboto">Nenhuma avaliação encontrada.</p>
-          </div>
-        ) : (
-          <>
-            <div className="flex flex-col gap-4 w-full">
-              {avaliacoesPagina.map((avaliacao) => (
-                <div
-                  key={avaliacao.id}
-                  className="bg-[#0d2137] rounded-2xl p-4 flex gap-4"
-                >
-                  <img
-                    src={avaliacao.fotoColaborador}
-                    alt={avaliacao.nomeColaborador}
-                    className="w-14 h-14 rounded-full object-cover border-2 border-white/20"
-                  />
-
-                  <div className="flex-1">
-                    <div className="flex items-center justify-between mb-1">
-                      <h3 className="text-white font-roboto font-bold">
-                        {avaliacao.nomeColaborador}
-                      </h3>
-                      <div className="flex gap-1">
-                        {[1, 2, 3, 4, 5].map((star) => (
-                          <i
-                            key={star}
-                            className={`text-sm ${
-                              star <= avaliacao.rating
-                                ? 'fa-solid fa-star text-yellow-400'
-                                : 'fa-regular fa-star text-white/30'
-                            }`}
-                          ></i>
-                        ))}
-                      </div>
-                    </div>
-
-                    <p className="text-white/50 text-xs mb-2">
-                      {avaliacao.nomeSetor}
-                    </p>
-
-                    {avaliacao.feedback && (
-                      <p className="text-white/80 font-roboto text-sm mb-2">
-                        "{avaliacao.feedback}"
-                      </p>
-                    )}
-
-                    <div className="flex items-center justify-between text-xs text-white/40">
-                      <span>{avaliacao.telefone ? `Tel: ${formatTelefone(avaliacao.telefone)}` : ''}</span>
-                      <span>{formatDate(avaliacao.createdAt)}</span>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            {totalPaginas > 1 && (
-              <div className="flex flex-col items-center gap-4 mt-8 pb-8">
-                <p className="text-white/60 text-sm">
-                  Página {paginaAtual} de {totalPaginas}
-                </p>
-
-                <div className="flex items-center gap-2">
-                  <button
-                    onClick={() => irParaPagina(paginaAtual - 1)}
-                    disabled={paginaAtual === 1}
-                    className="px-3 py-2 bg-[#1a2d4a] text-white rounded-lg font-medium text-sm disabled:opacity-30 disabled:cursor-not-allowed hover:bg-[#2a4d7a] transition-colors"
-                  >
-                    <i className="fa-solid fa-chevron-left"></i>
-                  </button>
-
-                  {getIntervaloPaginas().map((pagina, index) => (
-                    typeof pagina === 'number' ? (
-                      <button
-                        key={index}
-                        onClick={() => irParaPagina(pagina)}
-                        className={`px-3 py-2 rounded-lg font-medium text-sm transition-colors ${
-                          pagina === paginaAtual
-                            ? 'bg-[#1a5fa8] text-white'
-                            : 'bg-[#1a2d4a] text-white hover:bg-[#2a4d7a]'
-                        }`}
-                      >
-                        {pagina}
-                      </button>
-                    ) : (
-                      <span key={index} className="px-2 text-white/40">
-                        {pagina}
-                      </span>
-                    )
-                  ))}
-
-                  <button
-                    onClick={() => irParaPagina(paginaAtual + 1)}
-                    disabled={paginaAtual === totalPaginas}
-                    className="px-3 py-2 bg-[#1a2d4a] text-white rounded-lg font-medium text-sm disabled:opacity-30 disabled:cursor-not-allowed hover:bg-[#2a4d7a] transition-colors"
-                  >
-                    <i className="fa-solid fa-chevron-right"></i>
-                  </button>
-                </div>
-              </div>
-            )}
-          </>
-        )}
+        <NativeSelect
+          aria-label="Filtrar por data"
+          value={filtroData}
+          onChange={(e) => {
+            setFiltroData(e.target.value);
+            setPaginaAtual(1);
+          }}
+          className="w-full sm:w-56"
+        >
+          <NativeSelectOption value="">Todas as datas</NativeSelectOption>
+          <NativeSelectOption value="7">Últimos 7 dias</NativeSelectOption>
+          <NativeSelectOption value="30">Últimos 30 dias</NativeSelectOption>
+          <NativeSelectOption value="90">Últimos 90 dias</NativeSelectOption>
+          <NativeSelectOption value="ano">Este ano</NativeSelectOption>
+        </NativeSelect>
       </div>
 
-      <Footer />
-    </main>
+      {avaliacoesFiltradas.length === 0 ? (
+        <AdminEmpty>Nenhuma avaliação encontrada.</AdminEmpty>
+      ) : (
+        <div className="grid gap-3 lg:grid-cols-2 lg:gap-4">
+          {avaliacoesPagina.map((avaliacao) => (
+            <article
+              key={avaliacao.id}
+              className="flex gap-4 rounded-xl border border-white/10 bg-surface-card p-4"
+            >
+              <img
+                src={avaliacao.fotoColaborador}
+                alt=""
+                className="size-12 shrink-0 rounded-full border border-white/15 object-cover"
+              />
+
+              <div className="min-w-0 flex-1">
+                <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-1">
+                  <h3 className="font-semibold text-white">{avaliacao.nomeColaborador}</h3>
+                  <div className="flex gap-0.5" aria-label={`${avaliacao.rating} de 5 estrelas`}>
+                    {[1, 2, 3, 4, 5].map((star) => (
+                      <Star
+                        key={star}
+                        className={`size-4 ${
+                          star <= avaliacao.rating ? 'fill-yellow-400 text-yellow-400' : 'text-white/25'
+                        }`}
+                      />
+                    ))}
+                  </div>
+                </div>
+
+                <p className="text-xs text-white/50">{avaliacao.nomeSetor}</p>
+
+                {avaliacao.feedback && (
+                  <p className="mt-2 text-sm text-white/85">“{avaliacao.feedback}”</p>
+                )}
+
+                <div className="mt-2 flex flex-wrap items-center justify-between gap-x-3 text-xs text-white/45">
+                  <span>{avaliacao.telefone ? `Tel: ${formatTelefone(avaliacao.telefone)}` : ''}</span>
+                  <span>{formatDate(avaliacao.createdAt)}</span>
+                </div>
+              </div>
+            </article>
+          ))}
+        </div>
+      )}
+
+      <Pagination paginaAtual={paginaAtual} totalPaginas={totalPaginas} onChange={setPaginaAtual} />
+    </AdminShell>
   );
 }

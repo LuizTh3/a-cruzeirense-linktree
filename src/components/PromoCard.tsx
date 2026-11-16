@@ -1,69 +1,64 @@
+import { Link } from 'react-router-dom';
 import type { Produto } from '../types';
 import { cloudinaryUrl } from '../services/cloudinaryService';
+import { formatarPreco } from '@/lib/format';
 
 interface PromoCardProps {
   produto: Produto;
 }
 
 export default function PromoCard({ produto }: PromoCardProps) {
-  const temDesconto = produto.precoPromocional && produto.precoPromocional < produto.preco;
-  const desconto = temDesconto 
+  const temDesconto = !!produto.precoPromocional && produto.precoPromocional < produto.preco;
+  const desconto = temDesconto
     ? Math.round(((produto.preco - produto.precoPromocional!) / produto.preco) * 100)
     : 0;
   const isOferta = produto.tipo === 'oferta';
 
   return (
-    <a 
-      href={`/produto/${produto.id}`}
-      className="flex flex-col bg-surface-card rounded-xl overflow-hidden no-underline transition-all duration-300 shadow-[0_4px_10px_rgba(0,0,0,0.25)] hover:-translate-y-1.25 hover:shadow-[0_8px_20px_rgba(0,0,0,0.4)] border border-white/5"
+    <Link
+      to={`/produto/${produto.id}`}
+      className="group flex flex-col overflow-hidden rounded-xl border border-white/10 bg-surface-card transition-colors hover:border-white/25 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-action"
     >
-      <div className="relative">
-        <img 
-          src={cloudinaryUrl(produto.imagem, 500)} 
-          alt={produto.titulo} 
-          className="w-full h-32 xs:h-28 xxs:h-26 object-cover block"
-          loading="eager"
-          fetchPriority="high"
+      <div className="relative aspect-[4/3] overflow-hidden">
+        <img
+          src={cloudinaryUrl(produto.imagem, 500)}
+          alt={produto.titulo}
+          className="size-full object-cover transition-transform duration-500 group-hover:scale-105"
+          loading="lazy"
           decoding="async"
         />
         {temDesconto && (
-          <div className="absolute top-2 right-2 bg-[#e53935] text-white text-xs font-bold px-2 py-1 rounded-lg">
+          <span className="absolute right-2 top-2 rounded-md bg-discount px-2 py-0.5 text-xs font-semibold text-white">
             -{desconto}%
-          </div>
+          </span>
         )}
         {isOferta && (
-          <div className="absolute top-2 left-2 bg-orange-500 text-white text-xs font-bold px-2 py-1 rounded-lg">
-            OFERTA
-          </div>
+          <span className="absolute left-2 top-2 rounded-md bg-orange-500 px-2 py-0.5 text-xs font-semibold text-white">
+            Oferta
+          </span>
         )}
       </div>
-      
-      <div className="p-2 flex flex-col grow">
-        <h3 className="text-white font-roboto text-[0.85rem] xs:text-[0.8rem] xxs:text-[0.75rem] font-semibold mb-2 text-left line-clamp-2">
-          {produto.titulo}
-        </h3>
-        
-        <div className="flex flex-col gap-1 mb-2">
+
+      <div className="flex grow flex-col p-3">
+        <h3 className="line-clamp-2 text-sm font-medium leading-snug text-white">{produto.titulo}</h3>
+
+        <div className="mt-2 flex grow flex-col justify-end">
           {temDesconto && !isOferta ? (
             <>
-              <span className="text-[#6b7c93] text-[0.75rem] xs:text-[0.7rem] xxs:text-[0.65rem] line-through">
-                R$ {produto.preco.toFixed(2).replace('.', ',')}
-              </span>
-              <span className="text-[#4caf50] font-bold text-[1rem] xs:text-[0.9rem] xxs:text-[0.85rem]">
-                R$ {produto.precoPromocional?.toFixed(2).replace('.', ',')}
-              </span>
+              <span className="text-xs text-white/50 line-through">{formatarPreco(produto.preco)}</span>
+              <span className="text-lg font-semibold text-price">{formatarPreco(produto.precoPromocional!)}</span>
             </>
           ) : (
-            <span className={isOferta ? "text-orange-400 font-bold text-[1rem] xs:text-[0.9rem] xxs:text-[0.85rem]" : "text-white font-bold text-[1rem] xs:text-[0.9rem] xxs:text-[0.85rem]"}>
-              R$ {produto.preco.toFixed(2).replace('.', ',')}
+            <span className={isOferta ? 'text-lg font-semibold text-orange-400' : 'text-lg font-semibold text-white'}>
+              {formatarPreco(produto.preco)}
             </span>
           )}
         </div>
-        
-        <div className="bg-action text-surface-card text-center py-1.5 rounded-lg font-bold text-[0.8rem] xs:text-[0.75rem] xxs:text-[0.7rem] mt-auto transition-colors duration-200 hover:bg-action-hover">
+
+        <span className="mt-3 inline-flex h-9 items-center justify-center rounded-lg bg-action text-sm font-semibold text-surface-card transition-colors group-hover:bg-action-hover">
           Ver detalhes
-        </div>
+        </span>
       </div>
-    </a>
+    </Link>
   );
 }

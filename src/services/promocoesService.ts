@@ -1,6 +1,22 @@
-import { collection, getDocs, query, where, doc, setDoc, deleteDoc } from 'firebase/firestore';
+import { collection, getDocs, query, where, doc, setDoc, deleteDoc, limit } from 'firebase/firestore';
 import { db } from '../lib/firebase';
 import type { Produto } from '../types';
+
+let temPromocaoCache: Promise<boolean> | null = null;
+
+/** Diz se existe ao menos uma promoção cadastrada. Lê só 1 documento e guarda o resultado na sessão. */
+export function temPromocaoAtiva(): Promise<boolean> {
+  if (!temPromocaoCache) {
+    temPromocaoCache = getDocs(query(collection(db, 'promocoes'), limit(1)))
+      .then((snapshot) => !snapshot.empty)
+      .catch((error) => {
+        console.error('Erro ao verificar promoções:', error);
+        temPromocaoCache = null;
+        return false;
+      });
+  }
+  return temPromocaoCache;
+}
 
 export async function getProdutos(): Promise<Produto[]> {
   const q = query(collection(db, 'promocoes'));

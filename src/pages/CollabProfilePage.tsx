@@ -1,10 +1,17 @@
 import { useState } from 'react';
-import { useParams, Navigate, Link } from 'react-router-dom';
+import { useParams, Navigate } from 'react-router-dom';
+import { CircleCheck, Star } from 'lucide-react';
+import PageShell, { PageLoading } from '../components/layout/PageShell';
+import SiteHeader from '../components/layout/SiteHeader';
+import Container from '../components/layout/Container';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
 import { useColaborador } from '../hooks/useColaborador';
 import { enviarAvaliacao } from '../services/avaliacoesService';
 import { useRastrearAcesso } from '../hooks/useRastrearAcesso';
 import { useRastrearWhatsApp } from '../hooks/useRastrearWhatsApp';
-import Footer from '../components/Footer';
 import { cloudinaryUrl } from '../services/cloudinaryService';
 
 export default function CollabProfilePage() {
@@ -35,11 +42,7 @@ export default function CollabProfilePage() {
   };
 
   if (loading) {
-    return (
-      <main className="relative max-w-120 mx-auto min-h-screen bg-container-radial border-x border-white/5 shadow-lateral flex flex-col items-center justify-center overflow-x-hidden pb-10">
-        <div className="w-8 h-8 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
-      </main>
-    );
+    return <PageLoading />;
   }
 
   if (error || !colaborador) {
@@ -84,187 +87,130 @@ export default function CollabProfilePage() {
     }
   };
 
+  const getWhatsAppMessage = () => {
+    if (setorSlug === 'pagamento') {
+      return 'Olá, gostaria de realizar o pagamento de uma fatura, poderia me ajudar?';
+    }
+    if (setorSlug === 'negociacao') {
+      return 'Olá, gostaria de saber mais sobre um crediario, poderia me ajudar?';
+    }
+    return 'Olá, gostaria de saber mais sobre um produto da loja, poderia me ajudar?';
+  };
+
+  const temWhatsApp = !!colaborador.whatsappHref && colaborador.whatsappHref !== '#';
+  const whatsappUrl = (() => {
+    if (!temWhatsApp) return '';
+    const mensagem = encodeURIComponent(getWhatsAppMessage());
+    const baseUrl = colaborador.whatsappHref!;
+    return baseUrl.includes('wa.me')
+      ? `${baseUrl}${baseUrl.includes('?') ? '&' : '?'}text=${mensagem}`
+      : `https://wa.me/${baseUrl}?text=${mensagem}`;
+  })();
+
   return (
-    <main className="
-      relative max-w-120 mx-auto min-h-screen
-      bg-container-radial border-x border-white/5
-      shadow-lateral flex flex-col
-      overflow-x-hidden
-    ">
-      <div className="flex-1 px-6 pb-10">
-      <Link
-        to={`/setor/${setorSlug}`}
-        className="self-start mt-6 text-white/70 hover:text-white transition-colors flex items-center gap-2"
-      >
-        <i className="fa-solid fa-arrow-left"></i>
-        Voltar
-      </Link>
+    <PageShell>
+      <SiteHeader back={{ to: `/setor/${setorSlug}`, label: 'Voltar para o setor' }} />
 
-      <div className="flex flex-col items-center mt-6 w-full">
-        <img
-          src={cloudinaryUrl(colaborador.avatarSrc, 280)}
-          alt={`Foto ${colaborador.nome}`}
-          className="w-28 h-28 rounded-full object-cover border-4 border-white/20 shadow-lg"
-          loading="eager"
-          fetchPriority="high"
-        />
+      <Container className="mt-6 grid gap-5 lg:mt-10 lg:grid-cols-[22rem_1fr] lg:items-start lg:gap-8">
+        <section className="flex flex-col items-center rounded-xl border border-white/10 bg-surface-card p-6 text-center">
+          <img
+            src={cloudinaryUrl(colaborador.avatarSrc, 280)}
+            alt={`Foto ${colaborador.nome}`}
+            className="size-28 rounded-full border border-white/15 object-cover md:size-32"
+            loading="eager"
+            fetchPriority="high"
+          />
 
-        <h1 className="text-[1.8rem] font-roboto font-bold text-white mt-4 text-center">
-          {colaborador.nome}
-        </h1>
-        <p className="text-[1.1rem] text-white/70 font-roboto">
-          {colaborador.cargo}
-        </p>
-        {setorTitle && (
-          <p className="text-[0.9rem] text-white/50 font-roboto mt-1">
-            {setorTitle}
-          </p>
-        )}
+          <h1 className="mt-4 text-2xl font-semibold tracking-tight text-white">{colaborador.nome}</h1>
+          <p className="text-white/70">{colaborador.cargo}</p>
+          {setorTitle && <p className="mt-1 text-sm text-white/50">{setorTitle}</p>}
 
-        {colaborador.whatsappHref && colaborador.whatsappHref !== '#' && (() => {
-            const getWhatsAppMessage = () => {
-              if (setorSlug === 'pagamento') {
-                return 'Olá, gostaria de realizar o pagamento de uma fatura, poderia me ajudar?';
-              }
-              if (setorSlug === 'negociacao') {
-                return 'Olá, gostaria de saber mais sobre um crediario, poderia me ajudar?';
-              }
-              return 'Olá, gostaria de saber mais sobre um produto da loja, poderia me ajudar?';
-            };
-            const mensagem = encodeURIComponent(getWhatsAppMessage());
-            const baseUrl = colaborador.whatsappHref!;
-            const whatsappUrl = baseUrl.includes('wa.me') 
-              ? `${baseUrl}${baseUrl.includes('?') ? '&' : '?'}text=${mensagem}`
-              : `https://wa.me/${baseUrl}?text=${mensagem}`;
-            
-            return (
+          {temWhatsApp && (
+            <Button asChild size="xl" className="mt-5 w-full bg-whatsapp text-white hover:bg-whatsapp-hover">
               <a
                 href={whatsappUrl}
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={() => rastrearClique(setorSlug || 'contato', 'contato')}
-                className="
-                  flex items-center justify-center gap-2 w-full py-3.5 mt-4
-                  bg-whatsapp text-white no-underline rounded-xl
-                  font-roboto font-bold text-[0.9rem]
-                  transition-all duration-300
-                  hover:bg-[#1DA851]
-                "
               >
-                <i className="fa-brands fa-whatsapp text-xl"></i>
+                <i className="fa-brands fa-whatsapp text-xl" aria-hidden="true"></i>
                 Entrar em contato
               </a>
-            );
-          })()}
-      </div>
+            </Button>
+          )}
+        </section>
 
-      <div className="w-full mt-8">
-        <h2 className="text-[1.3rem] font-roboto font-bold text-white text-center mb-6">
-          Avalie este atendimento
-        </h2>
+        <section className="rounded-xl border border-white/10 bg-surface-card p-5 md:p-8">
+          <h2 className="text-xl font-semibold tracking-tight text-white">Avalie seu atendimento com {colaborador.nome}</h2>
+          <p className="mt-1 text-sm text-white/65">Sua opinião ajuda a melhorar nosso atendimento.</p>
 
-        {submitted ? (
-          <div className="bg-[#0d2137] rounded-2xl p-6 text-center">
-            <i className="fa-solid fa-check-circle text-green-500 text-5xl mb-4"></i>
-            <p className="text-white text-lg font-roboto">Obrigado pela sua avaliação!</p>
-          </div>
-        ) : (
-          <form onSubmit={handleSubmit} className="flex flex-col gap-5">
-            <div className="flex justify-center gap-2">
-              {[1, 2, 3, 4, 5].map((star) => (
-                <button
-                  key={star}
-                  type="button"
-                  onClick={() => setRating(star)}
-                  onMouseEnter={() => setHoverRating(star)}
-                  onMouseLeave={() => setHoverRating(0)}
-                  className="text-3xl transition-transform hover:scale-110 focus:outline-none"
-                >
-                  <i
-                    className={`${
-                      star <= (hoverRating || rating)
-                        ? 'fa-solid fa-star text-yellow-400'
-                        : 'fa-regular fa-star text-white/30'
-                    }`}
-                  ></i>
-                </button>
-              ))}
+          {submitted ? (
+            <div className="mt-6 flex flex-col items-center rounded-lg bg-surface-raised p-8 text-center">
+              <CircleCheck className="size-12 text-green-500" />
+              <p className="mt-3 text-lg text-white">Obrigado pela sua avaliação!</p>
             </div>
+          ) : (
+            <form onSubmit={handleSubmit} className="mt-6 flex flex-col gap-5">
+              <div>
+                <Label className="mb-2">Sua nota</Label>
+                <div className="flex gap-1" onMouseLeave={() => setHoverRating(0)}>
+                  {[1, 2, 3, 4, 5].map((star) => (
+                    <button
+                      key={star}
+                      type="button"
+                      onClick={() => setRating(star)}
+                      onMouseEnter={() => setHoverRating(star)}
+                      aria-label={`${star} ${star === 1 ? 'estrela' : 'estrelas'}`}
+                      aria-pressed={rating === star}
+                      className="rounded-md p-1 transition-transform hover:scale-110 focus-visible:outline-2 focus-visible:outline-action"
+                    >
+                      <Star
+                        className={`size-8 ${
+                          star <= (hoverRating || rating) ? 'fill-yellow-400 text-yellow-400' : 'text-white/30'
+                        }`}
+                      />
+                    </button>
+                  ))}
+                </div>
+              </div>
 
-            <div>
-              <label
-                htmlFor="telefone"
-                className="block text-white/80 text-sm font-roboto mb-2"
-              >
-                Seu telefone (para contato)
-              </label>
-              <input
-                type="tel"
-                id="telefone"
-                value={telefone}
-                onChange={handleTelefoneChange}
-                placeholder="(XX) 99999-9999"
-                required
-                className="
-                  w-full p-4 rounded-xl
-                  bg-[#0d2137] text-white
-                  border border-white/10
-                  placeholder:text-white/30
-                  focus:outline-none focus:border-white/30
-                  font-roboto
-                "
-              />
-            </div>
+              <div>
+                <Label htmlFor="telefone" className="mb-2">
+                  Seu telefone (para contato)
+                </Label>
+                <Input
+                  type="tel"
+                  id="telefone"
+                  value={telefone}
+                  onChange={handleTelefoneChange}
+                  placeholder="(XX) 99999-9999"
+                  required
+                  className="max-w-xs"
+                />
+              </div>
 
-            <div>
-              <label
-                htmlFor="feedback"
-                className="block text-white/80 text-sm font-roboto mb-2"
-              >
-                Elogios ou reclamações
-              </label>
-              <textarea
-                id="feedback"
-                value={feedback}
-                onChange={(e) => setFeedback(e.target.value)}
-                placeholder="Conte sua experiência com este atendimento..."
-                className="
-                  w-full h-32 p-4 rounded-xl
-                  bg-[#0d2137] text-white
-                  border border-white/10
-                  placeholder:text-white/30
-                  focus:outline-none focus:border-white/30
-                  resize-none font-roboto
-                "
-              />
-            </div>
+              <div>
+                <Label htmlFor="feedback" className="mb-2">
+                  Elogios ou reclamações
+                </Label>
+                <Textarea
+                  id="feedback"
+                  value={feedback}
+                  onChange={(e) => setFeedback(e.target.value)}
+                  placeholder="Conte sua experiência com este atendimento..."
+                  className="min-h-32 resize-none"
+                />
+              </div>
 
-            {submitError && (
-              <p className="text-red-400 text-sm text-center font-roboto">{submitError}</p>
-            )}
+              {submitError && <p className="text-sm text-red-400">{submitError}</p>}
 
-            <button
-              type="submit"
-              disabled={sending}
-              className="
-                flex items-center justify-center w-full py-4.5
-                bg-white text-blue-700 no-underline rounded-2xl
-                font-roboto font-bold uppercase text-[0.85rem] tracking-[1px]
-                border-none transition-all duration-300
-                ease-[cubic-bezier(0.25,0.8,0.25,1)]
-                hover:brightness-95 hover:-translate-y-0.75
-                hover:shadow-[0_8px_25px_rgba(255,255,255,0.3)]
-                disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0
-              "
-            >
-              {sending ? 'Enviando...' : 'Enviar Avaliação'}
-            </button>
-          </form>
-        )}
-      </div>
-      </div>
-
-      <Footer />
-    </main>
+              <Button type="submit" size="xl" disabled={sending} className="w-full sm:w-fit">
+                {sending ? 'Enviando...' : 'Enviar avaliação'}
+              </Button>
+            </form>
+          )}
+        </section>
+      </Container>
+    </PageShell>
   );
 }

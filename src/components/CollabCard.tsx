@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+import { ChevronRight } from 'lucide-react';
 import type { Colaborador } from '../types';
 import { cloudinaryUrl } from '../services/cloudinaryService';
 import { useRastrearWhatsApp } from '../hooks/useRastrearWhatsApp';
@@ -9,54 +10,35 @@ interface CollabCardProps {
   setorSlug?: string;
 }
 
-interface CardContentProps {
-  nome: string;
-  avatarSrc: string;
-  setorTitle?: string;
-}
-
-function CardContent({ nome, avatarSrc, setorTitle }: CardContentProps) {
+function CardContent({ colaborador, setorTitle }: { colaborador: Colaborador; setorTitle?: string }) {
   return (
     <>
-      <div className="flex items-center gap-3.75">
-        <img
-          src={cloudinaryUrl(avatarSrc, 240)}
-          alt={`Foto ${nome}`}
-          className="w-27 h-27 xs:w-24 xs:h-24 xxs:w-22 xxs:h-22 rounded-full object-cover border-2 border-white/20"
-          loading="lazy"
-          decoding="async"
-          width={104}
-          height={104}
-        />
-        <div className="flex flex-col leading-tight">
-          <h3 className="
-            font-sans text-[24px] xs:text-[20px] xxs:text-[18px] font-bold text-white m-0
-            border-b-2 border-[#A9B0B7] pb-1.25 mb-1.25 w-full
-          ">
-            {nome}
-          </h3>
-          <span className="font-sans text-[14px] xs:text-[12px] xxs:text-[11px] text-white/60 font-normal">
-            {setorTitle}
-          </span>
-        </div>
+      <img
+        src={cloudinaryUrl(colaborador.avatarSrc, 240)}
+        alt={`Foto ${colaborador.nome}`}
+        className="size-16 shrink-0 rounded-full border border-white/15 object-cover md:size-20"
+        loading="lazy"
+        decoding="async"
+        width={80}
+        height={80}
+      />
+      <div className="min-w-0 flex-1">
+        <h3 className="truncate text-lg font-semibold leading-tight text-white">{colaborador.nome}</h3>
+        <p className="mt-0.5 truncate text-sm text-white/60">
+          {[colaborador.cargo, setorTitle].filter(Boolean).join(' · ')}
+        </p>
       </div>
     </>
   );
 }
 
-const baseClass = `
-  group w-full box-border
-  bg-[#0d2137]
-  rounded-[20px] p-[20px_15px] xs:p-[16px_12px] xxs:p-[14px_10px]
-  flex justify-between items-center
-  shadow-[0_4px_10px_rgba(0,0,0,0.4)]
-  transition-transform duration-200 ease-in-out
-  hover:-translate-y-[2px]
-  no-underline text-white cursor-pointer
-`;
+const baseClass =
+  'flex w-full items-center gap-4 rounded-xl border border-white/10 bg-surface-card p-4 text-white transition-colors';
+const interativoClass =
+  'hover:border-white/25 hover:bg-surface-raised focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-action';
 
 export default function CollabCard({ colaborador, setorTitle, setorSlug }: CollabCardProps) {
-  const { nome, avatarSrc, profileHref, whatsappHref } = colaborador;
+  const { profileHref, whatsappHref } = colaborador;
   const { rastrearClique } = useRastrearWhatsApp();
 
   const getWhatsAppMessage = () => {
@@ -80,28 +62,30 @@ export default function CollabCard({ colaborador, setorTitle, setorSlug }: Colla
 
   if (profileHref) {
     return (
-      <Link to={profileHref} className={baseClass}>
-        <CardContent nome={nome} avatarSrc={avatarSrc} setorTitle={setorTitle} />
-        <i className="fa-solid fa-chevron-right text-white/40 text-lg"></i>
+      <Link to={profileHref} className={`${baseClass} ${interativoClass}`}>
+        <CardContent colaborador={colaborador} setorTitle={setorTitle} />
+        <ChevronRight className="size-5 shrink-0 text-white/40" />
       </Link>
     );
   }
 
   if (whatsappHref && whatsappHref !== '#') {
-    const whatsappUrl = buildWhatsAppUrl(whatsappHref);
-    const handleWhatsAppClick = () => {
-      rastrearClique(setorSlug || 'contato', 'contato');
-    };
     return (
-      <a href={whatsappUrl} target="_blank" rel="noopener noreferrer" className={baseClass} onClick={handleWhatsAppClick}>
-        <CardContent nome={nome} avatarSrc={avatarSrc} setorTitle={setorTitle} />
+      <a
+        href={buildWhatsAppUrl(whatsappHref)}
+        target="_blank"
+        rel="noopener noreferrer"
+        className={`${baseClass} ${interativoClass}`}
+        onClick={() => rastrearClique(setorSlug || 'contato', 'contato')}
+      >
+        <CardContent colaborador={colaborador} setorTitle={setorTitle} />
       </a>
     );
   }
 
   return (
-    <div className={baseClass} aria-disabled="true">
-      <CardContent nome={nome} avatarSrc={avatarSrc} setorTitle={setorTitle} />
+    <div className={baseClass}>
+      <CardContent colaborador={colaborador} setorTitle={setorTitle} />
     </div>
   );
 }

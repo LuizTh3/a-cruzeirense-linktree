@@ -1,13 +1,30 @@
 import { useEffect, useState, useMemo } from 'react';
-import { Link } from 'react-router-dom';
+import { Star } from 'lucide-react';
 import { getProdutos, saveProduto, deleteProduto } from '../services/promocoesService';
 import type { Produto } from '../types';
-import Footer from '../components/Footer';
 import ImageUpload from '../components/ImageUpload';
 import { cloudinaryUrl } from '../services/cloudinaryService';
+import { formatarPreco } from '@/lib/format';
+import AdminShell from '../components/layout/AdminShell';
+import { PageLoading } from '../components/layout/PageShell';
+import Notice from '../components/admin/Notice';
+import Pagination from '../components/admin/Pagination';
+import { AdminEmpty, AdminField, AdminRow, AdminSplit } from '../components/admin/AdminList';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { NativeSelect, NativeSelectOption } from '@/components/ui/native-select';
 
 const ITENS_POR_PAGINA = 10;
 const MAX_PROMOCOES = 30;
+
+const categorias = [
+  { value: 'moveis', label: 'Móveis' },
+  { value: 'calcados', label: 'Calçados' },
+  { value: 'confeccao', label: 'Confecção' },
+  { value: 'tecidos', label: 'Tecidos' },
+];
 
 interface ProdutoFormData {
   id: string;
@@ -83,11 +100,12 @@ export default function GerenciarPromocoesPage() {
     });
     setEditando(true);
     setMensagem('');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    
+
     if (!formData.titulo || !formData.preco || !formData.imagem) {
       setMensagem('Preencha todos os campos obrigatórios');
       return;
@@ -136,7 +154,7 @@ export default function GerenciarPromocoesPage() {
 
   async function handleDelete(id: string) {
     if (!confirm('Tem certeza que deseja excluir esta promoção/oferta?')) return;
-    
+
     try {
       await deleteProduto(id);
       setMensagem('Promoção/Oferta excluída com sucesso!');
@@ -162,341 +180,200 @@ export default function GerenciarPromocoesPage() {
 
   const produtosPagina = useMemo(() => {
     const inicio = (paginaAtual - 1) * ITENS_POR_PAGINA;
-    const fim = inicio + ITENS_POR_PAGINA;
-    return produtosFiltrados.slice(inicio, fim);
+    return produtosFiltrados.slice(inicio, inicio + ITENS_POR_PAGINA);
   }, [produtosFiltrados, paginaAtual]);
 
-  const irParaPagina = (pagina: number) => {
-    if (pagina >= 1 && pagina <= totalPaginas) {
-      setPaginaAtual(pagina);
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
-  };
-
-  const getIntervaloPaginas = () => {
-    const paginas: (number | string)[] = [];
-    const maxVisiveis = 5;
-
-    if (totalPaginas <= maxVisiveis) {
-      for (let i = 1; i <= totalPaginas; i++) {
-        paginas.push(i);
-      }
-    } else {
-      if (paginaAtual <= 3) {
-        for (let i = 1; i <= 4; i++) paginas.push(i);
-        paginas.push('...');
-        paginas.push(totalPaginas);
-      } else if (paginaAtual >= totalPaginas - 2) {
-        paginas.push(1);
-        paginas.push('...');
-        for (let i = totalPaginas - 3; i <= totalPaginas; i++) paginas.push(i);
-      } else {
-        paginas.push(1);
-        paginas.push('...');
-        for (let i = paginaAtual - 1; i <= paginaAtual + 1; i++) paginas.push(i);
-        paginas.push('...');
-        paginas.push(totalPaginas);
-      }
-    }
-
-    return paginas;
-  };
-
   if (loading) {
-    return (
-      <main className="relative max-w-120 mx-auto min-h-screen bg-container-radial border-x border-white/5 shadow-lateral flex flex-col overflow-x-hidden pb-10 px-6">
-        <div className="flex-1 flex items-center justify-center">
-          <div className="text-white">Carregando...</div>
-        </div>
-      </main>
-    );
+    return <PageLoading />;
   }
 
-  return (
-    <main className="relative max-w-120 mx-auto min-h-screen bg-container-radial border-x border-white/5 shadow-lateral flex flex-col overflow-x-hidden">
-      <div className="flex-1 px-6 pb-10">
-      <h1 className="text-[1.8rem] font-roboto font-bold text-white mt-8 mb-4">
-        Gerenciar Promoções/Ofertas
-      </h1>
+  const labelTipo = formData.tipo === 'promocao' ? 'promoção' : 'oferta';
 
-      <p className="text-white/70 text-sm mb-6">
-        {produtos.length}/{MAX_PROMOCOES} promoções/ofertas cadastradas
-      </p>
+  const form = (
+    <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+      <h2 className="font-semibold text-white">{editando ? `Editar ${labelTipo}` : `Nova ${labelTipo}`}</h2>
 
-      {mensagem && (
-        <div className={`w-full max-w-md p-3 rounded-lg mb-4 text-center text-sm ${
-          mensagem.includes('sucesso') 
-            ? 'bg-green-600/20 text-green-400 border border-green-600/30' 
-            : 'bg-red-600/20 text-red-400 border border-red-600/30'
-        }`}>
-          {mensagem}
-        </div>
-      )}
+      <AdminField>
+        <Label htmlFor="titulo">Título *</Label>
+        <Input
+          id="titulo"
+          name="titulo"
+          value={formData.titulo}
+          onChange={handleInputChange}
+          placeholder="Nome do produto"
+        />
+      </AdminField>
 
-      <form onSubmit={handleSubmit} className="w-full max-w-md flex flex-col gap-4 mb-8">
-        <div>
-          <label className="block text-white text-sm mb-1">Título *</label>
-          <input
-            type="text"
-            name="titulo"
-            value={formData.titulo}
+      <AdminField>
+        <Label htmlFor="tipo">Tipo</Label>
+        <NativeSelect id="tipo" name="tipo" value={formData.tipo} onChange={handleInputChange} className="w-full">
+          <NativeSelectOption value="promocao">Promoção (com dois preços)</NativeSelectOption>
+          <NativeSelectOption value="oferta">Oferta (com um preço)</NativeSelectOption>
+        </NativeSelect>
+      </AdminField>
+
+      <div className="grid grid-cols-2 gap-3">
+        <AdminField>
+          <Label htmlFor="preco">{formData.tipo === 'promocao' ? 'Preço original' : 'Preço'} *</Label>
+          <Input
+            id="preco"
+            name="preco"
+            type="number"
+            step="0.01"
+            min="0"
+            value={formData.preco}
             onChange={handleInputChange}
-            className="w-full px-4 py-3 rounded-lg bg-[#1a2d4a] text-white border border-white/10 focus:border-[#1a5fa8] outline-none"
-            placeholder="Nome do produto"
+            placeholder="0,00"
           />
-        </div>
-
-        <div>
-          <label className="block text-white text-sm mb-1">Tipo</label>
-          <select
-            name="tipo"
-            value={formData.tipo}
-            onChange={handleInputChange}
-            className="w-full px-4 py-3 rounded-lg bg-[#1a2d4a] text-white border border-white/10 focus:border-[#1a5fa8] outline-none"
-          >
-            <option value="promocao" style={{ color: 'White' }}>Promoção (com dois preços)</option>
-            <option value="oferta" style={{ color: 'White' }}>Oferta (com um preço)</option>
-          </select>
-        </div>
-
-        <div className="grid grid-cols-2 gap-4">
-          <div>
-            <label className="block text-white text-sm mb-1">
-              {formData.tipo === 'promocao' ? 'Preço Original' : 'Preço'} *
-            </label>
-            <input
-              type="number"
-              name="preco"
-              step="0.01"
-              min="0"
-              value={formData.preco}
-              onChange={handleInputChange}
-              className="w-full px-4 py-3 rounded-lg bg-[#1a2d4a] text-white border border-white/10 focus:border-[#1a5fa8] outline-none"
-              placeholder="0.00"
-            />
-          </div>
-          {formData.tipo === 'promocao' && (
-          <div>
-            <label className="block text-white text-sm mb-1">Preço Promocional</label>
-            <input
-              type="number"
+        </AdminField>
+        {formData.tipo === 'promocao' && (
+          <AdminField>
+            <Label htmlFor="precoPromocional">Preço promocional</Label>
+            <Input
+              id="precoPromocional"
               name="precoPromocional"
+              type="number"
               step="0.01"
               min="0"
               value={formData.precoPromocional}
               onChange={handleInputChange}
-              className="w-full px-4 py-3 rounded-lg bg-[#1a2d4a] text-white border border-white/10 focus:border-[#1a5fa8] outline-none"
-              placeholder="0.00"
+              placeholder="0,00"
             />
-          </div>
-          )}
-        </div>
+          </AdminField>
+        )}
+      </div>
 
-        <ImageUpload
-          label="Imagem *"
-          pasta="promocoes"
-          value={formData.imagem}
-          onUploadingChange={setEnviandoImagem}
-          onChange={(imagem) =>
-            setFormData(prev => ({ ...prev, imagem: imagem.url, imagemPublicId: imagem.publicId }))
-          }
+      <ImageUpload
+        label="Imagem *"
+        pasta="promocoes"
+        value={formData.imagem}
+        onUploadingChange={setEnviandoImagem}
+        onChange={(imagem) =>
+          setFormData(prev => ({ ...prev, imagem: imagem.url, imagemPublicId: imagem.publicId }))
+        }
+      />
+
+      <AdminField>
+        <Label htmlFor="categoria">Categoria</Label>
+        <NativeSelect
+          id="categoria"
+          name="categoria"
+          value={formData.categoria}
+          onChange={handleInputChange}
+          className="w-full"
+        >
+          <NativeSelectOption value="" disabled>
+            Selecione uma categoria
+          </NativeSelectOption>
+          {categorias.map((categoria) => (
+            <NativeSelectOption key={categoria.value} value={categoria.value}>
+              {categoria.label}
+            </NativeSelectOption>
+          ))}
+        </NativeSelect>
+      </AdminField>
+
+      <label htmlFor="destaque" className="flex items-start gap-2.5 text-sm text-white">
+        <input
+          type="checkbox"
+          name="destaque"
+          id="destaque"
+          checked={formData.destaque}
+          onChange={handleInputChange}
+          className="mt-0.5 size-4 accent-brand"
         />
+        <span>
+          Marcar como destaque
+          <span className="block text-xs text-white/55">Aparece entre os 2 destaques da página inicial</span>
+        </span>
+      </label>
 
-        <div>
-          <label className="block text-white text-sm mb-1">Categoria</label>
-          <select
-            name="categoria"
-            value={formData.categoria}
-            onChange={handleInputChange}
-            className="w-full px-4 py-3 rounded-lg bg-[#1a2d4a] text-black border border-white/10 focus:border-bg-container-top outline-none"
-            style={{ color: 'white' }}
-          >
-            <option value="" disabled style={{ color: '#94a3b8' }}>Selecione uma categoria</option>
-            <option value="moveis" style={{ color: 'White' }}>Móveis</option>
-            <option value="calcados" style={{ color: 'White' }}>Calçados</option>
-            <option value="confeccao" style={{ color: 'White' }}>Confecção</option>
-            <option value="tecidos" style={{ color: 'White' }}>Tecidos</option>
-          </select>
-        </div>
+      <div className="mt-1 flex gap-2">
+        <Button type="submit" variant="secondary" size="xl" disabled={saving || enviandoImagem} className="flex-1">
+          {saving ? 'Salvando...' : editando ? 'Atualizar' : 'Adicionar'}
+        </Button>
+        {editando && (
+          <Button type="button" variant="outline" size="xl" onClick={handleCancel}>
+            Cancelar
+          </Button>
+        )}
+      </div>
+    </form>
+  );
 
-        <div className="flex items-center gap-3">
-          <input
-            type="checkbox"
-            name="destaque"
-            id="destaque"
-            checked={formData.destaque}
-            onChange={handleInputChange}
-            className="w-5 h-5 rounded bg-[#1a2d4a] border-white/20 text-[#1a5fa8] focus:ring-[#1a5fa8]"
-          />
-          <label htmlFor="destaque" className="text-white text-sm">
-            Marcar como Destaque (aparece nos 2 primeiros cards)
-          </label>
-        </div>
+  return (
+    <AdminShell
+      title="Promoções e ofertas"
+      description={`${produtos.length}/${MAX_PROMOCOES} promoções/ofertas cadastradas`}
+    >
+      <Notice mensagem={mensagem} />
 
-        <div className="flex gap-3 mt-2">
-          <button
-            type="submit"
-            disabled={saving || enviandoImagem}
-            className="flex-1 py-3 bg-[linear-gradient(135deg,#082d5e,#1a5fa8)] text-white rounded-lg font-bold transition-all duration-300 hover:brightness-110 disabled:opacity-50"
-          >
-            {saving ? 'Salvando...' : editando 
-              ? `Atualizar ${formData.tipo === 'promocao' ? 'Promoção' : 'Oferta'}` 
-              : `Adicionar ${formData.tipo === 'promocao' ? 'Promoção' : 'Oferta'}`}
-          </button>
-          
-          {editando && (
-            <button
-              type="button"
-              onClick={handleCancel}
-              className="px-6 py-3 bg-gray-600 text-white rounded-lg font-bold transition-all duration-300 hover:bg-gray-500"
-            >
-              Cancelar
-            </button>
-          )}
-        </div>
-      </form>
-
-      <div className="w-full max-w-md">
-        <div className="flex flex-col sm:flex-row gap-3 w-full mb-4">
-          <select
+      <AdminSplit form={form}>
+        <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
+          <NativeSelect
+            aria-label="Filtrar por setor"
             value={filtroSetor}
             onChange={(e) => {
               setFiltroSetor(e.target.value);
               setPaginaAtual(1);
             }}
-            className="flex-1 px-4 py-2.5 rounded-lg bg-[#1a2d4a] text-white border border-white/10 focus:border-[#1a5fa8] outline-none text-sm"
+            className="w-full sm:w-72"
           >
-            <option value="" style={{ color: '#94a3b8' }}>Todos os setores</option>
-            <option value="moveis" style={{ color: 'white' }}>Móveis</option>
-            <option value="calcados" style={{ color: 'white' }}>Calçados</option>
-            <option value="confeccao" style={{ color: 'white' }}>Confecção</option>
-            <option value="tecidos" style={{ color: 'white' }}>Tecidos</option>
-          </select>
-        </div>
-
-        <h2 className="text-white font-bold text-lg mb-4">
-          Promoções/Ofertas Cadastradas
+            <NativeSelectOption value="">Todos os setores</NativeSelectOption>
+            {categorias.map((categoria) => (
+              <NativeSelectOption key={categoria.value} value={categoria.value}>
+                {categoria.label}
+              </NativeSelectOption>
+            ))}
+          </NativeSelect>
           {filtroSetor && (
-            <span className="text-white/50 text-sm font-normal ml-2">
-              ({produtosFiltrados.length} {produtosFiltrados.length === 1 ? 'item' : 'itens'})
+            <span className="text-sm text-white/55">
+              {produtosFiltrados.length} {produtosFiltrados.length === 1 ? 'item' : 'itens'}
             </span>
           )}
-        </h2>
-        
+        </div>
+
         {produtosFiltrados.length === 0 ? (
-          <p className="text-white/50 text-center py-4">
+          <AdminEmpty>
             {filtroSetor ? 'Nenhuma promoção/oferta neste setor' : 'Nenhuma promoção/oferta cadastrada'}
-          </p>
+          </AdminEmpty>
         ) : (
-          <div className="flex flex-col gap-3">
+          <div className="grid gap-3 xl:grid-cols-2">
             {produtosPagina.map((produto) => (
-              <div
+              <AdminRow
                 key={produto.id}
-                className="flex items-center gap-3 p-3 bg-[#1a2d4a] rounded-lg border border-white/10"
+                nome={produto.titulo}
+                media={
+                  <img
+                    src={cloudinaryUrl(produto.imagem, 160)}
+                    alt=""
+                    className="size-16 shrink-0 rounded-md object-cover"
+                  />
+                }
+                onEdit={() => handleEdit(produto)}
+                onDelete={() => handleDelete(produto.id)}
               >
-                <img
-                  src={cloudinaryUrl(produto.imagem, 160)}
-                  alt={produto.titulo}
-                  className="w-16 h-16 object-cover rounded"
-                />
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2">
-                    <h3 className="text-white font-medium text-sm truncate">{produto.titulo}</h3>
-                    {produto.destaque && (
-                      <span className="text-yellow-400 text-xs">
-                        <i className="fa-solid fa-star"></i>
-                      </span>
-                    )}
-                    {produto.tipo === 'oferta' && (
-                      <span className="bg-orange-500/20 text-orange-400 text-[0.65rem] px-1.5 py-0.5 rounded">
-                        OFERTA
-                      </span>
-                    )}
-                    {produto.tipo === 'promocao' && (
-                      <span className="bg-blue-500/20 text-blue-400 text-[0.65rem] px-1.5 py-0.5 rounded">
-                        PROMO
-                      </span>
-                    )}
-                  </div>
-                  <p className="text-[#4caf50] font-bold text-sm">
-                    R$ {produto.precoPromocional?.toFixed(2).replace('.', ',') || produto.preco.toFixed(2).replace('.', ',')}
-                  </p>
+                <div className="flex items-center gap-1.5">
+                  <h3 className="truncate text-sm font-medium text-white">{produto.titulo}</h3>
+                  {produto.destaque && (
+                    <Star className="size-3.5 shrink-0 fill-yellow-400 text-yellow-400" aria-label="Destaque" />
+                  )}
                 </div>
-                <div className="flex gap-2">
-                  <button
-                    onClick={() => handleEdit(produto)}
-                    className="p-2 bg-bg-container-top text-white rounded hover:bg-[#2a7fc8] transition-colors"
-                  >
-                    <i className="fa-solid fa-pen"></i>
-                  </button>
-                  <button
-                    onClick={() => handleDelete(produto.id)}
-                    className="p-2 bg-red-600 text-white rounded hover:bg-red-500 transition-colors"
-                  >
-                    <i className="fa-solid fa-trash"></i>
-                  </button>
-                </div>
-              </div>
+                <p className="text-sm font-semibold text-price">
+                  {formatarPreco(produto.precoPromocional || produto.preco)}
+                </p>
+                {produto.tipo && (
+                  <Badge variant="outline" className="mt-1">
+                    {produto.tipo === 'oferta' ? 'Oferta' : 'Promoção'}
+                  </Badge>
+                )}
+              </AdminRow>
             ))}
           </div>
         )}
 
-        {totalPaginas > 1 && (
-          <div className="flex flex-col items-center gap-4 mt-8 pb-8">
-            <p className="text-white/60 text-sm">
-              Página {paginaAtual} de {totalPaginas}
-            </p>
-
-            <div className="flex items-center gap-2">
-              <button
-                onClick={() => irParaPagina(paginaAtual - 1)}
-                disabled={paginaAtual === 1}
-                className="px-3 py-2 bg-[#1a2d4a] text-white rounded-lg font-medium text-sm disabled:opacity-30 disabled:cursor-not-allowed hover:bg-[#2a4d7a] transition-colors"
-              >
-                <i className="fa-solid fa-chevron-left"></i>
-              </button>
-
-              {getIntervaloPaginas().map((pagina, index) => (
-                typeof pagina === 'number' ? (
-                  <button
-                    key={index}
-                    onClick={() => irParaPagina(pagina)}
-                    className={`px-3 py-2 rounded-lg font-medium text-sm transition-colors ${
-                      pagina === paginaAtual
-                        ? 'bg-[#1a5fa8] text-white'
-                        : 'bg-[#1a2d4a] text-white hover:bg-[#2a4d7a]'
-                    }`}
-                  >
-                    {pagina}
-                  </button>
-                ) : (
-                  <span key={index} className="px-2 text-white/40">
-                    {pagina}
-                  </span>
-                )
-              ))}
-
-              <button
-                onClick={() => irParaPagina(paginaAtual + 1)}
-                disabled={paginaAtual === totalPaginas}
-                className="px-3 py-2 bg-[#1a2d4a] text-white rounded-lg font-medium text-sm disabled:opacity-30 disabled:cursor-not-allowed hover:bg-[#2a4d7a] transition-colors"
-              >
-                <i className="fa-solid fa-chevron-right"></i>
-              </button>
-            </div>
-          </div>
-        )}
-      </div>
-
-      <Link
-        to="/admin/dashboard"
-        className="mt-8 px-6 py-3 bg-[linear-gradient(135deg,#082d5e,#1a5fa8)] text-white rounded-lg font-bold transition-all duration-300 hover:brightness-110"
-      >
-        Voltar ao Painel
-      </Link>
-      </div>
-
-      <Footer />
-    </main>
+        <Pagination paginaAtual={paginaAtual} totalPaginas={totalPaginas} onChange={setPaginaAtual} />
+      </AdminSplit>
+    </AdminShell>
   );
 }

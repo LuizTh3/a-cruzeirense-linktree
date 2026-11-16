@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
 import { getTotalAcessos, getAcessosSemana, getAcessosPorDia, getTotalCliquesWhatsApp, getCliquesWhatsAppPorSetor, getCliquesWhatsAppPorTipo, getCliquesWhatsAppPorDia } from '../services/acessosService';
-import Footer from '../components/Footer';
+import AdminShell from '../components/layout/AdminShell';
+import { PageLoading } from '../components/layout/PageShell';
 
 interface DadosAcesso {
   total: number;
@@ -15,6 +15,62 @@ interface DadosWhatsApp {
   porTipo: { tipo: string; quantidade: number }[];
   porDia: { data: string; quantidade: number }[];
 }
+
+const painel = 'rounded-xl border border-white/10 bg-surface-card p-5';
+
+function Indicador({ rotulo, valor }: { rotulo: string; valor: number }) {
+  return (
+    <div className={painel}>
+      <p className="text-sm text-white/65">{rotulo}</p>
+      <p className="mt-1 text-3xl font-semibold tabular-nums text-white">{valor}</p>
+    </div>
+  );
+}
+
+function GraficoBarras({
+  titulo,
+  dados,
+  corClass,
+}: {
+  titulo: string;
+  dados: { data: string; quantidade: number }[];
+  corClass: string;
+}) {
+  const maximo = Math.max(...dados.map((d) => d.quantidade), 1);
+
+  return (
+    <div className={painel}>
+      <h3 className="mb-4 font-semibold text-white">{titulo}</h3>
+      <div className="flex h-40 items-end justify-between gap-2">
+        {dados.map((item, index) => (
+          <div key={index} className="flex h-full flex-1 flex-col items-center justify-end gap-1.5">
+            <span className="text-xs tabular-nums text-white/65">{item.quantidade}</span>
+            <div
+              className={`w-full max-w-12 rounded-t-md ${corClass}`}
+              style={{ height: `${Math.max((item.quantidade / maximo) * 100, 3)}%` }}
+            />
+            <span className="text-xs text-white/50">{item.data}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function Linha({ rotulo, valor }: { rotulo: string; valor: number }) {
+  return (
+    <div className="flex items-center justify-between border-b border-white/5 py-2 last:border-0">
+      <span className="text-sm capitalize text-white/70">{rotulo}</span>
+      <span className="font-semibold tabular-nums text-white">{valor}</span>
+    </div>
+  );
+}
+
+const rotuloTipo: Record<string, string> = {
+  promocao: 'Promoções',
+  oferta: 'Ofertas',
+  contato: 'Contato',
+};
 
 export default function RelatoriosPage() {
   const [dados, setDados] = useState<DadosAcesso | null>(null);
@@ -46,188 +102,62 @@ export default function RelatoriosPage() {
     fetchDados();
   }, []);
 
-  const maxAcesso = dados ? Math.max(...dados.porDia.map(d => d.quantidade), 1) : 1;
-
   if (loading) {
-    return (
-      <main className="relative max-w-120 mx-auto min-h-screen bg-container-radial border-x border-white/5 shadow-lateral flex flex-col overflow-x-hidden pb-10">
-        <div className="flex-1 flex items-center justify-center">
-          <div className="w-8 h-8 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
-        </div>
-      </main>
-    );
+    return <PageLoading />;
   }
 
+  const porDia = dados?.porDia ?? [];
+  const quantidades = porDia.length > 0 ? porDia.map((d) => d.quantidade) : [0];
+  const mediaDiaria = Math.round(quantidades.reduce((acc, q) => acc + q, 0) / 7);
+
   return (
-    <main className="
-      relative max-w-120 mx-auto min-h-screen
-      bg-container-radial border-x border-white/5
-      shadow-lateral flex flex-col
-      overflow-x-hidden
-    ">
-      <div className="flex-1 px-6 pb-10">
-      <Link
-        to="/admin/dashboard"
-        className="self-start mt-6 text-white/70 hover:text-white transition-colors flex items-center gap-2"
-      >
-        <i className="fa-solid fa-arrow-left"></i>
-        Voltar
-      </Link>
-
-      <h1 className="text-[1.8rem] font-roboto font-bold text-white mt-6 mb-6 text-center">
-        Relatórios de Acesso
-      </h1>
-
-      <div className="flex flex-col gap-4 w-full">
-        <div className="grid grid-cols-2 gap-4">
-          <div className="bg-[#0d2137] rounded-2xl p-5 text-center">
-            <p className="text-white/60 text-xs font-roboto uppercase tracking-wider mb-1">
-              Total de Acessos
-            </p>
-            <p className="text-white text-3xl font-roboto font-bold">
-              {dados?.total || 0}
-            </p>
-          </div>
-
-          <div className="bg-[#0d2137] rounded-2xl p-5 text-center">
-            <p className="text-white/60 text-xs font-roboto uppercase tracking-wider mb-1">
-              Esta Semana
-            </p>
-            <p className="text-white text-3xl font-roboto font-bold">
-              {dados?.semana || 0}
-            </p>
-          </div>
+    <AdminShell title="Relatórios" description="Acessos ao site e contatos pelo WhatsApp.">
+      <section>
+        <h2 className="mb-3 text-lg font-semibold text-white">Acessos</h2>
+        <div className="grid grid-cols-2 gap-3 md:grid-cols-3 lg:grid-cols-5 lg:gap-4">
+          <Indicador rotulo="Total de acessos" valor={dados?.total || 0} />
+          <Indicador rotulo="Esta semana" valor={dados?.semana || 0} />
+          <Indicador rotulo="Média diária (7 dias)" valor={mediaDiaria} />
+          <Indicador rotulo="Maior acesso (7 dias)" valor={Math.max(...quantidades)} />
+          <Indicador rotulo="Menor acesso (7 dias)" valor={Math.min(...quantidades)} />
         </div>
 
-        <div className="bg-[#0d2137] rounded-2xl p-5">
-          <h2 className="text-white font-roboto font-bold mb-4 text-center">
-            Últimos 7 Dias
-          </h2>
-          
-          <div className="flex items-end justify-between gap-2 h-32">
-            {dados?.porDia.map((item, index) => (
-              <div key={index} className="flex flex-col items-center flex-1 gap-2">
-                <span className="text-white/60 text-xs">
-                  {item.quantidade}
-                </span>
-                <div 
-                  className="w-full bg-[#1a5fa8] rounded-t-md transition-all duration-300"
-                  style={{ 
-                    height: `${Math.max((item.quantidade / maxAcesso) * 100, 4)}%`,
-                    minHeight: '4px'
-                  }}
-                ></div>
-                <span className="text-white/50 text-xs">
-                  {item.data}
-                </span>
-              </div>
-            ))}
-          </div>
+        <div className="mt-3 lg:mt-4">
+          <GraficoBarras titulo="Acessos nos últimos 7 dias" dados={porDia} corClass="bg-brand" />
         </div>
+      </section>
 
-        <div className="bg-[#0d2137] rounded-2xl p-5">
-          <h2 className="text-white font-roboto font-bold mb-4 text-center">
-            Resumo
-          </h2>
-          <div className="space-y-3">
-            <div className="flex justify-between items-center">
-              <span className="text-white/60 font-roboto">Média diária (7 dias)</span>
-              <span className="text-white font-roboto font-bold">
-                {dados ? Math.round(dados.porDia.reduce((acc, d) => acc + d.quantidade, 0) / 7) : 0}
-              </span>
-            </div>
-            <div className="flex justify-between items-center">
-              <span className="text-white/60 font-roboto">Maior acesso (7 dias)</span>
-              <span className="text-white font-roboto font-bold">
-                {Math.max(...(dados?.porDia.map(d => d.quantidade) || [0]))}
-              </span>
-            </div>
-            <div className="flex justify-between items-center">
-              <span className="text-white/60 font-roboto">Menor acesso (7 dias)</span>
-              <span className="text-white font-roboto font-bold">
-                {Math.min(...(dados?.porDia.map(d => d.quantidade) || [0]))}
-              </span>
+      <section className="mt-10">
+        <h2 className="mb-3 text-lg font-semibold text-white">Contatos via WhatsApp</h2>
+        <div className="grid gap-3 lg:grid-cols-3 lg:gap-4">
+          <div className="grid gap-3 lg:gap-4">
+            <Indicador rotulo="Total de cliques" valor={dadosWhatsApp?.total || 0} />
+
+            <div className={painel}>
+              <h3 className="mb-2 font-semibold text-white">Por tipo</h3>
+              {dadosWhatsApp?.porTipo.map((item) => (
+                <Linha key={item.tipo} rotulo={rotuloTipo[item.tipo] || item.tipo} valor={item.quantidade} />
+              ))}
             </div>
           </div>
-        </div>
-      </div>
 
-      <div className="mt-8">
-        <h2 className="text-white font-roboto font-bold text-[1.3rem] mb-4 text-center">
-          Contatos via WhatsApp
-        </h2>
-        
-        <div className="grid grid-cols-2 gap-4 mb-4">
-          <div className="bg-[#0d2137] rounded-2xl p-5 text-center">
-            <p className="text-white/60 text-xs font-roboto uppercase tracking-wider mb-1">
-              Total de Cliques
-            </p>
-            <p className="text-white text-3xl font-roboto font-bold">
-              {dadosWhatsApp?.total || 0}
-            </p>
-          </div>
-        </div>
-
-        <div className="bg-[#0d2137] rounded-2xl p-5 mb-4">
-          <h3 className="text-white font-roboto font-bold mb-4 text-center">
-            Por Tipo
-          </h3>
-          <div className="flex justify-around">
-            {dadosWhatsApp?.porTipo.map((item) => (
-              <div key={item.tipo} className="text-center">
-                <p className="text-white/60 text-xs font-roboto uppercase mb-1">
-                  {item.tipo === 'promocao' ? 'Promoções' : item.tipo === 'oferta' ? 'Ofertas' : 'Contato'}
-                </p>
-                <p className="text-white text-2xl font-roboto font-bold">{item.quantidade}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        <div className="bg-[#0d2137] rounded-2xl p-5 mb-4">
-          <h3 className="text-white font-roboto font-bold mb-4 text-center">
-            Por Setor
-          </h3>
-          <div className="space-y-2">
+          <div className={painel}>
+            <h3 className="mb-2 font-semibold text-white">Por setor</h3>
             {dadosWhatsApp?.porSetor.map((item) => (
-              <div key={item.setor} className="flex justify-between items-center">
-                <span className="text-white/70 font-roboto capitalize">{item.setor}</span>
-                <span className="text-white font-roboto font-bold">{item.quantidade}</span>
-              </div>
+              <Linha key={item.setor} rotulo={item.setor} valor={item.quantidade} />
             ))}
             {(!dadosWhatsApp?.porSetor || dadosWhatsApp.porSetor.length === 0) && (
-              <p className="text-white/50 text-center font-roboto">Nenhum clique registrado</p>
+              <p className="py-4 text-center text-sm text-white/50">Nenhum clique registrado</p>
             )}
           </div>
-        </div>
 
-        <div className="bg-[#0d2137] rounded-2xl p-5">
-          <h3 className="text-white font-roboto font-bold mb-4 text-center">
-            Últimos 7 Dias
-          </h3>
-          <div className="flex items-end justify-between gap-2 h-24">
-            {dadosWhatsApp?.porDia.map((item, index) => {
-              const maxCliques = Math.max(...(dadosWhatsApp.porDia.map(d => d.quantidade) || [1]), 1);
-              return (
-                <div key={index} className="flex flex-col items-center flex-1 gap-1">
-                  <span className="text-white/60 text-xs">{item.quantidade}</span>
-                  <div 
-                    className="w-full bg-[#25D366] rounded-t-md transition-all duration-300"
-                    style={{ 
-                      height: `${Math.max((item.quantidade / maxCliques) * 100, 4)}%`,
-                      minHeight: '4px'
-                    }}
-                  ></div>
-                  <span className="text-white/50 text-xs">{item.data}</span>
-                </div>
-              );
-            })}
-          </div>
+          <GraficoBarras
+            titulo="Cliques nos últimos 7 dias"
+            dados={dadosWhatsApp?.porDia ?? []}
+            corClass="bg-whatsapp"
+          />
         </div>
-      </div>
-      </div>
-
-      <Footer />
-    </main>
+      </section>
+    </AdminShell>
   );
 }
